@@ -35,15 +35,8 @@
           "additionalProperties": false
         },
         "environment": {
-          "description": "Environment configures the environment in which resources are rendered. \n THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored unless the relevant Crossplane feature flag is enabled, and may be changed or removed without notice.",
+          "description": "Environment configures the environment in which resources are rendered. THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored unless the relevant Crossplane feature flag is enabled, and may be changed or removed without notice.",
           "properties": {
-            "defaultData": {
-              "additionalProperties": {
-                "x-kubernetes-preserve-unknown-fields": true
-              },
-              "description": "DefaultData statically defines the initial state of the environment. It has the same schema-less structure as the data field in environment configs. It is overwritten by the selected environment configs.",
-              "type": "object"
-            },
             "environmentConfigs": {
               "description": "EnvironmentConfigs selects a list of `EnvironmentConfig`s. The resolved resources are stored in the composite resource at `spec.environmentConfigRefs` and is only updated if it is null. \n The list of references is used to compute an in-memory environment at compose time. The data of all object is merged in the order they are listed, meaning the values of EnvironmentConfigs with a larger index take priority over ones with smaller indices. \n The computed environment can be accessed in a composition using `FromEnvironmentFieldPath` and `CombineFromEnvironment` patches.",
               "items": {
@@ -64,22 +57,13 @@
                     "additionalProperties": false
                   },
                   "selector": {
-                    "description": "Selector selects EnvironmentConfig(s) via labels.",
+                    "description": "Selector selects one EnvironmentConfig via labels.",
                     "properties": {
                       "matchLabels": {
                         "description": "MatchLabels ensures an object with matching labels is selected.",
                         "items": {
                           "description": "An EnvironmentSourceSelectorLabelMatcher acts like a k8s label selector but can draw the label value from a different path.",
                           "properties": {
-                            "fromFieldPathPolicy": {
-                              "default": "Required",
-                              "description": "FromFieldPathPolicy specifies the policy for the valueFromFieldPath. The default is Required, meaning that an error will be returned if the field is not found in the composite resource. Optional means that if the field is not found in the composite resource, that label pair will just be skipped. N.B. other specified label matchers will still be used to retrieve the desired environment config, if any.",
-                              "enum": [
-                                "Optional",
-                                "Required"
-                              ],
-                              "type": "string"
-                            },
                             "key": {
                               "description": "Key of the label to match.",
                               "type": "string"
@@ -109,25 +93,6 @@
                           "additionalProperties": false
                         },
                         "type": "array"
-                      },
-                      "maxMatch": {
-                        "description": "MaxMatch specifies the number of extracted EnvironmentConfigs in Multiple mode, extracts all if nil.",
-                        "format": "int64",
-                        "type": "integer"
-                      },
-                      "mode": {
-                        "default": "Single",
-                        "description": "Mode specifies retrieval strategy: \"Single\" or \"Multiple\".",
-                        "enum": [
-                          "Single",
-                          "Multiple"
-                        ],
-                        "type": "string"
-                      },
-                      "sortByFieldPath": {
-                        "default": "metadata.name",
-                        "description": "SortByFieldPath is the path to the field based on which list of EnvironmentConfigs is alphabetically sorted.",
-                        "type": "string"
                       }
                     },
                     "type": "object",
@@ -251,11 +216,10 @@
                           "description": "Convert is used to cast the input into the given output type.",
                           "properties": {
                             "format": {
-                              "description": "The expected input format. \n * `quantity` - parses the input as a K8s [`resource.Quantity`](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity). Only used during `string -> float64` conversions. * `json` - parses the input as a JSON string. Only used during `string -> object` or `string -> list` conversions. \n If this property is null, the default conversion is applied.",
+                              "description": "The expected input format. \n * `quantity` - parses the input as a K8s [`resource.Quantity`](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity). Only used during `string -> float64` conversions. \n If this property is null, the default conversion is applied.",
                               "enum": [
                                 "none",
-                                "quantity",
-                                "json"
+                                "quantity"
                               ],
                               "type": "string"
                             },
@@ -266,9 +230,7 @@
                                 "int",
                                 "int64",
                                 "bool",
-                                "float64",
-                                "object",
-                                "array"
+                                "float64"
                               ],
                               "type": "string"
                             }
@@ -458,6 +420,7 @@
                     "description": "Type sets the patching behaviour to be used. Each patch type may require its own fields to be set on the Patch object.",
                     "enum": [
                       "FromCompositeFieldPath",
+                      "FromEnvironmentFieldPath",
                       "ToCompositeFieldPath",
                       "CombineFromComposite",
                       "CombineToComposite"
@@ -469,46 +432,144 @@
                 "additionalProperties": false
               },
               "type": "array"
-            },
-            "policy": {
-              "description": "Policy represents the Resolve and Resolution policies which apply to all EnvironmentSourceReferences in EnvironmentConfigs list.",
-              "properties": {
-                "resolution": {
-                  "default": "Required",
-                  "description": "Resolution specifies whether resolution of this reference is required. The default is 'Required', which means the reconcile will fail if the reference cannot be resolved. 'Optional' means this reference will be a no-op if it cannot be resolved.",
-                  "enum": [
-                    "Required",
-                    "Optional"
-                  ],
-                  "type": "string"
-                },
-                "resolve": {
-                  "description": "Resolve specifies when this reference should be resolved. The default is 'IfNotPresent', which will attempt to resolve the reference only when the corresponding field is not present. Use 'Always' to resolve the reference on every reconcile.",
-                  "enum": [
-                    "Always",
-                    "IfNotPresent"
-                  ],
-                  "type": "string"
-                }
-              },
-              "type": "object",
-              "additionalProperties": false
             }
           },
           "type": "object",
           "additionalProperties": false
         },
-        "mode": {
-          "default": "Resources",
-          "description": "Mode controls what type or \"mode\" of Composition will be used. \n \"Resources\" (the default) indicates that a Composition uses what is commonly referred to as \"Patch & Transform\" or P&T composition. This mode of Composition uses an array of resources, each a template for a composed resource. \n \"Pipeline\" indicates that a Composition specifies a pipeline of Composition Functions, each of which is responsible for producing composed resources that Crossplane should create or update. THE PIPELINE MODE IS A BETA FEATURE. It is not honored if the relevant Crossplane feature flag is disabled.",
-          "enum": [
-            "Resources",
-            "Pipeline"
-          ],
-          "type": "string"
+        "functions": {
+          "description": "Functions is list of Composition Functions that will be used when a composite resource referring to this composition is created. At least one of resources and functions must be specified. If both are specified the resources will be rendered first, then passed to the functions for further processing. \n THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored unless the relevant Crossplane feature flag is enabled, and may be changed or removed without notice.",
+          "items": {
+            "description": "A Function represents a Composition Function.",
+            "properties": {
+              "config": {
+                "description": "Config is an optional, arbitrary Kubernetes resource (i.e. a resource with an apiVersion and kind) that will be passed to the Composition Function as the 'config' block of its FunctionIO.",
+                "type": "object",
+                "x-kubernetes-embedded-resource": true,
+                "x-kubernetes-preserve-unknown-fields": true
+              },
+              "container": {
+                "description": "Container configuration of this function.",
+                "properties": {
+                  "image": {
+                    "description": "Image specifies the OCI image in which the function is packaged. The image should include an entrypoint that reads a FunctionIO from stdin and emits it, optionally mutated, to stdout.",
+                    "type": "string"
+                  },
+                  "imagePullPolicy": {
+                    "default": "IfNotPresent",
+                    "description": "ImagePullPolicy defines the pull policy for the function image.",
+                    "enum": [
+                      "IfNotPresent",
+                      "Always",
+                      "Never"
+                    ],
+                    "type": "string"
+                  },
+                  "network": {
+                    "description": "Network configuration for the Composition Function.",
+                    "properties": {
+                      "policy": {
+                        "default": "Isolated",
+                        "description": "Policy specifies the network policy under which the Composition Function will run. Defaults to 'Isolated' - i.e. no network access. Specify 'Runner' to allow the function the same network access as its runner.",
+                        "enum": [
+                          "Isolated",
+                          "Runner"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "resources": {
+                    "description": "Resources that may be used by the Composition Function.",
+                    "properties": {
+                      "limits": {
+                        "description": "Limits specify the maximum compute resources that may be used by the Composition Function.",
+                        "properties": {
+                          "cpu": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ],
+                            "default": "100m",
+                            "description": "CPU, in cores. (500m = .5 cores)",
+                            "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                            "x-kubernetes-int-or-string": true
+                          },
+                          "memory": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ],
+                            "default": "128Mi",
+                            "description": "Memory, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)",
+                            "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                            "x-kubernetes-int-or-string": true
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "runner": {
+                    "description": "Runner configuration for the Composition Function.",
+                    "properties": {
+                      "endpoint": {
+                        "default": "unix-abstract:crossplane/fn/default.sock",
+                        "description": "Endpoint specifies how and where Crossplane should reach the runner it uses to invoke containerized Composition Functions.",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "timeout": {
+                    "default": "20s",
+                    "description": "Timeout after which the Composition Function will be killed.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "image"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "name": {
+                "description": "Name of this function. Must be unique within its Composition.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of this function.",
+                "enum": [
+                  "Container"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
         },
         "patchSets": {
-          "description": "PatchSets define a named set of patches that may be included by any resource in this Composition. PatchSets cannot themselves refer to other PatchSets. \n PatchSets are only used by the \"Resources\" mode of Composition. They are ignored by other modes.",
+          "description": "PatchSets define a named set of patches that may be included by any resource in this Composition. PatchSets cannot themselves refer to other PatchSets.",
           "items": {
             "description": "A PatchSet is a set of patches that can be reused from all resources within a Composition.",
             "properties": {
@@ -623,11 +684,10 @@
                             "description": "Convert is used to cast the input into the given output type.",
                             "properties": {
                               "format": {
-                                "description": "The expected input format. \n * `quantity` - parses the input as a K8s [`resource.Quantity`](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity). Only used during `string -> float64` conversions. * `json` - parses the input as a JSON string. Only used during `string -> object` or `string -> list` conversions. \n If this property is null, the default conversion is applied.",
+                                "description": "The expected input format. \n * `quantity` - parses the input as a K8s [`resource.Quantity`](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity). Only used during `string -> float64` conversions. \n If this property is null, the default conversion is applied.",
                                 "enum": [
                                   "none",
-                                  "quantity",
-                                  "json"
+                                  "quantity"
                                 ],
                                 "type": "string"
                               },
@@ -638,9 +698,7 @@
                                   "int",
                                   "int64",
                                   "bool",
-                                  "float64",
-                                  "object",
-                                  "array"
+                                  "float64"
                                 ],
                                 "type": "string"
                               }
@@ -857,45 +915,6 @@
           },
           "type": "array"
         },
-        "pipeline": {
-          "description": "Pipeline is a list of composition function steps that will be used when a composite resource referring to this composition is created. One of resources and pipeline must be specified - you cannot specify both. \n The Pipeline is only used by the \"Pipeline\" mode of Composition. It is ignored by other modes. \n THIS IS A BETA FIELD. It is not honored if the relevant Crossplane feature flag is disabled.",
-          "items": {
-            "description": "A PipelineStep in a Composition Function pipeline.",
-            "properties": {
-              "functionRef": {
-                "description": "FunctionRef is a reference to the Composition Function this step should execute.",
-                "properties": {
-                  "name": {
-                    "description": "Name of the referenced Function.",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name"
-                ],
-                "type": "object",
-                "additionalProperties": false
-              },
-              "input": {
-                "description": "Input is an optional, arbitrary Kubernetes resource (i.e. a resource with an apiVersion and kind) that will be passed to the Composition Function as the 'input' of its RunFunctionRequest.",
-                "type": "object",
-                "x-kubernetes-embedded-resource": true,
-                "x-kubernetes-preserve-unknown-fields": true
-              },
-              "step": {
-                "description": "Step name. Must be unique within its Pipeline.",
-                "type": "string"
-              }
-            },
-            "required": [
-              "functionRef",
-              "step"
-            ],
-            "type": "object",
-            "additionalProperties": false
-          },
-          "type": "array"
-        },
         "publishConnectionDetailsWithStoreConfigRef": {
           "default": {
             "name": "default"
@@ -914,7 +933,7 @@
           "additionalProperties": false
         },
         "resources": {
-          "description": "Resources is a list of resource templates that will be used when a composite resource referring to this composition is created. \n Resources are only used by the \"Resources\" mode of Composition. They are ignored by other modes.",
+          "description": "Resources is a list of resource templates that will be used when a composite resource referring to this composition is created. At least one of resources and functions must be specififed. If both are specified the resources will be rendered first, then passed to the functions for further processing.",
           "items": {
             "description": "ComposedTemplate is used to provide information about how the composed resource should be processed.",
             "properties": {
@@ -1071,11 +1090,10 @@
                             "description": "Convert is used to cast the input into the given output type.",
                             "properties": {
                               "format": {
-                                "description": "The expected input format. \n * `quantity` - parses the input as a K8s [`resource.Quantity`](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity). Only used during `string -> float64` conversions. * `json` - parses the input as a JSON string. Only used during `string -> object` or `string -> list` conversions. \n If this property is null, the default conversion is applied.",
+                                "description": "The expected input format. \n * `quantity` - parses the input as a K8s [`resource.Quantity`](https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity). Only used during `string -> float64` conversions. \n If this property is null, the default conversion is applied.",
                                 "enum": [
                                   "none",
-                                  "quantity",
-                                  "json"
+                                  "quantity"
                                 ],
                                 "type": "string"
                               },
@@ -1086,9 +1104,7 @@
                                   "int",
                                   "int64",
                                   "bool",
-                                  "float64",
-                                  "object",
-                                  "array"
+                                  "float64"
                                 ],
                                 "type": "string"
                               }
@@ -1296,15 +1312,6 @@
                 "type": "array"
               },
               "readinessChecks": {
-                "default": [
-                  {
-                    "matchCondition": {
-                      "status": "True",
-                      "type": "Ready"
-                    },
-                    "type": "MatchCondition"
-                  }
-                ],
                 "description": "ReadinessChecks allows users to define custom readiness checks. All checks have to return true in order for resource to be considered ready. The default readiness check is to have the \"Ready\" condition to be \"True\".",
                 "items": {
                   "description": "ReadinessCheck is used to indicate how to tell whether a resource is ready for consumption",
@@ -1312,27 +1319,6 @@
                     "fieldPath": {
                       "description": "FieldPath shows the path of the field whose value will be used.",
                       "type": "string"
-                    },
-                    "matchCondition": {
-                      "description": "MatchCondition specifies the condition you'd like to match if you're using \"MatchCondition\" type.",
-                      "properties": {
-                        "status": {
-                          "default": "True",
-                          "description": "Status is the status of the condition you'd like to match.",
-                          "type": "string"
-                        },
-                        "type": {
-                          "default": "Ready",
-                          "description": "Type indicates the type of condition you'd like to use.",
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "status",
-                        "type"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false
                     },
                     "matchInteger": {
                       "description": "MatchInt is the value you'd like to match if you're using \"MatchInt\" type.",
@@ -1349,9 +1335,6 @@
                         "MatchString",
                         "MatchInteger",
                         "NonEmpty",
-                        "MatchCondition",
-                        "MatchTrue",
-                        "MatchFalse",
                         "None"
                       ],
                       "type": "string"

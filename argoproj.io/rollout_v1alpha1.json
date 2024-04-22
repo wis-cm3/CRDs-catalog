@@ -169,24 +169,6 @@
                 },
                 "postPromotionAnalysis": {
                   "properties": {
-                    "analysisRunMetadata": {
-                      "properties": {
-                        "annotations": {
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "type": "object"
-                        },
-                        "labels": {
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
-                    },
                     "args": {
                       "items": {
                         "properties": {
@@ -282,24 +264,6 @@
                 },
                 "prePromotionAnalysis": {
                   "properties": {
-                    "analysisRunMetadata": {
-                      "properties": {
-                        "annotations": {
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "type": "object"
-                        },
-                        "labels": {
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
-                    },
                     "args": {
                       "items": {
                         "properties": {
@@ -441,24 +405,6 @@
                 },
                 "analysis": {
                   "properties": {
-                    "analysisRunMetadata": {
-                      "properties": {
-                        "annotations": {
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "type": "object"
-                        },
-                        "labels": {
-                          "additionalProperties": {
-                            "type": "string"
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
-                    },
                     "args": {
                       "items": {
                         "properties": {
@@ -678,24 +624,6 @@
                     "properties": {
                       "analysis": {
                         "properties": {
-                          "analysisRunMetadata": {
-                            "properties": {
-                              "annotations": {
-                                "additionalProperties": {
-                                  "type": "string"
-                                },
-                                "type": "object"
-                              },
-                              "labels": {
-                                "additionalProperties": {
-                                  "type": "string"
-                                },
-                                "type": "object"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          },
                           "args": {
                             "items": {
                               "properties": {
@@ -918,15 +846,6 @@
                                         "type": "string"
                                       },
                                       "type": "object"
-                                    }
-                                  },
-                                  "type": "object",
-                                  "additionalProperties": false
-                                },
-                                "service": {
-                                  "properties": {
-                                    "name": {
-                                      "type": "string"
                                     }
                                   },
                                   "type": "object",
@@ -1409,20 +1328,13 @@
                         },
                         "stableIngress": {
                           "type": "string"
-                        },
-                        "stableIngresses": {
-                          "items": {
-                            "type": "string"
-                          },
-                          "type": "array"
                         }
                       },
+                      "required": [
+                        "stableIngress"
+                      ],
                       "type": "object",
                       "additionalProperties": false
-                    },
-                    "plugins": {
-                      "type": "object",
-                      "x-kubernetes-preserve-unknown-fields": true
                     },
                     "smi": {
                       "properties": {
@@ -4041,9 +3953,6 @@
                 "hostPID": {
                   "type": "boolean"
                 },
-                "hostUsers": {
-                  "type": "boolean"
-                },
                 "hostname": {
                   "type": "string"
                 },
@@ -5270,13 +5179,6 @@
                         "type": "object",
                         "additionalProperties": false
                       },
-                      "matchLabelKeys": {
-                        "items": {
-                          "type": "string"
-                        },
-                        "type": "array",
-                        "x-kubernetes-list-type": "atomic"
-                      },
                       "maxSkew": {
                         "format": "int32",
                         "type": "integer"
@@ -5284,12 +5186,6 @@
                       "minDomains": {
                         "format": "int32",
                         "type": "integer"
-                      },
-                      "nodeAffinityPolicy": {
-                        "type": "string"
-                      },
-                      "nodeTaintsPolicy": {
-                        "type": "string"
                       },
                       "topologyKey": {
                         "type": "string"
@@ -5369,16 +5265,12 @@
                 "arn": {
                   "type": "string"
                 },
-                "fullName": {
-                  "type": "string"
-                },
                 "name": {
                   "type": "string"
                 }
               },
               "required": [
                 "arn",
-                "fullName",
                 "name"
               ],
               "type": "object",
@@ -5389,16 +5281,12 @@
                 "arn": {
                   "type": "string"
                 },
-                "fullName": {
-                  "type": "string"
-                },
                 "name": {
                   "type": "string"
                 }
               },
               "required": [
                 "arn",
-                "fullName",
                 "name"
               ],
               "type": "object",
@@ -5409,16 +5297,12 @@
                 "arn": {
                   "type": "string"
                 },
-                "fullName": {
-                  "type": "string"
-                },
                 "name": {
                   "type": "string"
                 }
               },
               "required": [
                 "arn",
-                "fullName",
                 "name"
               ],
               "type": "object",

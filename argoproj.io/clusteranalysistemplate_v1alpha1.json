@@ -255,31 +255,16 @@
                   },
                   "datadog": {
                     "properties": {
-                      "apiVersion": {
-                        "default": "v1",
-                        "enum": [
-                          "v1",
-                          "v2"
-                        ],
-                        "type": "string"
-                      },
-                      "formula": {
-                        "type": "string"
-                      },
                       "interval": {
-                        "default": "5m",
                         "type": "string"
-                      },
-                      "queries": {
-                        "additionalProperties": {
-                          "type": "string"
-                        },
-                        "type": "object"
                       },
                       "query": {
                         "type": "string"
                       }
                     },
+                    "required": [
+                      "query"
+                    ],
                     "type": "object",
                     "additionalProperties": false
                   },
@@ -351,76 +336,6 @@
                             "format": "int32",
                             "type": "integer"
                           },
-                          "podFailurePolicy": {
-                            "properties": {
-                              "rules": {
-                                "items": {
-                                  "properties": {
-                                    "action": {
-                                      "type": "string"
-                                    },
-                                    "onExitCodes": {
-                                      "properties": {
-                                        "containerName": {
-                                          "type": "string"
-                                        },
-                                        "operator": {
-                                          "type": "string"
-                                        },
-                                        "values": {
-                                          "items": {
-                                            "format": "int32",
-                                            "type": "integer"
-                                          },
-                                          "type": "array",
-                                          "x-kubernetes-list-type": "set"
-                                        }
-                                      },
-                                      "required": [
-                                        "operator",
-                                        "values"
-                                      ],
-                                      "type": "object",
-                                      "additionalProperties": false
-                                    },
-                                    "onPodConditions": {
-                                      "items": {
-                                        "properties": {
-                                          "status": {
-                                            "type": "string"
-                                          },
-                                          "type": {
-                                            "type": "string"
-                                          }
-                                        },
-                                        "required": [
-                                          "status",
-                                          "type"
-                                        ],
-                                        "type": "object",
-                                        "additionalProperties": false
-                                      },
-                                      "type": "array",
-                                      "x-kubernetes-list-type": "atomic"
-                                    }
-                                  },
-                                  "required": [
-                                    "action",
-                                    "onPodConditions"
-                                  ],
-                                  "type": "object",
-                                  "additionalProperties": false
-                                },
-                                "type": "array",
-                                "x-kubernetes-list-type": "atomic"
-                              }
-                            },
-                            "required": [
-                              "rules"
-                            ],
-                            "type": "object",
-                            "additionalProperties": false
-                          },
                           "selector": {
                             "properties": {
                               "matchExpressions": {
@@ -456,7 +371,6 @@
                               }
                             },
                             "type": "object",
-                            "x-kubernetes-map-type": "atomic",
                             "additionalProperties": false
                           },
                           "suspend": {
@@ -549,7 +463,6 @@
                                                     }
                                                   },
                                                   "type": "object",
-                                                  "x-kubernetes-map-type": "atomic",
                                                   "additionalProperties": false
                                                 },
                                                 "weight": {
@@ -623,7 +536,6 @@
                                                     }
                                                   },
                                                   "type": "object",
-                                                  "x-kubernetes-map-type": "atomic",
                                                   "additionalProperties": false
                                                 },
                                                 "type": "array"
@@ -633,7 +545,6 @@
                                               "nodeSelectorTerms"
                                             ],
                                             "type": "object",
-                                            "x-kubernetes-map-type": "atomic",
                                             "additionalProperties": false
                                           }
                                         },
@@ -682,7 +593,6 @@
                                                         }
                                                       },
                                                       "type": "object",
-                                                      "x-kubernetes-map-type": "atomic",
                                                       "additionalProperties": false
                                                     },
                                                     "namespaceSelector": {
@@ -720,7 +630,6 @@
                                                         }
                                                       },
                                                       "type": "object",
-                                                      "x-kubernetes-map-type": "atomic",
                                                       "additionalProperties": false
                                                     },
                                                     "namespaces": {
@@ -791,7 +700,6 @@
                                                     }
                                                   },
                                                   "type": "object",
-                                                  "x-kubernetes-map-type": "atomic",
                                                   "additionalProperties": false
                                                 },
                                                 "namespaceSelector": {
@@ -829,7 +737,6 @@
                                                     }
                                                   },
                                                   "type": "object",
-                                                  "x-kubernetes-map-type": "atomic",
                                                   "additionalProperties": false
                                                 },
                                                 "namespaces": {
@@ -896,7 +803,6 @@
                                                         }
                                                       },
                                                       "type": "object",
-                                                      "x-kubernetes-map-type": "atomic",
                                                       "additionalProperties": false
                                                     },
                                                     "namespaceSelector": {
@@ -934,7 +840,6 @@
                                                         }
                                                       },
                                                       "type": "object",
-                                                      "x-kubernetes-map-type": "atomic",
                                                       "additionalProperties": false
                                                     },
                                                     "namespaces": {
@@ -1005,7 +910,6 @@
                                                     }
                                                   },
                                                   "type": "object",
-                                                  "x-kubernetes-map-type": "atomic",
                                                   "additionalProperties": false
                                                 },
                                                 "namespaceSelector": {
@@ -1043,7 +947,6 @@
                                                     }
                                                   },
                                                   "type": "object",
-                                                  "x-kubernetes-map-type": "atomic",
                                                   "additionalProperties": false
                                                 },
                                                 "namespaces": {
@@ -1117,7 +1020,6 @@
                                                       "key"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "fieldRef": {
@@ -1133,7 +1035,6 @@
                                                       "fieldPath"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "resourceFieldRef": {
@@ -1161,7 +1062,6 @@
                                                       "resource"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "secretKeyRef": {
@@ -1180,7 +1080,6 @@
                                                       "key"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   }
                                                 },
@@ -1209,7 +1108,6 @@
                                                   }
                                                 },
                                                 "type": "object",
-                                                "x-kubernetes-map-type": "atomic",
                                                 "additionalProperties": false
                                               },
                                               "prefix": {
@@ -1225,7 +1123,6 @@
                                                   }
                                                 },
                                                 "type": "object",
-                                                "x-kubernetes-map-type": "atomic",
                                                 "additionalProperties": false
                                               }
                                             },
@@ -2117,7 +2014,6 @@
                                                       "key"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "fieldRef": {
@@ -2133,7 +2029,6 @@
                                                       "fieldPath"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "resourceFieldRef": {
@@ -2161,7 +2056,6 @@
                                                       "resource"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "secretKeyRef": {
@@ -2180,7 +2074,6 @@
                                                       "key"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   }
                                                 },
@@ -2209,7 +2102,6 @@
                                                   }
                                                 },
                                                 "type": "object",
-                                                "x-kubernetes-map-type": "atomic",
                                                 "additionalProperties": false
                                               },
                                               "prefix": {
@@ -2225,7 +2117,6 @@
                                                   }
                                                 },
                                                 "type": "object",
-                                                "x-kubernetes-map-type": "atomic",
                                                 "additionalProperties": false
                                               }
                                             },
@@ -3066,9 +2957,6 @@
                                   "hostPID": {
                                     "type": "boolean"
                                   },
-                                  "hostUsers": {
-                                    "type": "boolean"
-                                  },
                                   "hostname": {
                                     "type": "string"
                                   },
@@ -3080,7 +2968,6 @@
                                         }
                                       },
                                       "type": "object",
-                                      "x-kubernetes-map-type": "atomic",
                                       "additionalProperties": false
                                     },
                                     "type": "array"
@@ -3127,7 +3014,6 @@
                                                       "key"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "fieldRef": {
@@ -3143,7 +3029,6 @@
                                                       "fieldPath"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "resourceFieldRef": {
@@ -3171,7 +3056,6 @@
                                                       "resource"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   },
                                                   "secretKeyRef": {
@@ -3190,7 +3074,6 @@
                                                       "key"
                                                     ],
                                                     "type": "object",
-                                                    "x-kubernetes-map-type": "atomic",
                                                     "additionalProperties": false
                                                   }
                                                 },
@@ -3219,7 +3102,6 @@
                                                   }
                                                 },
                                                 "type": "object",
-                                                "x-kubernetes-map-type": "atomic",
                                                 "additionalProperties": false
                                               },
                                               "prefix": {
@@ -3235,7 +3117,6 @@
                                                   }
                                                 },
                                                 "type": "object",
-                                                "x-kubernetes-map-type": "atomic",
                                                 "additionalProperties": false
                                               }
                                             },
@@ -4300,15 +4181,7 @@
                                             }
                                           },
                                           "type": "object",
-                                          "x-kubernetes-map-type": "atomic",
                                           "additionalProperties": false
-                                        },
-                                        "matchLabelKeys": {
-                                          "items": {
-                                            "type": "string"
-                                          },
-                                          "type": "array",
-                                          "x-kubernetes-list-type": "atomic"
                                         },
                                         "maxSkew": {
                                           "format": "int32",
@@ -4317,12 +4190,6 @@
                                         "minDomains": {
                                           "format": "int32",
                                           "type": "integer"
-                                        },
-                                        "nodeAffinityPolicy": {
-                                          "type": "string"
-                                        },
-                                        "nodeTaintsPolicy": {
-                                          "type": "string"
                                         },
                                         "topologyKey": {
                                           "type": "string"
@@ -4520,96 +4387,9 @@
                     "type": "object",
                     "additionalProperties": false
                   },
-                  "plugin": {
-                    "type": "object",
-                    "x-kubernetes-preserve-unknown-fields": true
-                  },
                   "prometheus": {
                     "properties": {
                       "address": {
-                        "type": "string"
-                      },
-                      "authentication": {
-                        "properties": {
-                          "oauth2": {
-                            "properties": {
-                              "clientId": {
-                                "type": "string"
-                              },
-                              "clientSecret": {
-                                "type": "string"
-                              },
-                              "scopes": {
-                                "items": {
-                                  "type": "string"
-                                },
-                                "type": "array"
-                              },
-                              "tokenUrl": {
-                                "type": "string"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          },
-                          "sigv4": {
-                            "properties": {
-                              "profile": {
-                                "type": "string"
-                              },
-                              "region": {
-                                "type": "string"
-                              },
-                              "roleArn": {
-                                "type": "string"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "headers": {
-                        "items": {
-                          "properties": {
-                            "key": {
-                              "type": "string"
-                            },
-                            "value": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "key",
-                            "value"
-                          ],
-                          "type": "object",
-                          "additionalProperties": false
-                        },
-                        "type": "array"
-                      },
-                      "insecure": {
-                        "type": "boolean"
-                      },
-                      "query": {
-                        "type": "string"
-                      },
-                      "timeout": {
-                        "format": "int64",
-                        "type": "integer"
-                      }
-                    },
-                    "type": "object",
-                    "additionalProperties": false
-                  },
-                  "skywalking": {
-                    "properties": {
-                      "address": {
-                        "type": "string"
-                      },
-                      "interval": {
                         "type": "string"
                       },
                       "query": {
@@ -4633,48 +4413,6 @@
                   },
                   "web": {
                     "properties": {
-                      "authentication": {
-                        "properties": {
-                          "oauth2": {
-                            "properties": {
-                              "clientId": {
-                                "type": "string"
-                              },
-                              "clientSecret": {
-                                "type": "string"
-                              },
-                              "scopes": {
-                                "items": {
-                                  "type": "string"
-                                },
-                                "type": "array"
-                              },
-                              "tokenUrl": {
-                                "type": "string"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          },
-                          "sigv4": {
-                            "properties": {
-                              "profile": {
-                                "type": "string"
-                              },
-                              "region": {
-                                "type": "string"
-                              },
-                              "roleArn": {
-                                "type": "string"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
                       "body": {
                         "type": "string"
                       },

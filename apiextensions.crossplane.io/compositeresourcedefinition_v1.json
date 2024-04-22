@@ -67,11 +67,11 @@
           "description": "Conversion defines all conversion settings for the defined Composite resource.",
           "properties": {
             "strategy": {
-              "description": "strategy specifies how custom resources are converted between versions. Allowed values are: - `\"None\"`: The converter only change the apiVersion and would not touch any other field in the custom resource. - `\"Webhook\"`: API Server will call to an external webhook to do the conversion. Additional information is needed for this option. This requires spec.preserveUnknownFields to be false, and spec.conversion.webhook to be set.",
+              "description": "strategy specifies how custom resources are converted between versions. Allowed values are: - `None`: The converter only change the apiVersion and would not touch any other field in the custom resource. - `Webhook`: API Server will call to an external webhook to do the conversion. Additional information is needed for this option. This requires spec.preserveUnknownFields to be false, and spec.conversion.webhook to be set.",
               "type": "string"
             },
             "webhook": {
-              "description": "webhook describes how to call the conversion webhook. Required when `strategy` is set to `\"Webhook\"`.",
+              "description": "webhook describes how to call the conversion webhook. Required when `strategy` is set to `Webhook`.",
               "properties": {
                 "clientConfig": {
                   "description": "clientConfig is the instructions for how to call the webhook if strategy is `Webhook`.",
@@ -187,27 +187,6 @@
         "group": {
           "description": "Group specifies the API group of the defined composite resource. Composite resources are served under `/apis/<group>/...`. Must match the name of the XRD (in the form `<names.plural>.<group>`).",
           "type": "string"
-        },
-        "metadata": {
-          "description": "Metadata specifies the desired metadata for the defined composite resource and claim CRD's.",
-          "properties": {
-            "annotations": {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations",
-              "type": "object"
-            },
-            "labels": {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "description": "Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels and services. These labels are added to the composite resource and claim CRD's in addition to any labels defined by `CompositionResourceDefinition` `metadata.labels`.",
-              "type": "object"
-            }
-          },
-          "type": "object",
-          "additionalProperties": false
         },
         "names": {
           "description": "Names specifies the resource and kind names of the defined composite resource.",
@@ -387,11 +366,7 @@
             "type": "object",
             "additionalProperties": false
           },
-          "type": "array",
-          "x-kubernetes-list-map-keys": [
-            "type"
-          ],
-          "x-kubernetes-list-type": "map"
+          "type": "array"
         },
         "controllers": {
           "description": "Controllers represents the status of the controllers that power this composite resource definition.",

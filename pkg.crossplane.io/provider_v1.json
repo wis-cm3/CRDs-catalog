@@ -23,7 +23,7 @@
           "type": "object"
         },
         "controllerConfigRef": {
-          "description": "ControllerConfigRef references a ControllerConfig resource that will be used to configure the packaged controller Deployment. Deprecated: Use RuntimeConfigReference instead.",
+          "description": "ControllerConfigRef references a ControllerConfig resource that will be used to configure the packaged controller Deployment.",
           "properties": {
             "name": {
               "description": "Name of the ControllerConfig.",
@@ -77,33 +77,6 @@
           "format": "int64",
           "type": "integer"
         },
-        "runtimeConfigRef": {
-          "default": {
-            "name": "default"
-          },
-          "description": "RuntimeConfigRef references a RuntimeConfig resource that will be used to configure the package runtime.",
-          "properties": {
-            "apiVersion": {
-              "default": "pkg.crossplane.io/v1beta1",
-              "description": "API version of the referent.",
-              "type": "string"
-            },
-            "kind": {
-              "default": "DeploymentRuntimeConfig",
-              "description": "Kind of the referent.",
-              "type": "string"
-            },
-            "name": {
-              "description": "Name of the RuntimeConfig.",
-              "type": "string"
-            }
-          },
-          "required": [
-            "name"
-          ],
-          "type": "object",
-          "additionalProperties": false
-        },
         "skipDependencyResolution": {
           "default": false,
           "description": "SkipDependencyResolution indicates to the package manager whether to skip resolving dependencies for a package. Setting this value to true may have unintended consequences. Default is false.",
@@ -155,11 +128,7 @@
             "type": "object",
             "additionalProperties": false
           },
-          "type": "array",
-          "x-kubernetes-list-map-keys": [
-            "type"
-          ],
-          "x-kubernetes-list-type": "map"
+          "type": "array"
         },
         "currentIdentifier": {
           "description": "CurrentIdentifier is the most recent package source that was used to produce a revision. The package manager uses this field to determine whether to check for package updates for a given source when packagePullPolicy is set to IfNotPresent. Manually removing this field will cause the package manager to check that the current revision is correct for the given package source.",

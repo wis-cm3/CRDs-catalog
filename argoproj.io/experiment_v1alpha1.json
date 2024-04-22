@@ -3999,6 +3999,10 @@
                               "format": "int32",
                               "type": "integer"
                             },
+                            "minDomains": {
+                              "format": "int32",
+                              "type": "integer"
+                            },
                             "topologyKey": {
                               "type": "string"
                             },
