@@ -1,18 +1,17 @@
 {
-  "description": "EventType represents a type of event that can be consumed from a Broker.",
+  "type": "object",
+  "description": "EventType represents a type of event that can be consumed from a resource.",
   "properties": {
     "spec": {
       "description": "Spec defines the desired state of the EventType.",
+      "type": "object",
       "properties": {
         "broker": {
           "type": "string"
         },
-        "description": {
-          "description": "Description is an optional field used to describe the EventType, in any meaningful way.",
-          "type": "string"
-        },
         "reference": {
-          "description": "Reference Broker. For example",
+          "description": "Reference a resource. For example, Broker.",
+          "type": "object",
           "properties": {
             "apiVersion": {
               "description": "API version of the referent.",
@@ -29,10 +28,17 @@
             "namespace": {
               "description": "Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.",
               "type": "string"
+            },
+            "address": {
+              "description": "Address points to a specific Address Name",
+              "type": "string"
             }
           },
-          "type": "object",
           "additionalProperties": false
+        },
+        "description": {
+          "description": "Description is an optional field used to describe the EventType, in any meaningful way.",
+          "type": "string"
         },
         "schema": {
           "description": "Schema is a URI, it represents the CloudEvents schemaurl extension attribute. It may be a JSON schema, a protobuf schema, etc. It is optional.",
@@ -51,11 +57,11 @@
           "type": "string"
         }
       },
-      "type": "object",
       "additionalProperties": false
     },
     "status": {
       "description": "Status represents the current state of the EventType. This data may be out of date.",
+      "type": "object",
       "properties": {
         "annotations": {
           "description": "Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.",
@@ -64,7 +70,13 @@
         },
         "conditions": {
           "description": "Conditions the latest available observations of a resource's current state.",
+          "type": "array",
           "items": {
+            "type": "object",
+            "required": [
+              "type",
+              "status"
+            ],
             "properties": {
               "lastTransitionTime": {
                 "description": "LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).",
@@ -91,24 +103,16 @@
                 "type": "string"
               }
             },
-            "required": [
-              "type",
-              "status"
-            ],
-            "type": "object",
             "additionalProperties": false
-          },
-          "type": "array"
+          }
         },
         "observedGeneration": {
           "description": "ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.",
-          "format": "int64",
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         }
       },
-      "type": "object",
       "additionalProperties": false
     }
-  },
-  "type": "object"
+  }
 }

@@ -16,6 +16,9 @@
       "description": "NodePoolSpec is the top level nodepool specification. Nodepools\nlaunch nodes in response to pods that are unschedulable. A single nodepool\nis capable of managing a diverse set of nodes. Node properties are determined\nfrom a combination of nodepool and pod scheduling constraints.",
       "properties": {
         "disruption": {
+          "default": {
+            "consolidateAfter": "0s"
+          },
           "description": "Disruption contains the parameters that relate to Karpenter's disruption logic",
           "properties": {
             "budgets": {
@@ -50,6 +53,7 @@
                       ],
                       "type": "string"
                     },
+                    "maxItems": 50,
                     "type": "array"
                   },
                   "schedule": {
@@ -74,13 +78,13 @@
               ]
             },
             "consolidateAfter": {
-              "description": "ConsolidateAfter is the duration the controller will wait\nbefore attempting to terminate nodes that are underutilized.\nRefer to ConsolidationPolicy for how underutilization is considered.",
-              "pattern": "^(([0-9]+(s|m|h))+)|(Never)$",
+              "description": "ConsolidateAfter is the duration the controller will wait\nbefore attempting to terminate nodes that are underutilized.\nRefer to ConsolidationPolicy for how underutilization is considered.\nWhen replicas is set, ConsolidateAfter is simply ignored",
+              "pattern": "^(([0-9]+(s|m|h))+|Never)$",
               "type": "string"
             },
             "consolidationPolicy": {
               "default": "WhenEmptyOrUnderutilized",
-              "description": "ConsolidationPolicy describes which nodes Karpenter can disrupt through its consolidation\nalgorithm. This policy defaults to \"WhenEmptyOrUnderutilized\" if not specified",
+              "description": "ConsolidationPolicy describes which nodes Karpenter can disrupt through its consolidation\nalgorithm. This policy defaults to \"WhenEmptyOrUnderutilized\" if not specified\nWhen replicas is set, ConsolidationPolicy is simply ignored",
               "enum": [
                 "WhenEmpty",
                 "WhenEmptyOrUnderutilized"
@@ -107,8 +111,14 @@
             "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
             "x-kubernetes-int-or-string": true
           },
-          "description": "Limits define a set of bounds for provisioning capacity.",
+          "description": "Limits define a set of bounds for provisioning capacity.\nLimits other than limits.nodes is not supported when replicas is set.",
           "type": "object"
+        },
+        "replicas": {
+          "description": "Replicas is the desired number of nodes for the NodePool. When specified, the NodePool will\nmaintain this fixed number of replicas rather than scaling based on pod demand.\nWhen replicas is set:\n  - The following fields are ignored:\n      * disruption.consolidationPolicy\n      * disruption.consolidateAfter\n  - Only limits.nodes is supported; other resource limits (e.g., CPU, memory) must not be specified.\n  - Weight is not supported.\nNote: This field is alpha.",
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
         },
         "template": {
           "description": "Template contains the template of possibilities for the provisioning logic to launch a NodeClaim with.\nNodeClaims launched from this NodePool will often be further constrained than the template specifies.",
@@ -133,14 +143,6 @@
                   "type": "object",
                   "x-kubernetes-validations": [
                     {
-                      "message": "label domain \"kubernetes.io\" is restricted",
-                      "rule": "self.all(x, x in [\"beta.kubernetes.io/instance-type\", \"failure-domain.beta.kubernetes.io/region\",  \"beta.kubernetes.io/os\", \"beta.kubernetes.io/arch\", \"failure-domain.beta.kubernetes.io/zone\", \"topology.kubernetes.io/zone\", \"topology.kubernetes.io/region\", \"kubernetes.io/arch\", \"kubernetes.io/os\", \"node.kubernetes.io/windows-build\"] || x.find(\"^([^/]+)\").endsWith(\"node.kubernetes.io\") || x.find(\"^([^/]+)\").endsWith(\"node-restriction.kubernetes.io\") || !x.find(\"^([^/]+)\").endsWith(\"kubernetes.io\"))"
-                    },
-                    {
-                      "message": "label domain \"k8s.io\" is restricted",
-                      "rule": "self.all(x, x.find(\"^([^/]+)\").endsWith(\"kops.k8s.io\") || !x.find(\"^([^/]+)\").endsWith(\"k8s.io\"))"
-                    },
-                    {
                       "message": "label domain \"karpenter.sh\" is restricted",
                       "rule": "self.all(x, x in [\"karpenter.sh/capacity-type\", \"karpenter.sh/nodepool\"] || !x.find(\"^([^/]+)\").endsWith(\"karpenter.sh\"))"
                     },
@@ -154,7 +156,7 @@
                     },
                     {
                       "message": "label domain \"karpenter.k8s.aws\" is restricted",
-                      "rule": "self.all(x, x in [\"karpenter.k8s.aws/instance-encryption-in-transit-supported\", \"karpenter.k8s.aws/instance-category\", \"karpenter.k8s.aws/instance-hypervisor\", \"karpenter.k8s.aws/instance-family\", \"karpenter.k8s.aws/instance-generation\", \"karpenter.k8s.aws/instance-local-nvme\", \"karpenter.k8s.aws/instance-size\", \"karpenter.k8s.aws/instance-cpu\",\"karpenter.k8s.aws/instance-cpu-manufacturer\",\"karpenter.k8s.aws/instance-memory\", \"karpenter.k8s.aws/instance-ebs-bandwidth\", \"karpenter.k8s.aws/instance-network-bandwidth\", \"karpenter.k8s.aws/instance-gpu-name\", \"karpenter.k8s.aws/instance-gpu-manufacturer\", \"karpenter.k8s.aws/instance-gpu-count\", \"karpenter.k8s.aws/instance-gpu-memory\", \"karpenter.k8s.aws/instance-accelerator-name\", \"karpenter.k8s.aws/instance-accelerator-manufacturer\", \"karpenter.k8s.aws/instance-accelerator-count\"] || !x.find(\"^([^/]+)\").endsWith(\"karpenter.k8s.aws\"))"
+                      "rule": "self.all(x, x in [\"karpenter.k8s.aws/instance-tenancy\", \"karpenter.k8s.aws/capacity-reservation-type\", \"karpenter.k8s.aws/capacity-reservation-id\", \"karpenter.k8s.aws/ec2nodeclass\", \"karpenter.k8s.aws/instance-encryption-in-transit-supported\", \"karpenter.k8s.aws/instance-category\", \"karpenter.k8s.aws/instance-hypervisor\", \"karpenter.k8s.aws/instance-family\", \"karpenter.k8s.aws/instance-generation\", \"karpenter.k8s.aws/instance-local-nvme\", \"karpenter.k8s.aws/instance-size\", \"karpenter.k8s.aws/instance-cpu\", \"karpenter.k8s.aws/instance-cpu-manufacturer\", \"karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz\", \"karpenter.k8s.aws/instance-memory\", \"karpenter.k8s.aws/instance-ebs-bandwidth\", \"karpenter.k8s.aws/instance-network-bandwidth\", \"karpenter.k8s.aws/instance-gpu-name\", \"karpenter.k8s.aws/instance-gpu-manufacturer\", \"karpenter.k8s.aws/instance-gpu-count\", \"karpenter.k8s.aws/instance-gpu-memory\", \"karpenter.k8s.aws/instance-accelerator-name\", \"karpenter.k8s.aws/instance-accelerator-manufacturer\", \"karpenter.k8s.aws/instance-accelerator-count\", \"karpenter.k8s.aws/instance-capability-flex\"] || !x.find(\"^([^/]+)\").endsWith(\"karpenter.k8s.aws\"))"
                     }
                   ]
                 }
@@ -168,7 +170,7 @@
                 "expireAfter": {
                   "default": "720h",
                   "description": "ExpireAfter is the duration the controller will wait\nbefore terminating a node, measured from when the node is created. This\nis useful to implement features like eventually consistent node upgrade,\nmemory leak protection, and disruption testing.",
-                  "pattern": "^(([0-9]+(s|m|h))+)|(Never)$",
+                  "pattern": "^(([0-9]+(s|m|h))+|Never)$",
                   "type": "string"
                 },
                 "nodeClassRef": {
@@ -177,15 +179,33 @@
                     "group": {
                       "description": "API version of the referent",
                       "pattern": "^[^/]*$",
-                      "type": "string"
+                      "type": "string",
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "group may not be empty",
+                          "rule": "self != ''"
+                        }
+                      ]
                     },
                     "kind": {
                       "description": "Kind of the referent; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\"",
-                      "type": "string"
+                      "type": "string",
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "kind may not be empty",
+                          "rule": "self != ''"
+                        }
+                      ]
                     },
                     "name": {
                       "description": "Name of the referent; More info: http://kubernetes.io/docs/user-guide/identifiers#names",
-                      "type": "string"
+                      "type": "string",
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "name may not be empty",
+                          "rule": "self != ''"
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -194,12 +214,22 @@
                     "name"
                   ],
                   "type": "object",
+                  "x-kubernetes-validations": [
+                    {
+                      "message": "nodeClassRef.group is immutable",
+                      "rule": "self.group == oldSelf.group"
+                    },
+                    {
+                      "message": "nodeClassRef.kind is immutable",
+                      "rule": "self.kind == oldSelf.kind"
+                    }
+                  ],
                   "additionalProperties": false
                 },
                 "requirements": {
                   "description": "Requirements are layered with GetLabels and applied to every node.",
                   "items": {
-                    "description": "A node selector requirement with min values is a selector that contains values, a key, an operator that relates the key and values\nand minValues that represent the requirement to have at least that many values.",
+                    "description": "A node selector requirement is a selector that contains values, a key, an operator that relates the key and values\nand minValues that represent the requirement to have at least that many values.",
                     "properties": {
                       "key": {
                         "description": "The label key that the selector applies to.",
@@ -207,14 +237,6 @@
                         "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$",
                         "type": "string",
                         "x-kubernetes-validations": [
-                          {
-                            "message": "label domain \"kubernetes.io\" is restricted",
-                            "rule": "self in [\"beta.kubernetes.io/instance-type\", \"failure-domain.beta.kubernetes.io/region\", \"beta.kubernetes.io/os\", \"beta.kubernetes.io/arch\", \"failure-domain.beta.kubernetes.io/zone\", \"topology.kubernetes.io/zone\", \"topology.kubernetes.io/region\", \"node.kubernetes.io/instance-type\", \"kubernetes.io/arch\", \"kubernetes.io/os\", \"node.kubernetes.io/windows-build\"] || self.find(\"^([^/]+)\").endsWith(\"node.kubernetes.io\") || self.find(\"^([^/]+)\").endsWith(\"node-restriction.kubernetes.io\") || !self.find(\"^([^/]+)\").endsWith(\"kubernetes.io\")"
-                          },
-                          {
-                            "message": "label domain \"k8s.io\" is restricted",
-                            "rule": "self.find(\"^([^/]+)\").endsWith(\"kops.k8s.io\") || !self.find(\"^([^/]+)\").endsWith(\"k8s.io\")"
-                          },
                           {
                             "message": "label domain \"karpenter.sh\" is restricted",
                             "rule": "self in [\"karpenter.sh/capacity-type\", \"karpenter.sh/nodepool\"] || !self.find(\"^([^/]+)\").endsWith(\"karpenter.sh\")"
@@ -229,7 +251,7 @@
                           },
                           {
                             "message": "label domain \"karpenter.k8s.aws\" is restricted",
-                            "rule": "self in [\"karpenter.k8s.aws/instance-encryption-in-transit-supported\", \"karpenter.k8s.aws/instance-category\", \"karpenter.k8s.aws/instance-hypervisor\", \"karpenter.k8s.aws/instance-family\", \"karpenter.k8s.aws/instance-generation\", \"karpenter.k8s.aws/instance-local-nvme\", \"karpenter.k8s.aws/instance-size\", \"karpenter.k8s.aws/instance-cpu\",\"karpenter.k8s.aws/instance-cpu-manufacturer\",\"karpenter.k8s.aws/instance-memory\", \"karpenter.k8s.aws/instance-ebs-bandwidth\", \"karpenter.k8s.aws/instance-network-bandwidth\", \"karpenter.k8s.aws/instance-gpu-name\", \"karpenter.k8s.aws/instance-gpu-manufacturer\", \"karpenter.k8s.aws/instance-gpu-count\", \"karpenter.k8s.aws/instance-gpu-memory\", \"karpenter.k8s.aws/instance-accelerator-name\", \"karpenter.k8s.aws/instance-accelerator-manufacturer\", \"karpenter.k8s.aws/instance-accelerator-count\"] || !self.find(\"^([^/]+)\").endsWith(\"karpenter.k8s.aws\")"
+                            "rule": "self in [\"karpenter.k8s.aws/instance-tenancy\", \"karpenter.k8s.aws/capacity-reservation-type\", \"karpenter.k8s.aws/capacity-reservation-id\", \"karpenter.k8s.aws/ec2nodeclass\", \"karpenter.k8s.aws/instance-encryption-in-transit-supported\", \"karpenter.k8s.aws/instance-category\", \"karpenter.k8s.aws/instance-hypervisor\", \"karpenter.k8s.aws/instance-family\", \"karpenter.k8s.aws/instance-generation\", \"karpenter.k8s.aws/instance-local-nvme\", \"karpenter.k8s.aws/instance-size\", \"karpenter.k8s.aws/instance-cpu\", \"karpenter.k8s.aws/instance-cpu-manufacturer\", \"karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz\", \"karpenter.k8s.aws/instance-memory\", \"karpenter.k8s.aws/instance-ebs-bandwidth\", \"karpenter.k8s.aws/instance-network-bandwidth\", \"karpenter.k8s.aws/instance-gpu-name\", \"karpenter.k8s.aws/instance-gpu-manufacturer\", \"karpenter.k8s.aws/instance-gpu-count\", \"karpenter.k8s.aws/instance-gpu-memory\", \"karpenter.k8s.aws/instance-accelerator-name\", \"karpenter.k8s.aws/instance-accelerator-manufacturer\", \"karpenter.k8s.aws/instance-accelerator-count\", \"karpenter.k8s.aws/instance-capability-flex\"] || !self.find(\"^([^/]+)\").endsWith(\"karpenter.k8s.aws\")"
                           }
                         ]
                       },
@@ -240,8 +262,10 @@
                         "type": "integer"
                       },
                       "operator": {
-                        "description": "Represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.",
+                        "description": "Represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists, DoesNotExist. Gt, Lt, Gte, and Lte.",
                         "enum": [
+                          "Gte",
+                          "Lte",
                           "In",
                           "NotIn",
                           "Exists",
@@ -252,7 +276,7 @@
                         "type": "string"
                       },
                       "values": {
-                        "description": "An array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. If the operator is Gt or Lt, the values\narray must have a single element, which will be interpreted as an integer.\nThis array is replaced during a strategic merge patch.",
+                        "description": "An array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. If the operator is Gt, Lt, Gte, or Lte, the values\narray must have a single element, which will be interpreted as an integer.\nThis array is replaced during a strategic merge patch.",
                         "items": {
                           "type": "string"
                         },
@@ -277,8 +301,8 @@
                       "rule": "self.all(x, x.operator == 'In' ? x.values.size() != 0 : true)"
                     },
                     {
-                      "message": "requirements operator 'Gt' or 'Lt' must have a single positive integer value",
-                      "rule": "self.all(x, (x.operator == 'Gt' || x.operator == 'Lt') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)"
+                      "message": "requirements operator 'Gt', 'Lt', 'Gte', or 'Lte' must have a single positive integer value",
+                      "rule": "self.all(x, (x.operator == 'Gt' || x.operator == 'Lt' || x.operator == 'Gte' || x.operator == 'Lte') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)"
                     },
                     {
                       "message": "requirements with 'minValues' must have at least that many values specified in the 'values' field",
@@ -307,7 +331,7 @@
                         "type": "string"
                       },
                       "timeAdded": {
-                        "description": "TimeAdded represents the time at which the taint was added.\nIt is only written for NoExecute taints.",
+                        "description": "TimeAdded represents the time at which the taint was added.",
                         "format": "date-time",
                         "type": "string"
                       },
@@ -347,7 +371,7 @@
                         "type": "string"
                       },
                       "timeAdded": {
-                        "description": "TimeAdded represents the time at which the taint was added.\nIt is only written for NoExecute taints.",
+                        "description": "TimeAdded represents the time at which the taint was added.",
                         "format": "date-time",
                         "type": "string"
                       },
@@ -367,7 +391,7 @@
                   "type": "array"
                 },
                 "terminationGracePeriod": {
-                  "description": "TerminationGracePeriod is the maximum duration the controller will wait before forcefully deleting the pods on a node, measured from when deletion is first initiated.\n\n\nWarning: this feature takes precedence over a Pod's terminationGracePeriodSeconds value, and bypasses any blocked PDBs or the karpenter.sh/do-not-disrupt annotation.\n\n\nThis field is intended to be used by cluster administrators to enforce that nodes can be cycled within a given time period.\nWhen set, drifted nodes will begin draining even if there are pods blocking eviction. Draining will respect PDBs and the do-not-disrupt annotation until the TGP is reached.\n\n\nKarpenter will preemptively delete pods so their terminationGracePeriodSeconds align with the node's terminationGracePeriod.\nIf a pod would be terminated without being granted its full terminationGracePeriodSeconds prior to the node timeout,\nthat pod will be deleted at T = node timeout - pod terminationGracePeriodSeconds.\n\n\nThe feature can also be used to allow maximum time limits for long-running jobs which can delay node termination with preStop hooks.\nIf left undefined, the controller will wait indefinitely for pods to be drained.",
+                  "description": "TerminationGracePeriod is the maximum duration the controller will wait before forcefully deleting the pods on a node, measured from when deletion is first initiated.\n\nWarning: this feature takes precedence over a Pod's terminationGracePeriodSeconds value, and bypasses any blocked PDBs or the karpenter.sh/do-not-disrupt annotation.\n\nThis field is intended to be used by cluster administrators to enforce that nodes can be cycled within a given time period.\nWhen set, drifted nodes will begin draining even if there are pods blocking eviction. Draining will respect PDBs and the do-not-disrupt annotation until the TGP is reached.\n\nKarpenter will preemptively delete pods so their terminationGracePeriodSeconds align with the node's terminationGracePeriod.\nIf a pod would be terminated without being granted its full terminationGracePeriodSeconds prior to the node timeout,\nthat pod will be deleted at T = node timeout - pod terminationGracePeriodSeconds.\n\nThe feature can also be used to allow maximum time limits for long-running jobs which can delay node termination with preStop hooks.\nIf left undefined, the controller will wait indefinitely for pods to be drained.",
                   "pattern": "^([0-9]+(s|m|h))+$",
                   "type": "string"
                 }
@@ -387,7 +411,7 @@
           "additionalProperties": false
         },
         "weight": {
-          "description": "Weight is the priority given to the nodepool during scheduling. A higher\nnumerical weight indicates that this nodepool will be ordered\nahead of other nodepools with lower weights. A nodepool with no weight\nwill be treated as if it is a nodepool with a weight of 0.",
+          "description": "Weight is the priority given to the nodepool during scheduling. A higher\nnumerical weight indicates that this nodepool will be ordered\nahead of other nodepools with lower weights. A nodepool with no weight\nwill be treated as if it is a nodepool with a weight of 0.\nWeight is not supported when replicas is set.",
           "format": "int32",
           "maximum": 100,
           "minimum": 1,
@@ -398,6 +422,20 @@
         "template"
       ],
       "type": "object",
+      "x-kubernetes-validations": [
+        {
+          "message": "Cannot transition NodePool between static (replicas set) and dynamic (replicas unset) provisioning modes",
+          "rule": "has(self.replicas) == has(oldSelf.replicas)"
+        },
+        {
+          "message": "only 'limits.nodes' is supported on static NodePools",
+          "rule": "!has(self.replicas) || (!has(self.limits) || size(self.limits) == 0 || (size(self.limits) == 1 && 'nodes' in self.limits))"
+        },
+        {
+          "message": "'weight' is not supported on static NodePools",
+          "rule": "!has(self.replicas) || !has(self.weight)"
+        }
+      ],
       "additionalProperties": false
     },
     "status": {
@@ -441,7 +479,7 @@
                 "type": "string"
               },
               "type": {
-                "description": "type of condition in CamelCase or in foo.example.com/CamelCase.\n---\nMany .condition.type values are consistent across resources like Available, but because arbitrary conditions can be\nuseful (see .node.status.conditions), the ability to deconflict is important.\nThe regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)",
+                "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
                 "maxLength": 316,
                 "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
                 "type": "string"
@@ -458,6 +496,17 @@
             "additionalProperties": false
           },
           "type": "array"
+        },
+        "nodeClassObservedGeneration": {
+          "description": "NodeClassObservedGeneration represents the observed nodeClass generation for referenced nodeClass. If this does not match\nthe actual NodeClass Generation, NodeRegistrationHealthy status condition on the NodePool will be reset",
+          "format": "int64",
+          "type": "integer"
+        },
+        "nodes": {
+          "default": 0,
+          "description": "Nodes is the count of nodes associated with this NodePool",
+          "format": "int64",
+          "type": "integer"
         },
         "resources": {
           "additionalProperties": {

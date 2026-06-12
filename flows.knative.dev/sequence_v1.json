@@ -1,11 +1,14 @@
 {
   "description": "Sequence defines a sequence of Subscribers that will be wired in series through Channels and Subscriptions.",
+  "type": "object",
   "properties": {
     "spec": {
       "description": "Spec defines the desired state of the Sequence.",
+      "type": "object",
       "properties": {
         "channelTemplate": {
           "description": "ChannelTemplate specifies which Channel CRD to use. If left unspecified, it is set to the default Channel CRD for the namespace (or cluster, in case there are no defaults for the namespace).",
+          "type": "object",
           "properties": {
             "apiVersion": {
               "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
@@ -21,14 +24,15 @@
               "x-kubernetes-preserve-unknown-fields": true
             }
           },
-          "type": "object",
           "additionalProperties": false
         },
         "reply": {
           "description": "Reply is a Reference to where the result of the last Subscriber gets sent to.",
+          "type": "object",
           "properties": {
             "ref": {
               "description": "Ref points to an Addressable.",
+              "type": "object",
               "properties": {
                 "apiVersion": {
                   "description": "API version of the referent.",
@@ -47,27 +51,32 @@
                   "type": "string"
                 }
               },
-              "type": "object",
               "additionalProperties": false
             },
             "uri": {
               "description": "URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.",
               "type": "string"
+            },
+            "CACerts": {
+              "type": "string",
+              "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the reply."
+            },
+            "audience": {
+              "description": "Audience is the OIDC audience of the reply. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.",
+              "type": "string"
             }
           },
-          "type": "object",
           "additionalProperties": false
         },
         "steps": {
           "description": "Steps is the list of Destinations (processors / functions) that will be called in the order provided. Each step has its own delivery options",
+          "type": "array",
           "items": {
+            "type": "object",
             "properties": {
-              "CACerts": {
-                "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.",
-                "type": "string"
-              },
               "delivery": {
                 "description": "Delivery is the delivery specification for events to the subscriber This includes things like retries, DLQ, etc.",
+                "type": "object",
                 "properties": {
                   "backoffDelay": {
                     "description": "BackoffDelay is the delay before retrying. More information on Duration format: - https://www.iso.org/iso-8601-date-and-time-format.html - https://en.wikipedia.org/wiki/ISO_8601  For linear policy, backoff delay is backoffDelay*<numberOfRetries>. For exponential policy, backoff delay is backoffDelay*2^<numberOfRetries>.",
@@ -79,13 +88,11 @@
                   },
                   "deadLetterSink": {
                     "description": "DeadLetterSink is the sink receiving event that could not be sent to a destination.",
+                    "type": "object",
                     "properties": {
-                      "CACerts": {
-                        "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.",
-                        "type": "string"
-                      },
                       "ref": {
                         "description": "Ref points to an Addressable.",
+                        "type": "object",
                         "properties": {
                           "apiVersion": {
                             "description": "API version of the referent.",
@@ -104,29 +111,35 @@
                             "type": "string"
                           }
                         },
-                        "type": "object",
                         "additionalProperties": false
                       },
                       "uri": {
                         "description": "URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.",
                         "type": "string"
+                      },
+                      "CACerts": {
+                        "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.",
+                        "type": "string"
+                      },
+                      "audience": {
+                        "description": "Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.",
+                        "type": "string"
                       }
                     },
-                    "type": "object",
                     "additionalProperties": false
                   },
                   "retry": {
                     "description": "Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.",
-                    "format": "int32",
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int32"
                   }
                 },
-                "type": "object",
                 "x-kubernetes-preserve-unknown-fields": true,
                 "additionalProperties": false
               },
               "ref": {
                 "description": "Ref points to an Addressable.",
+                "type": "object",
                 "properties": {
                   "apiVersion": {
                     "description": "API version of the referent.",
@@ -145,72 +158,104 @@
                     "type": "string"
                   }
                 },
-                "type": "object",
                 "additionalProperties": false
               },
               "uri": {
                 "description": "URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.",
                 "type": "string"
+              },
+              "CACerts": {
+                "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.",
+                "type": "string"
+              },
+              "audience": {
+                "description": "Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the Addressable itself. If the target is an Addressable and specifies an Audience, the target's Audience takes precedence.",
+                "type": "string"
               }
             },
-            "type": "object",
             "additionalProperties": false
-          },
-          "type": "array"
+          }
         }
       },
-      "type": "object",
       "additionalProperties": false
     },
     "status": {
       "description": "Status represents the current state of the Sequence. This data may be out of date.",
+      "type": "object",
       "properties": {
         "address": {
           "description": "Sequence is Addressable. It exposes the endpoint as an URI to get events delivered into the Sequence.",
+          "type": "object",
           "properties": {
-            "CACerts": {
-              "type": "string"
-            },
             "name": {
               "type": "string"
             },
             "url": {
               "type": "string"
+            },
+            "CACerts": {
+              "type": "string"
+            },
+            "audience": {
+              "type": "string"
             }
           },
-          "type": "object",
           "additionalProperties": false
         },
         "addresses": {
           "description": "Sequence is Addressable. It exposes the endpoints as URIs to get events delivered into the Sequence.",
+          "type": "array",
           "items": {
+            "type": "object",
             "properties": {
-              "CACerts": {
-                "type": "string"
-              },
               "name": {
                 "type": "string"
               },
               "url": {
                 "type": "string"
+              },
+              "CACerts": {
+                "type": "string"
+              },
+              "audience": {
+                "type": "string"
               }
             },
-            "type": "object",
             "additionalProperties": false
-          },
-          "type": "array"
+          }
         },
         "annotations": {
           "description": "Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.",
           "type": "object",
           "x-kubernetes-preserve-unknown-fields": true
         },
+        "auth": {
+          "description": "Auth provides the relevant information for OIDC authentication.",
+          "type": "object",
+          "properties": {
+            "serviceAccountName": {
+              "description": "ServiceAccountName is the name of the generated service account used for this components OIDC authentication.",
+              "type": "string"
+            },
+            "serviceAccountNames": {
+              "description": "ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
         "channelStatuses": {
           "description": "ChannelStatuses is an array of corresponding Channel statuses. Matches the Spec.Steps array in the order.",
+          "type": "array",
           "items": {
+            "type": "object",
             "properties": {
               "channel": {
                 "description": "Channel is the reference to the underlying channel.",
+                "type": "object",
                 "properties": {
                   "apiVersion": {
                     "description": "API version of the referent.",
@@ -241,11 +286,15 @@
                     "type": "string"
                   }
                 },
-                "type": "object",
                 "additionalProperties": false
               },
               "ready": {
                 "description": "ReadyCondition indicates whether the Channel is ready or not.",
+                "type": "object",
+                "required": [
+                  "type",
+                  "status"
+                ],
                 "properties": {
                   "lastTransitionTime": {
                     "description": "LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).",
@@ -272,22 +321,39 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "type",
-                  "status"
-                ],
-                "type": "object",
                 "additionalProperties": false
               }
             },
-            "type": "object",
             "additionalProperties": false
-          },
-          "type": "array"
+          }
+        },
+        "policies": {
+          "description": "List of applied EventPolicies",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "apiVersion": {
+                "description": "The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name of the applied EventPolicy",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
         },
         "conditions": {
           "description": "Conditions the latest available observations of a resource's current state.",
+          "type": "array",
           "items": {
+            "type": "object",
+            "required": [
+              "type",
+              "status"
+            ],
             "properties": {
               "lastTransitionTime": {
                 "description": "LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).",
@@ -314,26 +380,27 @@
                 "type": "string"
               }
             },
-            "required": [
-              "type",
-              "status"
-            ],
-            "type": "object",
             "additionalProperties": false
-          },
-          "type": "array"
+          }
         },
         "observedGeneration": {
           "description": "ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.",
-          "format": "int64",
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "subscriptionStatuses": {
           "description": "SubscriptionStatuses is an array of corresponding Subscription statuses. Matches the Spec.Steps array in the order.",
+          "type": "array",
           "items": {
+            "type": "object",
             "properties": {
               "ready": {
                 "description": "ReadyCondition indicates whether the Subscription is ready or not.",
+                "type": "object",
+                "required": [
+                  "type",
+                  "status"
+                ],
                 "properties": {
                   "lastTransitionTime": {
                     "description": "LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).",
@@ -360,15 +427,11 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "type",
-                  "status"
-                ],
-                "type": "object",
                 "additionalProperties": false
               },
               "subscription": {
                 "description": "Subscription is the reference to the underlying Subscription.",
+                "type": "object",
                 "properties": {
                   "apiVersion": {
                     "description": "API version of the referent.",
@@ -399,19 +462,14 @@
                     "type": "string"
                   }
                 },
-                "type": "object",
                 "additionalProperties": false
               }
             },
-            "type": "object",
             "additionalProperties": false
-          },
-          "type": "array"
+          }
         }
       },
-      "type": "object",
       "additionalProperties": false
     }
-  },
-  "type": "object"
+  }
 }

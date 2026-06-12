@@ -2,11 +2,11 @@
   "description": "ClusterComplianceReport is a specification for the ClusterComplianceReport resource.",
   "properties": {
     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
       "type": "string"
     },
     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
       "type": "string"
     },
     "metadata": {
@@ -28,6 +28,23 @@
                       "properties": {
                         "id": {
                           "description": "id define the check id as produced by scanner",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "type": "array"
+                  },
+                  "commands": {
+                    "items": {
+                      "description": "Commands represent the commands to be executed by the node-collector",
+                      "properties": {
+                        "id": {
+                          "description": "id define the commands id",
                           "type": "string"
                         }
                       },
@@ -86,6 +103,9 @@
             "id": {
               "type": "string"
             },
+            "platform": {
+              "type": "string"
+            },
             "relatedResources": {
               "items": {
                 "type": "string"
@@ -93,6 +113,9 @@
               "type": "array"
             },
             "title": {
+              "type": "string"
+            },
+            "type": {
               "type": "string"
             },
             "version": {
@@ -103,8 +126,10 @@
             "controls",
             "description",
             "id",
+            "platform",
             "relatedResources",
             "title",
+            "type",
             "version"
           ],
           "type": "object",
@@ -292,5 +317,6 @@
       "additionalProperties": false
     }
   },
-  "type": "object"
+  "type": "object",
+  "x-kubernetes-preserve-unknown-fields": true
 }

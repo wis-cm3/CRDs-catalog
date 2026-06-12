@@ -27,7 +27,7 @@
                 },
                 "name": {
                   "default": "",
-                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -66,7 +66,7 @@
                 },
                 "name": {
                   "default": "",
-                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -94,7 +94,7 @@
                 },
                 "name": {
                   "default": "",
-                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -127,7 +127,7 @@
             },
             "name": {
               "default": "",
-              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
               "type": "string"
             },
             "optional": {
@@ -169,7 +169,7 @@
         "metricRelabelConfigs": {
           "description": "MetricRelabelConfigs to apply to samples after scrapping.",
           "items": {
-            "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/#relabeling",
+            "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/victoriametrics/#relabeling",
             "properties": {
               "action": {
                 "description": "Action to perform based on regex matching. Default is 'replace'",
@@ -196,7 +196,7 @@
                 "type": "integer"
               },
               "regex": {
-                "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/vmagent/#relabeling-enhancements",
+                "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/victoriametrics/vmagent/#relabeling-enhancements",
                 "x-kubernetes-preserve-unknown-fields": true
               },
               "replacement": {
@@ -254,7 +254,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -278,7 +278,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -306,7 +306,7 @@
                 },
                 "name": {
                   "default": "",
-                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -332,12 +332,20 @@
               "description": "Parameters to append to the token URL",
               "type": "object"
             },
+            "proxy_url": {
+              "description": "The proxy URL for token_url connection\n( available from v0.55.0).\nIs only supported by Scrape objects family",
+              "type": "string"
+            },
             "scopes": {
               "description": "OAuth2 scopes used for the token request",
               "items": {
                 "type": "string"
               },
               "type": "array"
+            },
+            "tls_config": {
+              "description": "TLSConfig for token_url connection\n( available from v0.55.0).\nIs only supported by Scrape objects family",
+              "x-kubernetes-preserve-unknown-fields": true
             },
             "token_url": {
               "description": "The URL to fetch the token from",
@@ -372,19 +380,24 @@
         },
         "sampleLimit": {
           "description": "SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.",
-          "format": "int64",
           "type": "integer"
         },
         "scheme": {
           "description": "HTTP scheme to use for scraping.",
           "enum": [
             "http",
-            "https"
+            "https",
+            "HTTPS",
+            "HTTP"
           ],
           "type": "string"
         },
         "scrape_interval": {
           "description": "ScrapeInterval is the same as Interval and has priority over it.\none of scrape_interval or interval can be used",
+          "type": "string"
+        },
+        "scrapeClass": {
+          "description": "ScrapeClass defined scrape class to apply",
           "type": "string"
         },
         "scrapeTimeout": {
@@ -393,7 +406,6 @@
         },
         "seriesLimit": {
           "description": "SeriesLimit defines per-scrape limit on number of unique time series\na single target can expose during all the scrapes on the time window of 24h.",
-          "format": "int64",
           "type": "integer"
         },
         "targets": {
@@ -423,7 +435,7 @@
                 "relabelingConfigs": {
                   "description": "RelabelConfigs to apply to samples during service discovery.",
                   "items": {
-                    "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/#relabeling",
+                    "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/victoriametrics/#relabeling",
                     "properties": {
                       "action": {
                         "description": "Action to perform based on regex matching. Default is 'replace'",
@@ -450,7 +462,7 @@
                         "type": "integer"
                       },
                       "regex": {
-                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/vmagent/#relabeling-enhancements",
+                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/victoriametrics/vmagent/#relabeling-enhancements",
                         "x-kubernetes-preserve-unknown-fields": true
                       },
                       "replacement": {
@@ -553,7 +565,7 @@
                 "relabelingConfigs": {
                   "description": "RelabelConfigs to apply to samples during service discovery.",
                   "items": {
-                    "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/#relabeling",
+                    "description": "RelabelConfig allows dynamic rewriting of the label set\nMore info: https://docs.victoriametrics.com/victoriametrics/#relabeling",
                     "properties": {
                       "action": {
                         "description": "Action to perform based on regex matching. Default is 'replace'",
@@ -580,7 +592,7 @@
                         "type": "integer"
                       },
                       "regex": {
-                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/vmagent/#relabeling-enhancements",
+                        "description": "Regular expression against which the extracted value is matched. Default is '(.*)'\nvictoriaMetrics supports multiline regex joined with |\nhttps://docs.victoriametrics.com/victoriametrics/vmagent/#relabeling-enhancements",
                         "x-kubernetes-preserve-unknown-fields": true
                       },
                       "replacement": {
@@ -641,7 +653,7 @@
           "description": "TLSConfig configuration to use when scraping the endpoint",
           "properties": {
             "ca": {
-              "description": "Stuct containing the CA cert to use for the targets.",
+              "description": "Struct containing the CA cert to use for the targets.",
               "properties": {
                 "configMap": {
                   "description": "ConfigMap containing data to use for the targets.",
@@ -652,7 +664,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -676,7 +688,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -711,7 +723,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -735,7 +747,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -775,7 +787,7 @@
                 },
                 "name": {
                   "default": "",
-                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                  "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                   "type": "string"
                 },
                 "optional": {
@@ -806,7 +818,7 @@
               "type": "boolean"
             },
             "disable_keep_alive": {
-              "description": "disable_keepalive allows disabling HTTP keep-alive when scraping targets.\nBy default, HTTP keep-alive is enabled, so TCP connections to scrape targets\ncould be re-used.\nSee https://docs.victoriametrics.com/vmagent#scrape_config-enhancements",
+              "description": "disable_keepalive allows disabling HTTP keep-alive when scraping targets.\nBy default, HTTP keep-alive is enabled, so TCP connections to scrape targets\ncould be reused.\nSee https://docs.victoriametrics.com/victoriametrics/vmagent/#scrape_config-enhancements",
               "type": "boolean"
             },
             "headers": {
@@ -820,7 +832,7 @@
               "type": "boolean"
             },
             "proxy_client_config": {
-              "description": "ProxyClientConfig configures proxy auth settings for scraping\nSee feature description https://docs.victoriametrics.com/vmagent#scraping-targets-via-a-proxy",
+              "description": "ProxyClientConfig configures proxy auth settings for scraping\nSee feature description https://docs.victoriametrics.com/victoriametrics/vmagent/#scraping-targets-via-a-proxy",
               "properties": {
                 "basic_auth": {
                   "description": "BasicAuth allow an endpoint to authenticate over basic authentication",
@@ -834,7 +846,7 @@
                         },
                         "name": {
                           "default": "",
-                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                           "type": "string"
                         },
                         "optional": {
@@ -862,7 +874,7 @@
                         },
                         "name": {
                           "default": "",
-                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                           "type": "string"
                         },
                         "optional": {
@@ -890,7 +902,7 @@
                     },
                     "name": {
                       "default": "",
-                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
                       "type": "string"
                     },
                     "optional": {
@@ -909,165 +921,7 @@
                   "type": "string"
                 },
                 "tls_config": {
-                  "description": "TLSConfig specifies TLSConfig configuration parameters.",
-                  "properties": {
-                    "ca": {
-                      "description": "Stuct containing the CA cert to use for the targets.",
-                      "properties": {
-                        "configMap": {
-                          "description": "ConfigMap containing data to use for the targets.",
-                          "properties": {
-                            "key": {
-                              "description": "The key to select.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "default": "",
-                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
-                              "type": "string"
-                            },
-                            "optional": {
-                              "description": "Specify whether the ConfigMap or its key must be defined",
-                              "type": "boolean"
-                            }
-                          },
-                          "required": [
-                            "key"
-                          ],
-                          "type": "object",
-                          "x-kubernetes-map-type": "atomic",
-                          "additionalProperties": false
-                        },
-                        "secret": {
-                          "description": "Secret containing data to use for the targets.",
-                          "properties": {
-                            "key": {
-                              "description": "The key of the secret to select from.  Must be a valid secret key.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "default": "",
-                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
-                              "type": "string"
-                            },
-                            "optional": {
-                              "description": "Specify whether the Secret or its key must be defined",
-                              "type": "boolean"
-                            }
-                          },
-                          "required": [
-                            "key"
-                          ],
-                          "type": "object",
-                          "x-kubernetes-map-type": "atomic",
-                          "additionalProperties": false
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
-                    },
-                    "caFile": {
-                      "description": "Path to the CA cert in the container to use for the targets.",
-                      "type": "string"
-                    },
-                    "cert": {
-                      "description": "Struct containing the client cert file for the targets.",
-                      "properties": {
-                        "configMap": {
-                          "description": "ConfigMap containing data to use for the targets.",
-                          "properties": {
-                            "key": {
-                              "description": "The key to select.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "default": "",
-                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
-                              "type": "string"
-                            },
-                            "optional": {
-                              "description": "Specify whether the ConfigMap or its key must be defined",
-                              "type": "boolean"
-                            }
-                          },
-                          "required": [
-                            "key"
-                          ],
-                          "type": "object",
-                          "x-kubernetes-map-type": "atomic",
-                          "additionalProperties": false
-                        },
-                        "secret": {
-                          "description": "Secret containing data to use for the targets.",
-                          "properties": {
-                            "key": {
-                              "description": "The key of the secret to select from.  Must be a valid secret key.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "default": "",
-                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
-                              "type": "string"
-                            },
-                            "optional": {
-                              "description": "Specify whether the Secret or its key must be defined",
-                              "type": "boolean"
-                            }
-                          },
-                          "required": [
-                            "key"
-                          ],
-                          "type": "object",
-                          "x-kubernetes-map-type": "atomic",
-                          "additionalProperties": false
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
-                    },
-                    "certFile": {
-                      "description": "Path to the client cert file in the container for the targets.",
-                      "type": "string"
-                    },
-                    "insecureSkipVerify": {
-                      "description": "Disable target certificate validation.",
-                      "type": "boolean"
-                    },
-                    "keyFile": {
-                      "description": "Path to the client key file in the container for the targets.",
-                      "type": "string"
-                    },
-                    "keySecret": {
-                      "description": "Secret containing the client key file for the targets.",
-                      "properties": {
-                        "key": {
-                          "description": "The key of the secret to select from.  Must be a valid secret key.",
-                          "type": "string"
-                        },
-                        "name": {
-                          "default": "",
-                          "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.",
-                          "type": "string"
-                        },
-                        "optional": {
-                          "description": "Specify whether the Secret or its key must be defined",
-                          "type": "boolean"
-                        }
-                      },
-                      "required": [
-                        "key"
-                      ],
-                      "type": "object",
-                      "x-kubernetes-map-type": "atomic",
-                      "additionalProperties": false
-                    },
-                    "serverName": {
-                      "description": "Used to verify the hostname for the targets.",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object",
-                  "additionalProperties": false
+                  "x-kubernetes-preserve-unknown-fields": true
                 }
               },
               "type": "object",
@@ -1122,12 +976,80 @@
     "status": {
       "description": "ScrapeObjectStatus defines the observed state of ScrapeObjects",
       "properties": {
-        "lastSyncError": {
-          "description": "LastSyncError contains error message for unsuccessful config generation",
+        "conditions": {
+          "description": "Known .status.conditions.type are: \"Available\", \"Progressing\", and \"Degraded\"",
+          "items": {
+            "description": "Condition defines status condition of the resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "lastTransitionTime is the last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "lastUpdateTime": {
+                "description": "LastUpdateTime is the last time of given type update.\nThis value is used for status TTL update and removal",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
+                "maxLength": 32768,
+                "type": "string"
+              },
+              "observedGeneration": {
+                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
+                "format": "int64",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "reason": {
+                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
+                "maxLength": 1024,
+                "minLength": 1,
+                "type": "string"
+              },
+              "status": {
+                "description": "status of the condition, one of True, False, Unknown.",
+                "enum": [
+                  "True",
+                  "False",
+                  "Unknown"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of condition in CamelCase or in name.namespace.resource.victoriametrics.com/CamelCase.",
+                "maxLength": 316,
+                "type": "string"
+              }
+            },
+            "required": [
+              "lastTransitionTime",
+              "lastUpdateTime",
+              "reason",
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array",
+          "x-kubernetes-list-map-keys": [
+            "type"
+          ],
+          "x-kubernetes-list-type": "map"
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration defines current generation picked by operator for the\nreconcile",
+          "format": "int64",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "Reason defines human readable error reason",
           "type": "string"
         },
-        "status": {
-          "description": "Status defines update status of resource",
+        "updateStatus": {
+          "description": "UpdateStatus defines a status for update rollout",
           "type": "string"
         }
       },
