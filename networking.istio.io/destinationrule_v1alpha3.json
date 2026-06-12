@@ -280,6 +280,27 @@
                           "httpCookie": {
                             "description": "Hash based on HTTP cookie.",
                             "properties": {
+                              "attributes": {
+                                "description": "Additional attributes for the cookie.",
+                                "items": {
+                                  "properties": {
+                                    "name": {
+                                      "description": "The name of the cookie attribute.",
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "description": "The optional value of the cookie attribute.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "name"
+                                  ],
+                                  "type": "object",
+                                  "additionalProperties": false
+                                },
+                                "type": "array"
+                              },
                               "name": {
                                 "description": "Name of the cookie.",
                                 "type": "string"
@@ -779,6 +800,27 @@
                                 "httpCookie": {
                                   "description": "Hash based on HTTP cookie.",
                                   "properties": {
+                                    "attributes": {
+                                      "description": "Additional attributes for the cookie.",
+                                      "items": {
+                                        "properties": {
+                                          "name": {
+                                            "description": "The name of the cookie attribute.",
+                                            "type": "string"
+                                          },
+                                          "value": {
+                                            "description": "The optional value of the cookie attribute.",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "name"
+                                        ],
+                                        "type": "object",
+                                        "additionalProperties": false
+                                      },
+                                      "type": "array"
+                                    },
                                     "name": {
                                       "description": "Name of the cookie.",
                                       "type": "string"
@@ -1108,6 +1150,27 @@
                           "V2"
                         ],
                         "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "retryBudget": {
+                    "description": "Specifies a limit on concurrent retries in relation to the number of active requests.",
+                    "properties": {
+                      "minRetryConcurrency": {
+                        "description": "Specifies the minimum retry concurrency allowed for the retry budget.",
+                        "maximum": 4294967295,
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "percent": {
+                        "description": "Specifies the limit on concurrent retries as a percentage of the sum of active requests and active pending requests.",
+                        "format": "double",
+                        "maximum": 100,
+                        "minimum": 0,
+                        "nullable": true,
+                        "type": "number"
                       }
                     },
                     "type": "object",
@@ -1455,6 +1518,27 @@
                     "httpCookie": {
                       "description": "Hash based on HTTP cookie.",
                       "properties": {
+                        "attributes": {
+                          "description": "Additional attributes for the cookie.",
+                          "items": {
+                            "properties": {
+                              "name": {
+                                "description": "The name of the cookie attribute.",
+                                "type": "string"
+                              },
+                              "value": {
+                                "description": "The optional value of the cookie attribute.",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name"
+                            ],
+                            "type": "object",
+                            "additionalProperties": false
+                          },
+                          "type": "array"
+                        },
                         "name": {
                           "description": "Name of the cookie.",
                           "type": "string"
@@ -1954,6 +2038,27 @@
                           "httpCookie": {
                             "description": "Hash based on HTTP cookie.",
                             "properties": {
+                              "attributes": {
+                                "description": "Additional attributes for the cookie.",
+                                "items": {
+                                  "properties": {
+                                    "name": {
+                                      "description": "The name of the cookie attribute.",
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "description": "The optional value of the cookie attribute.",
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "name"
+                                  ],
+                                  "type": "object",
+                                  "additionalProperties": false
+                                },
+                                "type": "array"
+                              },
                               "name": {
                                 "description": "Name of the cookie.",
                                 "type": "string"
@@ -2283,6 +2388,27 @@
                     "V2"
                   ],
                   "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "retryBudget": {
+              "description": "Specifies a limit on concurrent retries in relation to the number of active requests.",
+              "properties": {
+                "minRetryConcurrency": {
+                  "description": "Specifies the minimum retry concurrency allowed for the retry budget.",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "percent": {
+                  "description": "Specifies the limit on concurrent retries as a percentage of the sum of active requests and active pending requests.",
+                  "format": "double",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "nullable": true,
+                  "type": "number"
                 }
               },
               "type": "object",

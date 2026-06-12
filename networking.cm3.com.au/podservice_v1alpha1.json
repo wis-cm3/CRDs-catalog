@@ -1,12 +1,12 @@
 {
-  "description": "PodService is the Schema for the podservices API. The name of the PodService should match an existing service.",
+  "description": "PodService is the Schema for the podservices API.\nThe name of the PodService should match an existing service.",
   "properties": {
     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
       "type": "string"
     },
     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
       "type": "string"
     },
     "metadata": {
@@ -16,19 +16,19 @@
       "description": "PodServiceSpec defines the desired state of PodService",
       "properties": {
         "exportTo": {
-          "description": "A list of namespaces to which this service is exported. Exporting a service allows it to be used by sidecars, gateways and virtual services defined in other namespaces. This feature provides a mechanism for service owners and mesh administrators to control the visibility of services across namespace boundaries. \n If no namespaces are specified then the service is exported to all namespaces by default. \n The value \".\" is reserved and defines an export to the same namespace that the service is declared in. Similarly, the value \"*\" is reserved and defines an export to all namespaces. \n For a Kubernetes Service, the equivalent effect can be achieved by setting the annotation \"networking.istio.io/exportTo\" to a comma-separated list of namespace names.",
+          "description": "A list of namespaces to which this service is exported. Exporting a service\nallows it to be used by sidecars, gateways and virtual services defined in\nother namespaces. This feature provides a mechanism for service owners\nand mesh administrators to control the visibility of services across\nnamespace boundaries.\n\nIf no namespaces are specified then the service is exported to all\nnamespaces by default.\n\nThe value \".\" is reserved and defines an export to the same namespace that\nthe service is declared in. Similarly, the value \"*\" is reserved and\ndefines an export to all namespaces.\n\nFor a Kubernetes Service, the equivalent effect can be achieved by setting\nthe annotation \"networking.istio.io/exportTo\" to a comma-separated list\nof namespace names.",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "ports": {
-          "description": "The list of ports that are exposed by this service. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies",
+          "description": "The list of ports that are exposed by this service.\nMore info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies",
           "items": {
             "description": "ServicePort contains information on service's port.",
             "properties": {
               "appProtocol": {
-                "description": "The application protocol for this port. MUST BE one of HTTP|HTTPS|GRPC|HTTP2|MONGO|MYSQL|TCP|TLS. TLS implies the connection will be routed based on the SNI header to the destination without terminating the TLS connection.",
+                "description": "The application protocol for this port.\nMUST BE one of HTTP|HTTPS|GRPC|HTTP2|MONGO|MYSQL|TCP|TLS.\nTLS implies the connection will be routed based on the SNI header to\nthe destination without terminating the TLS connection.",
                 "enum": [
                   "HTTP",
                   "HTTPS",
@@ -42,7 +42,7 @@
                 "type": "string"
               },
               "name": {
-                "description": "The name of this port within the service. This must be a DNS_LABEL. All ports within a ServiceSpec must have unique names. When considering the endpoints for a Service, this must match the 'name' field in the EndpointPort. Optional if only one ServicePort is defined on this service.",
+                "description": "The name of this port within the service. This must be a DNS_LABEL.\nAll ports within a ServiceSpec must have unique names. When considering\nthe endpoints for a Service, this must match the 'name' field in the\nEndpointPort.\nOptional if only one ServicePort is defined on this service.",
                 "type": "string"
               },
               "port": {
@@ -51,8 +51,7 @@
                 "type": "integer"
               },
               "protocol": {
-                "default": "TCP",
-                "description": "The IP protocol for this port. Supports \"TCP\", \"UDP\", and \"SCTP\". Default is TCP.",
+                "description": "The IP protocol for this port. Supports \"TCP\", \"UDP\", and \"SCTP\".\nDefault is TCP.",
                 "enum": [
                   "TCP",
                   "UDP",
@@ -69,7 +68,7 @@
                     "type": "string"
                   }
                 ],
-                "description": "Number or name of the port to access on the pods targeted by the service. Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME. If this is a string, it will be looked up as a named port in the target Pod's container ports. If this is not specified, the value of the 'port' field is used (an identity map). This field is ignored for services with clusterIP=None, and should be omitted or set equal to the 'port' field. More info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service",
+                "description": "Number or name of the port to access on the pods targeted by the service.\nNumber must be in the range 1 to 65535. Name must be an IANA_SVC_NAME.\nIf this is a string, it will be looked up as a named port in the\ntarget Pod's container ports. If this is not specified, the value\nof the 'port' field is used (an identity map).\nThis field is ignored for services with clusterIP=None, and should be\nomitted or set equal to the 'port' field.\nMore info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service",
                 "x-kubernetes-int-or-string": true
               }
             },
@@ -83,14 +82,14 @@
           "type": "array"
         },
         "publishNotReadyAddresses": {
-          "description": "publishNotReadyAddresses indicates that any agent which deals with endpoints for this Service should disregard any indications of ready/not-ready. The primary use case for setting this field is for a StatefulSet's Headless Service to propagate SRV DNS records for its Pods for the purpose of peer discovery. The Kubernetes controllers that generate Endpoints and EndpointSlice resources for Services interpret this to mean that all endpoints are considered \"ready\" even if the Pods themselves are not. Agents which consume only Kubernetes generated endpoints through the Endpoints or EndpointSlice resources can safely assume this behavior.",
+          "description": "publishNotReadyAddresses indicates that any agent which deals with endpoints for this\nService should disregard any indications of ready/not-ready.\nThe primary use case for setting this field is for a StatefulSet's Headless Service to\npropagate SRV DNS records for its Pods for the purpose of peer discovery.\nThe Kubernetes controllers that generate Endpoints and EndpointSlice resources for\nServices interpret this to mean that all endpoints are considered \"ready\" even if the\nPods themselves are not. Agents which consume only Kubernetes generated endpoints\nthrough the Endpoints or EndpointSlice resources can safely assume this behavior.",
           "type": "boolean"
         },
         "selector": {
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Create services for pods with label keys and values matching this selector.",
+          "description": "Create services for pods with label keys and values matching this\nselector.",
           "type": "object",
           "x-kubernetes-map-type": "atomic"
         },
@@ -104,14 +103,14 @@
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
+                  "description": "Annotations is an unstructured key value map stored with a resource that may be\nset by external tools to store and retrieve arbitrary metadata. They are not\nqueryable and should be preserved when modifying objects.\nMore info: http://kubernetes.io/docs/user-guide/annotations",
                   "type": "object"
                 },
                 "labels": {
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "description": "Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels",
+                  "description": "Map of string keys and values that can be used to organize and categorize\n(scope and select) objects. May match selectors of replication controllers\nand services.\nMore info: http://kubernetes.io/docs/user-guide/labels",
                   "type": "object"
                 }
               },

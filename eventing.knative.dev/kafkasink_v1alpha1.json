@@ -75,14 +75,45 @@
       "description": "Status represents the current state of the KafkaSink. This data may be out of date.",
       "properties": {
         "address": {
-          "description": "Kafka Sink is Addressable. It exposes the endpoint as an URI to get events delivered to a Kafka topic.",
+          "description": "Kafka Sink is Addressable. It exposes the endpoint as an URI to get events delivered into the Kafka topic.",
           "properties": {
+            "CACerts": {
+              "type": "string"
+            },
+            "audience": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
             "url": {
               "type": "string"
             }
           },
           "type": "object",
           "additionalProperties": false
+        },
+        "addresses": {
+          "description": "Kafka Sink is Addressable. It exposes the endpoints as URIs to get events delivered into the Kafka topic.",
+          "items": {
+            "properties": {
+              "CACerts": {
+                "type": "string"
+              },
+              "audience": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
         },
         "annotations": {
           "description": "Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.",
@@ -131,6 +162,24 @@
           "description": "ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.",
           "format": "int64",
           "type": "integer"
+        },
+        "policies": {
+          "description": "List of applied EventPolicies",
+          "items": {
+            "properties": {
+              "apiVersion": {
+                "description": "The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name of the applied EventPolicy",
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
         }
       },
       "type": "object",

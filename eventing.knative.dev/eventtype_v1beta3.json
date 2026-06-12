@@ -1,15 +1,45 @@
 {
-  "type": "object",
   "description": "EventType represents a type of event that can be consumed from a resource.",
   "properties": {
     "spec": {
       "description": "Spec defines the desired state of the EventType.",
-      "type": "object",
       "properties": {
+        "attributes": {
+          "description": "CloudEvent attribute and extension attributes.",
+          "items": {
+            "properties": {
+              "name": {
+                "description": "Name of the CloudEvent attribute.",
+                "type": "string"
+              },
+              "required": {
+                "description": "Indicates whether the attribute is required.",
+                "type": "boolean"
+              },
+              "value": {
+                "description": "Value of the attribute. May be a template string using curly brackets {} to represent variable sections of the string.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "description": {
+          "description": "Description is an optional field used to describe the EventType, in any meaningful way.",
+          "type": "string"
+        },
         "reference": {
           "description": "Reference a resource. For example, Broker.",
-          "type": "object",
           "properties": {
+            "address": {
+              "description": "Address points to a specific Address Name",
+              "type": "string"
+            },
             "apiVersion": {
               "description": "API version of the referent.",
               "type": "string"
@@ -25,49 +55,17 @@
             "namespace": {
               "description": "Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is an optional field, it gets defaulted to the object holding it if left out.",
               "type": "string"
-            },
-            "address": {
-              "description": "Address points to a specific Address Name",
-              "type": "string"
             }
           },
+          "type": "object",
           "additionalProperties": false
-        },
-        "description": {
-          "description": "Description is an optional field used to describe the EventType, in any meaningful way.",
-          "type": "string"
-        },
-        "attributes": {
-          "description": "CloudEvent attribute and extension attributes.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "name"
-            ],
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Name of the CloudEvent attribute."
-              },
-              "required": {
-                "type": "boolean",
-                "description": "Indicates whether the attribute is required."
-              },
-              "value": {
-                "type": "string",
-                "description": "Value of the attribute. May be a template string using curly brackets {} to represent variable sections of the string."
-              }
-            },
-            "additionalProperties": false
-          }
         }
       },
+      "type": "object",
       "additionalProperties": false
     },
     "status": {
       "description": "Status represents the current state of the EventType. This data may be out of date.",
-      "type": "object",
       "properties": {
         "annotations": {
           "description": "Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.",
@@ -76,13 +74,7 @@
         },
         "conditions": {
           "description": "Conditions the latest available observations of a resource's current state.",
-          "type": "array",
           "items": {
-            "type": "object",
-            "required": [
-              "type",
-              "status"
-            ],
             "properties": {
               "lastTransitionTime": {
                 "description": "LastTransitionTime is the last time the condition transitioned from one status to another. We use VolatileTime in place of metav1.Time to exclude this from creating equality.Semantic differences (all other things held constant).",
@@ -109,16 +101,24 @@
                 "type": "string"
               }
             },
+            "required": [
+              "type",
+              "status"
+            ],
+            "type": "object",
             "additionalProperties": false
-          }
+          },
+          "type": "array"
         },
         "observedGeneration": {
           "description": "ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.",
-          "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "type": "integer"
         }
       },
+      "type": "object",
       "additionalProperties": false
     }
-  }
+  },
+  "type": "object"
 }

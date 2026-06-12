@@ -12,7 +12,7 @@
       "type": "object"
     },
     "spec": {
-      "description": "The specification of the HTTP Bridge.",
+      "description": "The specification of the Kafka Bridge.",
       "properties": {
         "adminClient": {
           "description": "Kafka AdminClient related configuration.",
@@ -52,10 +52,6 @@
               "description": "Configure whether access token should be treated as JWT. This should be set to `false` if the authorization server returns opaque tokens. Defaults to `true`.",
               "type": "boolean"
             },
-            "accessTokenLocation": {
-              "description": "Path to the token file containing an access token to be used for authentication.",
-              "type": "string"
-            },
             "audience": {
               "description": "OAuth audience to use when authenticating against the authorization server. Some authorization servers require the audience to be explicitly set. The possible values depend on how the authorization server is configured. By default, `audience` is not specified when performing the token endpoint request.",
               "type": "string"
@@ -68,7 +64,7 @@
                   "type": "string"
                 },
                 "key": {
-                  "description": "The name of the private key in the secret. The private key must be in unencrypted PKCS #8 format. For more information, see RFC 5208: https://datatracker.ietf.org/doc/html/rfc5208.",
+                  "description": "The name of the private key in the Secret.",
                   "type": "string"
                 },
                 "secretName": {
@@ -77,39 +73,12 @@
                 }
               },
               "required": [
-                "secretName",
                 "certificate",
-                "key"
-              ],
-              "type": "object",
-              "additionalProperties": false
-            },
-            "clientAssertion": {
-              "description": "Link to Kubernetes secret containing the client assertion which was manually configured for the client.",
-              "properties": {
-                "key": {
-                  "description": "The key under which the secret value is stored in the Kubernetes Secret.",
-                  "type": "string"
-                },
-                "secretName": {
-                  "description": "The name of the Kubernetes Secret containing the secret value.",
-                  "type": "string"
-                }
-              },
-              "required": [
                 "key",
                 "secretName"
               ],
               "type": "object",
               "additionalProperties": false
-            },
-            "clientAssertionLocation": {
-              "description": "Path to the file containing the client assertion to be used for authentication.",
-              "type": "string"
-            },
-            "clientAssertionType": {
-              "description": "The client assertion type. If not set, and either `clientAssertion` or `clientAssertionLocation` is configured, this value defaults to `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`.",
-              "type": "string"
             },
             "clientId": {
               "description": "OAuth Client ID which the Kafka client can use to authenticate against the OAuth server and use the token endpoint URI.",
@@ -134,11 +103,6 @@
               "type": "object",
               "additionalProperties": false
             },
-            "config": {
-              "description": "Configuration for the custom authentication mechanism. Only properties with the `sasl.` and `ssl.keystore.` prefixes are allowed. Specify other options in the regular configuration section of the custom resource.",
-              "type": "object",
-              "x-kubernetes-preserve-unknown-fields": true
-            },
             "connectTimeoutSeconds": {
               "description": "The connect timeout in seconds when connecting to authorization server. If not set, the effective connect timeout is 60 seconds.",
               "type": "integer"
@@ -151,10 +115,6 @@
               "description": "Enable or disable OAuth metrics. Default value is `false`.",
               "type": "boolean"
             },
-            "grantType": {
-              "description": "A custom OAuth grant type to use when authenticating against the authorization server with `clientId` and one of `clientSecret` or `clientAssertion`. The value defaults to `client_credentials` in these cases. This is optional configuration, only used with custom authorization server implementations.",
-              "type": "string"
-            },
             "httpRetries": {
               "description": "The maximum number of retries to attempt if an initial HTTP request fails. If not set, the default is to not attempt any retries.",
               "type": "integer"
@@ -166,14 +126,6 @@
             "includeAcceptHeader": {
               "description": "Whether the Accept header should be set in requests to the authorization servers. The default value is `true`.",
               "type": "boolean"
-            },
-            "httpRetries": {
-              "description": "The maximum number of retries to attempt if an initial HTTP request fails. If not set, the default is to not attempt any retries.",
-              "type": "integer"
-            },
-            "httpRetryPauseMs": {
-              "description": "The pause to take before retrying a failed HTTP request. If not set, the default is to not pause at all but to immediately repeat a request.",
-              "type": "integer"
             },
             "maxTokenExpirySeconds": {
               "description": "Set or limit time-to-live of the access tokens to the specified number of seconds. This should be set if the authorization server returns opaque tokens.",
@@ -192,8 +144,8 @@
                 }
               },
               "required": [
-                "secretName",
-                "password"
+                "password",
+                "secretName"
               ],
               "type": "object",
               "additionalProperties": false
@@ -221,17 +173,6 @@
               "type": "object",
               "additionalProperties": false
             },
-            "sasl": {
-              "description": "Enable or disable SASL on this authentication mechanism.",
-              "type": "boolean"
-            },
-            "saslExtensions": {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "description": "SASL extensions parameters.",
-              "type": "object"
-            },
             "scope": {
               "description": "OAuth scope to use when authenticating against the authorization server. Some authorization servers require this to be set. The possible values depend on how authorization server is configured. By default `scope` is not specified when doing the token endpoint request.",
               "type": "string"
@@ -239,31 +180,9 @@
             "tlsTrustedCertificates": {
               "description": "Trusted certificates for TLS connection to the OAuth server.",
               "items": {
-                "oneOf": [
-                  {
-                    "properties": {
-                      "certificate": {}
-                    },
-                    "required": [
-                      "certificate"
-                    ]
-                  },
-                  {
-                    "properties": {
-                      "pattern": {}
-                    },
-                    "required": [
-                      "pattern"
-                    ]
-                  }
-                ],
                 "properties": {
                   "certificate": {
-                    "description": "The name of the file certificate in the secret.",
-                    "type": "string"
-                  },
-                  "pattern": {
-                    "description": "Pattern for the certificate files in the secret. Use the link:https://en.wikipedia.org/wiki/Glob_(programming)[_glob syntax_] for the pattern. All files in the secret that match the pattern are used.",
+                    "description": "The name of the file certificate in the Secret.",
                     "type": "string"
                   },
                   "secretName": {
@@ -272,6 +191,7 @@
                   }
                 },
                 "required": [
+                  "certificate",
                   "secretName"
                 ],
                 "type": "object",
@@ -284,14 +204,13 @@
               "type": "string"
             },
             "type": {
-              "description": "Specifies the authentication type. Supported types are `tls`, `scram-sha-256`, `scram-sha-512`, `plain`, 'oauth', and `custom`. `tls` uses TLS client authentication and is supported only over TLS connections. `scram-sha-256` and `scram-sha-512` use SASL SCRAM-SHA-256 and SASL SCRAM-SHA-512 authentication, respectively. `plain` uses SASL PLAIN authentication. `oauth` uses SASL OAUTHBEARER authentication. `custom` allows you to configure a custom authentication mechanism. As of Strimzi 0.49.0, `oauth` type is deprecated and will be removed in the `v1` API version. Please use `custom` type instead.",
+              "description": "Authentication type. Currently the supported types are `tls`, `scram-sha-256`, `scram-sha-512`, `plain`, and 'oauth'. `scram-sha-256` and `scram-sha-512` types use SASL SCRAM-SHA-256 and SASL SCRAM-SHA-512 Authentication, respectively. `plain` type uses SASL PLAIN Authentication. `oauth` type uses SASL OAUTHBEARER Authentication. The `tls` type uses TLS Client Authentication. The `tls` type is supported only over TLS connections.",
               "enum": [
                 "tls",
                 "scram-sha-256",
                 "scram-sha-512",
                 "plain",
-                "oauth",
-                "custom"
+                "oauth"
               ],
               "type": "string"
             },
@@ -321,21 +240,13 @@
               "description": "The Kafka consumer configuration used for consumer instances created by the bridge. Properties with the following prefixes cannot be set: ssl., bootstrap.servers, group.id, sasl., security. (with the exception of: ssl.endpoint.identification.algorithm, ssl.cipher.suites, ssl.protocol, ssl.enabled.protocols).",
               "type": "object",
               "x-kubernetes-preserve-unknown-fields": true
-            },
-            "enabled": {
-              "description": "Whether the HTTP consumer should be enabled or disabled. The default is enabled (`true`).",
-              "type": "boolean"
-            },
-            "timeoutSeconds": {
-              "description": "The timeout in seconds for deleting inactive consumers, default is -1 (disabled).",
-              "type": "integer"
             }
           },
           "type": "object",
           "additionalProperties": false
         },
         "enableMetrics": {
-          "description": "Enable the metrics for the HTTP Bridge. Default is false.",
+          "description": "Enable the metrics for the Kafka Bridge. Default is false.",
           "type": "boolean"
         },
         "http": {
@@ -376,11 +287,11 @@
           "additionalProperties": false
         },
         "image": {
-          "description": "The container image used for HTTP Bridge pods. If no image name is explicitly specified, the image name corresponds to the image specified in the Cluster Operator configuration. If an image name is not defined in the Cluster Operator configuration, a default value is used.",
+          "description": "The container image used for Kafka Bridge pods. If no image name is explicitly specified, the image name corresponds to the image specified in the Cluster Operator configuration. If an image name is not defined in the Cluster Operator configuration, a default value is used.",
           "type": "string"
         },
         "jvmOptions": {
-          "description": "JVM Options for pods.",
+          "description": "**Currently not supported** JVM Options for pods.",
           "properties": {
             "-XX": {
               "additionalProperties": {
@@ -458,7 +369,7 @@
           "additionalProperties": false
         },
         "logging": {
-          "description": "Logging configuration for HTTP Bridge.",
+          "description": "Logging configuration for Kafka Bridge.",
           "properties": {
             "loggers": {
               "additionalProperties": {
@@ -505,67 +416,6 @@
           "type": "object",
           "additionalProperties": false
         },
-        "metricsConfig": {
-          "description": "Metrics configuration.",
-          "properties": {
-            "type": {
-              "description": "Metrics type. The supported types are `jmxPrometheusExporter` and `strimziMetricsReporter`. Type `jmxPrometheusExporter` uses the Prometheus JMX Exporter to expose Kafka JMX metrics in Prometheus format through an HTTP endpoint. Type `strimziMetricsReporter` uses the Strimzi Metrics Reporter to directly expose Kafka metrics in Prometheus format through an HTTP endpoint.",
-              "enum": [
-                "jmxPrometheusExporter",
-                "strimziMetricsReporter"
-              ],
-              "type": "string"
-            },
-            "valueFrom": {
-              "description": "ConfigMap entry where the Prometheus JMX Exporter configuration is stored.",
-              "properties": {
-                "configMapKeyRef": {
-                  "description": "Reference to the key in the ConfigMap containing the configuration.",
-                  "properties": {
-                    "key": {
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "optional": {
-                      "type": "boolean"
-                    }
-                  },
-                  "type": "object",
-                  "additionalProperties": false
-                }
-              },
-              "type": "object",
-              "additionalProperties": false
-            },
-            "values": {
-              "description": "Configuration values for the Strimzi Metrics Reporter.",
-              "properties": {
-                "allowList": {
-                  "description": "A list of regex patterns to filter the metrics to collect. Should contain at least one element.",
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object",
-              "additionalProperties": false
-            }
-          },
-          "required": [
-            "type"
-          ],
-          "type": "object",
-          "x-kubernetes-validations": [
-            {
-              "message": "valueFrom property is required",
-              "rule": "self.type != 'jmxPrometheusExporter' || has(self.valueFrom)"
-            }
-          ],
-          "additionalProperties": false
-        },
         "producer": {
           "description": "Kafka producer related configuration.",
           "properties": {
@@ -573,10 +423,6 @@
               "description": "The Kafka producer configuration used for producer instances created by the bridge. Properties with the following prefixes cannot be set: ssl., bootstrap.servers, sasl., security. (with the exception of: ssl.endpoint.identification.algorithm, ssl.cipher.suites, ssl.protocol, ssl.enabled.protocols).",
               "type": "object",
               "x-kubernetes-preserve-unknown-fields": true
-            },
-            "enabled": {
-              "description": "Whether the HTTP producer should be enabled or disabled. The default is enabled (`true`).",
-              "type": "boolean"
             }
           },
           "type": "object",
@@ -630,7 +476,7 @@
           "additionalProperties": false
         },
         "replicas": {
-          "description": "The number of pods in the `Deployment`. Required in the `v1` version of the Strimzi API. Defaults to `1` in the `v1beta2` version of the Strimzi API.",
+          "description": "The number of pods in the `Deployment`.  Defaults to `1`.",
           "minimum": 0,
           "type": "integer"
         },
@@ -642,9 +488,6 @@
                 "properties": {
                   "name": {
                     "type": "string"
-                  },
-                  "request": {
-                    "type": "string"
                   }
                 },
                 "type": "object",
@@ -653,44 +496,22 @@
               "type": "array"
             },
             "limits": {
-              "additionalProperties": {
-                "anyOf": [
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "type": "string"
-                  }
-                ],
-                "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
-                "x-kubernetes-int-or-string": true
-              },
-              "type": "object"
+              "type": "object",
+              "x-kubernetes-preserve-unknown-fields": true
             },
             "requests": {
-              "additionalProperties": {
-                "anyOf": [
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "type": "string"
-                  }
-                ],
-                "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
-                "x-kubernetes-int-or-string": true
-              },
-              "type": "object"
+              "type": "object",
+              "x-kubernetes-preserve-unknown-fields": true
             }
           },
           "type": "object",
           "additionalProperties": false
         },
         "template": {
-          "description": "Template for HTTP Bridge resources. The template allows users to specify how a `Deployment` and `Pod` is generated.",
+          "description": "Template for Kafka Bridge resources. The template allows users to specify how a `Deployment` and `Pod` is generated.",
           "properties": {
             "apiService": {
-              "description": "Template for HTTP Bridge API `Service`.",
+              "description": "Template for Kafka Bridge API `Service`.",
               "properties": {
                 "ipFamilies": {
                   "description": "Specifies the IP Families used by the service. Available options are `IPv4` and `IPv6`. If unspecified, Kubernetes will choose the default value based on the `ipFamilyPolicy` setting.",
@@ -738,29 +559,11 @@
               "additionalProperties": false
             },
             "bridgeContainer": {
-              "description": "Template for the HTTP Bridge container.",
+              "description": "Template for the Kafka Bridge container.",
               "properties": {
                 "env": {
                   "description": "Environment variables which should be applied to the container.",
                   "items": {
-                    "oneOf": [
-                      {
-                        "properties": {
-                          "value": {}
-                        },
-                        "required": [
-                          "value"
-                        ]
-                      },
-                      {
-                        "properties": {
-                          "valueFrom": {}
-                        },
-                        "required": [
-                          "valueFrom"
-                        ]
-                      }
-                    ],
                     "properties": {
                       "name": {
                         "description": "The environment variable key.",
@@ -769,63 +572,6 @@
                       "value": {
                         "description": "The environment variable value.",
                         "type": "string"
-                      },
-                      "valueFrom": {
-                        "description": "Reference to the secret or config map property to which the environment variable is set.",
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "secretKeyRef": {}
-                            },
-                            "required": [
-                              "secretKeyRef"
-                            ]
-                          },
-                          {
-                            "properties": {
-                              "configMapKeyRef": {}
-                            },
-                            "required": [
-                              "configMapKeyRef"
-                            ]
-                          }
-                        ],
-                        "properties": {
-                          "configMapKeyRef": {
-                            "description": "Reference to a key in a config map.",
-                            "properties": {
-                              "key": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "optional": {
-                                "type": "boolean"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          },
-                          "secretKeyRef": {
-                            "description": "Reference to a key in a secret.",
-                            "properties": {
-                              "key": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "optional": {
-                                "type": "boolean"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
                       }
                     },
                     "type": "object",
@@ -838,18 +584,6 @@
                   "properties": {
                     "allowPrivilegeEscalation": {
                       "type": "boolean"
-                    },
-                    "appArmorProfile": {
-                      "properties": {
-                        "localhostProfile": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
                     },
                     "capabilities": {
                       "properties": {
@@ -938,44 +672,13 @@
                   },
                   "type": "object",
                   "additionalProperties": false
-                },
-                "volumeMounts": {
-                  "description": "Additional volume mounts which should be applied to the container.",
-                  "items": {
-                    "properties": {
-                      "mountPath": {
-                        "type": "string"
-                      },
-                      "mountPropagation": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "readOnly": {
-                        "type": "boolean"
-                      },
-                      "recursiveReadOnly": {
-                        "type": "string"
-                      },
-                      "subPath": {
-                        "type": "string"
-                      },
-                      "subPathExpr": {
-                        "type": "string"
-                      }
-                    },
-                    "type": "object",
-                    "additionalProperties": false
-                  },
-                  "type": "array"
                 }
               },
               "type": "object",
               "additionalProperties": false
             },
             "clusterRoleBinding": {
-              "description": "Template for the HTTP Bridge ClusterRoleBinding.",
+              "description": "Template for the Kafka Bridge ClusterRoleBinding.",
               "properties": {
                 "metadata": {
                   "description": "Metadata applied to the resource.",
@@ -1003,7 +706,7 @@
               "additionalProperties": false
             },
             "deployment": {
-              "description": "Template for HTTP Bridge `Deployment`.",
+              "description": "Template for Kafka Bridge `Deployment`.",
               "properties": {
                 "deploymentStrategy": {
                   "description": "Pod replacement strategy for deployment configuration changes. Valid values are `RollingUpdate` and `Recreate`. Defaults to `RollingUpdate`.",
@@ -1039,29 +742,11 @@
               "additionalProperties": false
             },
             "initContainer": {
-              "description": "Template for the HTTP Bridge init container.",
+              "description": "Template for the Kafka Bridge init container.",
               "properties": {
                 "env": {
                   "description": "Environment variables which should be applied to the container.",
                   "items": {
-                    "oneOf": [
-                      {
-                        "properties": {
-                          "value": {}
-                        },
-                        "required": [
-                          "value"
-                        ]
-                      },
-                      {
-                        "properties": {
-                          "valueFrom": {}
-                        },
-                        "required": [
-                          "valueFrom"
-                        ]
-                      }
-                    ],
                     "properties": {
                       "name": {
                         "description": "The environment variable key.",
@@ -1070,63 +755,6 @@
                       "value": {
                         "description": "The environment variable value.",
                         "type": "string"
-                      },
-                      "valueFrom": {
-                        "description": "Reference to the secret or config map property to which the environment variable is set.",
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "secretKeyRef": {}
-                            },
-                            "required": [
-                              "secretKeyRef"
-                            ]
-                          },
-                          {
-                            "properties": {
-                              "configMapKeyRef": {}
-                            },
-                            "required": [
-                              "configMapKeyRef"
-                            ]
-                          }
-                        ],
-                        "properties": {
-                          "configMapKeyRef": {
-                            "description": "Reference to a key in a config map.",
-                            "properties": {
-                              "key": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "optional": {
-                                "type": "boolean"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          },
-                          "secretKeyRef": {
-                            "description": "Reference to a key in a secret.",
-                            "properties": {
-                              "key": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "optional": {
-                                "type": "boolean"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
                       }
                     },
                     "type": "object",
@@ -1139,18 +767,6 @@
                   "properties": {
                     "allowPrivilegeEscalation": {
                       "type": "boolean"
-                    },
-                    "appArmorProfile": {
-                      "properties": {
-                        "localhostProfile": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
                     },
                     "capabilities": {
                       "properties": {
@@ -1239,44 +855,13 @@
                   },
                   "type": "object",
                   "additionalProperties": false
-                },
-                "volumeMounts": {
-                  "description": "Additional volume mounts which should be applied to the container.",
-                  "items": {
-                    "properties": {
-                      "mountPath": {
-                        "type": "string"
-                      },
-                      "mountPropagation": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "readOnly": {
-                        "type": "boolean"
-                      },
-                      "recursiveReadOnly": {
-                        "type": "string"
-                      },
-                      "subPath": {
-                        "type": "string"
-                      },
-                      "subPathExpr": {
-                        "type": "string"
-                      }
-                    },
-                    "type": "object",
-                    "additionalProperties": false
-                  },
-                  "type": "array"
                 }
               },
               "type": "object",
               "additionalProperties": false
             },
             "pod": {
-              "description": "Template for HTTP Bridge `Pods`.",
+              "description": "Template for Kafka Bridge `Pods`.",
               "properties": {
                 "affinity": {
                   "description": "The pod's affinity rules.",
@@ -1822,50 +1407,6 @@
                   "type": "object",
                   "additionalProperties": false
                 },
-                "dnsConfig": {
-                  "description": "The pod's DNSConfig. If specified, it will be merged to the generated DNS configuration based on the DNSPolicy.",
-                  "properties": {
-                    "nameservers": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "options": {
-                      "items": {
-                        "properties": {
-                          "name": {
-                            "type": "string"
-                          },
-                          "value": {
-                            "type": "string"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "type": "array"
-                    },
-                    "searches": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    }
-                  },
-                  "type": "object",
-                  "additionalProperties": false
-                },
-                "dnsPolicy": {
-                  "description": "The pod's DNSPolicy. Defaults to `ClusterFirst`. Valid values are `ClusterFirstWithHostNet`, `ClusterFirst`, `Default` or `None`.",
-                  "enum": [
-                    "ClusterFirst",
-                    "ClusterFirstWithHostNet",
-                    "Default",
-                    "None"
-                  ],
-                  "type": "string"
-                },
                 "enableServiceLinks": {
                   "description": "Indicates whether information about services should be injected into Pod's environment variables.",
                   "type": "boolean"
@@ -1934,18 +1475,6 @@
                 "securityContext": {
                   "description": "Configures pod-level security attributes and common container settings.",
                   "properties": {
-                    "appArmorProfile": {
-                      "properties": {
-                        "localhostProfile": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      },
-                      "type": "object",
-                      "additionalProperties": false
-                    },
                     "fsGroup": {
                       "type": "integer"
                     },
@@ -1960,9 +1489,6 @@
                     },
                     "runAsUser": {
                       "type": "integer"
-                    },
-                    "seLinuxChangePolicy": {
-                      "type": "string"
                     },
                     "seLinuxOptions": {
                       "properties": {
@@ -1999,9 +1525,6 @@
                         "type": "integer"
                       },
                       "type": "array"
-                    },
-                    "supplementalGroupsPolicy": {
-                      "type": "string"
                     },
                     "sysctls": {
                       "items": {
@@ -2046,7 +1569,7 @@
                   "type": "integer"
                 },
                 "tmpDirSizeLimit": {
-                  "description": "Defines the total amount of pod memory allocated for the temporary `EmptyDir` volume `/tmp`. Specify the allocation in memory units, for example, `100Mi` for 100 mebibytes. Default value is `5Mi`. The `/tmp` volume is backed by pod memory, not disk storage, so avoid setting a high value as it consumes pod memory resources.",
+                  "description": "Defines the total amount (for example `1Gi`) of local storage required for temporary EmptyDir volume (`/tmp`). Default value is `5Mi`.",
                   "pattern": "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$",
                   "type": "string"
                 },
@@ -2141,183 +1664,13 @@
                     "additionalProperties": false
                   },
                   "type": "array"
-                },
-                "volumes": {
-                  "description": "Additional volumes that can be mounted to the pod.",
-                  "items": {
-                    "oneOf": [
-                      {
-                        "properties": {
-                          "configMap": {},
-                          "csi": {},
-                          "emptyDir": {},
-                          "image": {},
-                          "persistentVolumeClaim": {},
-                          "secret": {}
-                        }
-                      }
-                    ],
-                    "properties": {
-                      "configMap": {
-                        "description": "`ConfigMap` to use to populate the volume.",
-                        "properties": {
-                          "defaultMode": {
-                            "type": "integer"
-                          },
-                          "items": {
-                            "items": {
-                              "properties": {
-                                "key": {
-                                  "type": "string"
-                                },
-                                "mode": {
-                                  "type": "integer"
-                                },
-                                "path": {
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object",
-                              "additionalProperties": false
-                            },
-                            "type": "array"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "optional": {
-                            "type": "boolean"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "csi": {
-                        "description": "`CSIVolumeSource` object to use to populate the volume.",
-                        "properties": {
-                          "driver": {
-                            "type": "string"
-                          },
-                          "fsType": {
-                            "type": "string"
-                          },
-                          "nodePublishSecretRef": {
-                            "properties": {
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "type": "object",
-                            "additionalProperties": false
-                          },
-                          "readOnly": {
-                            "type": "boolean"
-                          },
-                          "volumeAttributes": {
-                            "additionalProperties": {
-                              "type": "string"
-                            },
-                            "type": "object"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "emptyDir": {
-                        "description": "`EmptyDir` to use to populate the volume.",
-                        "properties": {
-                          "medium": {
-                            "description": "Medium represents the type of storage medium should back this volume. Valid values are unset or `Memory`. When not set, it will use the node's default medium.",
-                            "enum": [
-                              "Memory"
-                            ],
-                            "type": "string"
-                          },
-                          "sizeLimit": {
-                            "description": "The total amount of local storage required for this EmptyDir volume (for example 1Gi).",
-                            "pattern": "^([0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "image": {
-                        "description": "`ImageVolumeSource` object to use to populate the volume.",
-                        "properties": {
-                          "pullPolicy": {
-                            "type": "string"
-                          },
-                          "reference": {
-                            "type": "string"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "name": {
-                        "description": "Name to use for the volume. Required.",
-                        "type": "string"
-                      },
-                      "persistentVolumeClaim": {
-                        "description": "`PersistentVolumeClaim` object to use to populate the volume.",
-                        "properties": {
-                          "claimName": {
-                            "type": "string"
-                          },
-                          "readOnly": {
-                            "type": "boolean"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      },
-                      "secret": {
-                        "description": "`Secret` to use to populate the volume.",
-                        "properties": {
-                          "defaultMode": {
-                            "type": "integer"
-                          },
-                          "items": {
-                            "items": {
-                              "properties": {
-                                "key": {
-                                  "type": "string"
-                                },
-                                "mode": {
-                                  "type": "integer"
-                                },
-                                "path": {
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object",
-                              "additionalProperties": false
-                            },
-                            "type": "array"
-                          },
-                          "optional": {
-                            "type": "boolean"
-                          },
-                          "secretName": {
-                            "type": "string"
-                          }
-                        },
-                        "type": "object",
-                        "additionalProperties": false
-                      }
-                    },
-                    "type": "object",
-                    "additionalProperties": false
-                  },
-                  "type": "array"
                 }
               },
               "type": "object",
               "additionalProperties": false
             },
             "podDisruptionBudget": {
-              "description": "Template for HTTP Bridge `PodDisruptionBudget`.",
+              "description": "Template for Kafka Bridge `PodDisruptionBudget`.",
               "properties": {
                 "maxUnavailable": {
                   "description": "Maximum number of unavailable pods to allow automatic Pod eviction. A Pod eviction is allowed when the `maxUnavailable` number of pods or fewer are unavailable after the eviction. Setting this value to 0 prevents all voluntary evictions, so the pods must be evicted manually. Defaults to 1.",
@@ -2350,7 +1703,7 @@
               "additionalProperties": false
             },
             "serviceAccount": {
-              "description": "Template for the HTTP Bridge service account.",
+              "description": "Template for the Kafka Bridge service account.",
               "properties": {
                 "metadata": {
                   "description": "Metadata applied to the resource.",
@@ -2382,36 +1735,14 @@
           "additionalProperties": false
         },
         "tls": {
-          "description": "TLS configuration for connecting HTTP Bridge to the cluster.",
+          "description": "TLS configuration for connecting Kafka Bridge to the cluster.",
           "properties": {
             "trustedCertificates": {
               "description": "Trusted certificates for TLS connection.",
               "items": {
-                "oneOf": [
-                  {
-                    "properties": {
-                      "certificate": {}
-                    },
-                    "required": [
-                      "certificate"
-                    ]
-                  },
-                  {
-                    "properties": {
-                      "pattern": {}
-                    },
-                    "required": [
-                      "pattern"
-                    ]
-                  }
-                ],
                 "properties": {
                   "certificate": {
-                    "description": "The name of the file certificate in the secret.",
-                    "type": "string"
-                  },
-                  "pattern": {
-                    "description": "Pattern for the certificate files in the secret. Use the link:https://en.wikipedia.org/wiki/Glob_(programming)[_glob syntax_] for the pattern. All files in the secret that match the pattern are used.",
+                    "description": "The name of the file certificate in the Secret.",
                     "type": "string"
                   },
                   "secretName": {
@@ -2420,6 +1751,7 @@
                   }
                 },
                 "required": [
+                  "certificate",
                   "secretName"
                 ],
                 "type": "object",
@@ -2432,7 +1764,7 @@
           "additionalProperties": false
         },
         "tracing": {
-          "description": "The configuration of tracing in HTTP Bridge.",
+          "description": "The configuration of tracing in Kafka Bridge.",
           "properties": {
             "type": {
               "description": "Type of the tracing used. Currently the only supported type is `opentelemetry` for OpenTelemetry tracing. As of Strimzi 0.37.0, `jaeger` type is not supported anymore and this option is ignored.",
@@ -2457,7 +1789,7 @@
       "additionalProperties": false
     },
     "status": {
-      "description": "The status of the HTTP Bridge.",
+      "description": "The status of the Kafka Bridge.",
       "properties": {
         "conditions": {
           "description": "List of status conditions.",
@@ -2502,7 +1834,7 @@
           "type": "integer"
         },
         "url": {
-          "description": "The URL at which external client applications can access the HTTP Bridge.",
+          "description": "The URL at which external client applications can access the Kafka Bridge.",
           "type": "string"
         }
       },

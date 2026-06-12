@@ -18,6 +18,13 @@
             "deadLetterSink": {
               "description": "DeadLetterSink is the sink receiving event that could not be sent to a destination.",
               "properties": {
+                "CACerts": {
+                  "type": "string"
+                },
+                "audience": {
+                  "description": "Audience is the OIDC audience for the deadLetterSink.",
+                  "type": "string"
+                },
                 "ref": {
                   "description": "Ref points to an Addressable.",
                   "properties": {
@@ -79,6 +86,17 @@
           "description": "This is the list of subscriptions for this subscribable.",
           "items": {
             "properties": {
+              "auth": {
+                "description": "Auth provides the relevant information for OIDC authentication.",
+                "properties": {
+                  "serviceAccountName": {
+                    "description": "ServiceAccountName is the name of the generated service account used for this components OIDC authentication.",
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
               "delivery": {
                 "description": "DeliverySpec contains options controlling the event delivery",
                 "properties": {
@@ -93,6 +111,13 @@
                   "deadLetterSink": {
                     "description": "DeadLetterSink is the sink receiving event that could not be sent to a destination.",
                     "properties": {
+                      "CACerts": {
+                        "type": "string"
+                      },
+                      "audience": {
+                        "description": "Audience is the OIDC audience for the deadLetterSink.",
+                        "type": "string"
+                      },
                       "ref": {
                         "description": "Ref points to an Addressable.",
                         "properties": {
@@ -139,8 +164,28 @@
                 "format": "int64",
                 "type": "integer"
               },
+              "name": {
+                "description": "The name of the subscription",
+                "type": "string"
+              },
+              "replyAudience": {
+                "description": "ReplyAudience is the OIDC audience for the replyUri.",
+                "type": "string"
+              },
+              "replyCACerts": {
+                "description": "replyCACerts is the CA certs to trust for the reply.",
+                "type": "string"
+              },
               "replyUri": {
                 "description": "ReplyURI is the endpoint for the reply",
+                "type": "string"
+              },
+              "subscriberAudience": {
+                "description": "SubscriberAudience is the OIDC audience for the subscriberUri.",
+                "type": "string"
+              },
+              "subscriberCACerts": {
+                "description": "SubscriberCACerts is the CA certs to trust for the subscriber.",
                 "type": "string"
               },
               "subscriberUri": {
@@ -166,6 +211,15 @@
       "properties": {
         "address": {
           "properties": {
+            "CACerts": {
+              "type": "string"
+            },
+            "audience": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
             "url": {
               "type": "string"
             }
@@ -175,6 +229,28 @@
           ],
           "type": "object",
           "additionalProperties": false
+        },
+        "addresses": {
+          "description": "Kafka Sink is Addressable. It exposes the endpoints as URIs to get events delivered into the Kafka topic.",
+          "items": {
+            "properties": {
+              "CACerts": {
+                "type": "string"
+              },
+              "audience": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
         },
         "annotations": {
           "description": "Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.",
@@ -242,6 +318,13 @@
           "type": "object",
           "additionalProperties": false
         },
+        "deadLetterSinkAudience": {
+          "description": "OIDC audience of the dead letter sink.",
+          "type": "string"
+        },
+        "deadLetterSinkCACerts": {
+          "type": "string"
+        },
         "deadLetterSinkUri": {
           "description": "DeadLetterSinkURI is the resolved URI of the dead letter ref if one is specified in the Spec.Delivery.",
           "type": "string"
@@ -251,10 +334,39 @@
           "format": "int64",
           "type": "integer"
         },
+        "policies": {
+          "description": "List of applied EventPolicies",
+          "items": {
+            "properties": {
+              "apiVersion": {
+                "description": "The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name of the applied EventPolicy",
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
         "subscribers": {
           "description": "This is the list of subscription's statuses for this channel.",
           "items": {
             "properties": {
+              "auth": {
+                "description": "Auth provides the relevant information for OIDC authentication.",
+                "properties": {
+                  "serviceAccountName": {
+                    "description": "ServiceAccountName is the name of the generated service account used for this components OIDC authentication.",
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
               "message": {
                 "description": "A human readable message indicating details of Ready status.",
                 "type": "string"

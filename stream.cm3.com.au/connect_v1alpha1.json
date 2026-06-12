@@ -2,11 +2,11 @@
   "description": "Connect is the Schema for the connects API",
   "properties": {
     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
       "type": "string"
     },
     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
       "type": "string"
     },
     "metadata": {
@@ -15,6 +15,11 @@
     "spec": {
       "description": "ConnectSpec defines the desired state of Connect",
       "properties": {
+        "enableRackAwareness": {
+          "default": true,
+          "description": "Defines if the KafkaConnect cluster should be rack aware.",
+          "type": "boolean"
+        },
         "kafkaCluster": {
           "default": "kafka-cluster",
           "description": "The Kafka cluster to provision topics in.",
@@ -25,13 +30,13 @@
           "properties": {
             "maxReplicas": {
               "default": 1,
-              "description": "MaxReplicas is the upper limit for the number of replicas to which the Autoscaler can scale up. It cannot be less that minReplicas.",
+              "description": "MaxReplicas is the upper limit for the number of replicas to which the Autoscaler can scale up.\nIt cannot be less that minReplicas.",
               "format": "int32",
               "type": "integer"
             },
             "minReplicas": {
-              "default": 1,
-              "description": "MinReplicas is the lower limit for the number of replicas to which the Autoscaler can scale down.",
+              "default": 0,
+              "description": "MinReplicas is the lower limit for the number of replicas to which the Autoscaler\ncan scale down.",
               "format": "int32",
               "type": "integer"
             }
@@ -57,14 +62,14 @@
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
+                  "description": "Annotations is an unstructured key value map stored with a resource that may be\nset by external tools to store and retrieve arbitrary metadata. They are not\nqueryable and should be preserved when modifying objects.\nMore info: http://kubernetes.io/docs/user-guide/annotations",
                   "type": "object"
                 },
                 "labels": {
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "description": "Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels",
+                  "description": "Map of string keys and values that can be used to organize and categorize\n(scope and select) objects. May match selectors of replication controllers\nand services.\nMore info: http://kubernetes.io/docs/user-guide/labels",
                   "type": "object"
                 }
               },
@@ -78,7 +83,7 @@
                   "description": "Authentication configuration for Kafka Connect.",
                   "properties": {
                     "accessToken": {
-                      "description": "Link to Kubernetes Secret containing the access token which was obtained from the authorization server.",
+                      "description": "Link to Kubernetes Secret containing the access token which was obtained from\nthe authorization server.",
                       "properties": {
                         "key": {
                           "description": "The key under which the secret value is stored in the Kubernetes Secret.",
@@ -97,11 +102,11 @@
                       "additionalProperties": false
                     },
                     "accessTokenIsJwt": {
-                      "description": "Configure whether access token should be treated as JWT. This should be set to `false` if the authorization server returns opaque tokens. Defaults to `true`.",
+                      "description": "Configure whether access token should be treated as JWT. This should be set to\n`false` if the authorization server returns opaque tokens. Defaults to `true`.",
                       "type": "boolean"
                     },
                     "audience": {
-                      "description": "OAuth audience to use when authenticating against the authorization server. Some authorization servers require the audience to be explicitly set. The possible values depend on how the authorization server is configured. By default, `audience` is not specified when performing the token endpoint request.",
+                      "description": "OAuth audience to use when authenticating against the authorization server.\nSome authorization servers require the audience to be explicitly set. The\npossible values depend on how the authorization server is configured. By\ndefault, `audience` is not specified when performing the token endpoint\nrequest.",
                       "type": "string"
                     },
                     "certificateAndKey": {
@@ -129,11 +134,11 @@
                       "additionalProperties": false
                     },
                     "clientId": {
-                      "description": "OAuth Client ID which the Kafka client can use to authenticate against the OAuth server and use the token endpoint URI.",
+                      "description": "OAuth Client ID which the Kafka client can use to authenticate against the\nOAuth server and use the token endpoint URI.",
                       "type": "string"
                     },
                     "clientSecret": {
-                      "description": "Link to Kubernetes Secret containing the OAuth client secret which the Kafka client can use to authenticate against the OAuth server and use the token endpoint URI.",
+                      "description": "Link to Kubernetes Secret containing the OAuth client secret which the Kafka\nclient can use to authenticate against the OAuth server and use the token\nendpoint URI.",
                       "properties": {
                         "key": {
                           "description": "The key under which the secret value is stored in the Kubernetes Secret.",
@@ -152,7 +157,7 @@
                       "additionalProperties": false
                     },
                     "connectTimeoutSeconds": {
-                      "description": "The connect timeout in seconds when connecting to authorization server. If not set, the effective connect timeout is 60 seconds.",
+                      "description": "The connect timeout in seconds when connecting to authorization server. If not\nset, the effective connect timeout is 60 seconds.",
                       "type": "integer"
                     },
                     "disableTlsHostnameVerification": {
@@ -164,15 +169,15 @@
                       "type": "boolean"
                     },
                     "httpRetries": {
-                      "description": "The maximum number of retries to attempt if an initial HTTP request fails. If not set, the default is to not attempt any retries.",
+                      "description": "The maximum number of retries to attempt if an initial HTTP request fails. If\nnot set, the default is to not attempt any retries.",
                       "type": "integer"
                     },
                     "httpRetryPauseMs": {
-                      "description": "The pause to take before retrying a failed HTTP request. If not set, the default is to not pause at all but to immediately repeat a request.",
+                      "description": "The pause to take before retrying a failed HTTP request. If not set, the\ndefault is to not pause at all but to immediately repeat a request.",
                       "type": "integer"
                     },
                     "maxTokenExpirySeconds": {
-                      "description": "Set or limit time-to-live of the access tokens to the specified number of seconds. This should be set if the authorization server returns opaque tokens.",
+                      "description": "Set or limit time-to-live of the access tokens to the specified number of\nseconds. This should be set if the authorization server returns opaque tokens.",
                       "type": "integer"
                     },
                     "passwordSecret": {
@@ -195,11 +200,11 @@
                       "additionalProperties": false
                     },
                     "readTimeoutSeconds": {
-                      "description": "The read timeout in seconds when connecting to authorization server. If not set, the effective read timeout is 60 seconds.",
+                      "description": "The read timeout in seconds when connecting to authorization server. If not\nset, the effective read timeout is 60 seconds.",
                       "type": "integer"
                     },
                     "refreshToken": {
-                      "description": "Link to Kubernetes Secret containing the refresh token which can be used to obtain access token from the authorization server.",
+                      "description": "Link to Kubernetes Secret containing the refresh token which can be used to\nobtain access token from the authorization server.",
                       "properties": {
                         "key": {
                           "description": "The key under which the secret value is stored in the Kubernetes Secret.",
@@ -218,7 +223,7 @@
                       "additionalProperties": false
                     },
                     "scope": {
-                      "description": "OAuth scope to use when authenticating against the authorization server. Some authorization servers require this to be set. The possible values depend on how authorization server is configured. By default `scope` is not specified when doing the token endpoint request.",
+                      "description": "OAuth scope to use when authenticating against the authorization server. Some\nauthorization servers require this to be set. The possible values depend on how\nauthorization server is configured. By default `scope` is not specified when\ndoing the token endpoint request.",
                       "type": "string"
                     },
                     "tlsTrustedCertificates": {
@@ -248,7 +253,7 @@
                       "type": "string"
                     },
                     "type": {
-                      "description": "Authentication type. Currently the supported types are `tls`, `scram-sha-256`, `scram-sha-512`, `plain`, and 'oauth'. `scram-sha-256` and `scram-sha-512` types use SASL SCRAM-SHA-256 and SASL SCRAM-SHA-512 Authentication, respectively. `plain` type uses SASL PLAIN Authentication. `oauth` type uses SASL OAUTHBEARER Authentication. The `tls` type uses TLS Client Authentication. The `tls` type is supported only over TLS connections.",
+                      "description": "Authentication type. Currently the supported types are `tls`, `scram-sha-256`,\n`scram-sha-512`, `plain`, and 'oauth'. `scram-sha-256` and `scram-sha-512`\ntypes use SASL SCRAM-SHA-256 and SASL SCRAM-SHA-512 Authentication,\nrespectively. `plain` type uses SASL PLAIN Authentication. `oauth` type uses\nSASL OAUTHBEARER Authentication. The `tls` type uses TLS Client Authentication.\nThe `tls` type is supported only over TLS connections.",
                       "type": "string"
                     },
                     "username": {
@@ -263,7 +268,7 @@
                   "additionalProperties": false
                 },
                 "bootstrapServers": {
-                  "description": "Bootstrap servers to connect to. This should be given as a comma separated list of _<hostname>_:_<port>_ pairs.",
+                  "description": "Bootstrap servers to connect to. This should be given as a comma separated list\nof _<hostname>_:_<port>_ pairs.",
                   "type": "string"
                 },
                 "build": {
@@ -273,7 +278,7 @@
                       "description": "Configures where should the newly built image be stored. Required.",
                       "properties": {
                         "additionalKanikoOptions": {
-                          "description": "Configures additional options which will be passed to the Kaniko executor when building the new Connect image. Allowed options are: --customPlatform, --insecure, --insecure-pull, --insecure-registry, --log-format, --log-timestamp, --registry-mirror, --reproducible, --single-snapshot, --skip-tls-verify, --skip-tls-verify-pull, --skip-tls-verify-registry, --verbosity, --snapshotMode, --use-new-run. These options will be used only on Kubernetes where the Kaniko executor is used. They will be ignored on OpenShift. The options are described in the link:https://github.com/GoogleContainerTools/kaniko[Kaniko GitHub repository^]. Changing this field does not trigger new build of the Kafka Connect image.",
+                          "description": "Configures additional options which will be passed to the Kaniko executor when\nbuilding the new Connect image. Allowed options are: --customPlatform,\n--insecure, --insecure-pull, --insecure-registry, --log-format,\n--log-timestamp, --registry-mirror, --reproducible, --single-snapshot,\n--skip-tls-verify, --skip-tls-verify-pull, --skip-tls-verify-registry,\n--verbosity, --snapshotMode, --use-new-run. These options will be used only on\nKubernetes where the Kaniko executor is used. They will be ignored on\nOpenShift. The options are described in the\nlink:https://github.com/GoogleContainerTools/kaniko[Kaniko GitHub repository^].\nChanging this field does not trigger new build of the Kafka Connect image.",
                           "items": {
                             "type": "string"
                           },
@@ -284,11 +289,11 @@
                           "type": "string"
                         },
                         "pushSecret": {
-                          "description": "Container Registry Secret with the credentials for pushing the newly built image.",
+                          "description": "Container Registry Secret with the credentials for pushing the newly built\nimage.",
                           "type": "string"
                         },
                         "type": {
-                          "description": "Output type. Must be either `docker` for pushing the newly build image to Docker compatible registry or `imagestream` for pushing the image to OpenShift ImageStream. Required.",
+                          "description": "Output type. Must be either `docker` for pushing the newly build image to\nDocker compatible registry or `imagestream` for pushing the image to OpenShift\nImageStream. Required.",
                           "type": "string"
                         }
                       },
@@ -320,23 +325,23 @@
                                   "type": "string"
                                 },
                                 "insecure": {
-                                  "description": "By default, connections using TLS are verified to check they are secure. The server certificate used must be valid, trusted, and contain the server name. By setting this option to `true`, all TLS verification is disabled and the artifact will be downloaded, even when the server is considered insecure.",
+                                  "description": "By default, connections using TLS are verified to check they are secure. The\nserver certificate used must be valid, trusted, and contain the server name. By\nsetting this option to `true`, all TLS verification is disabled and the\nartifact will be downloaded, even when the server is considered insecure.",
                                   "type": "boolean"
                                 },
                                 "repository": {
-                                  "description": "Maven repository to download the artifact from. Applicable to the `maven` artifact type only.",
+                                  "description": "Maven repository to download the artifact from. Applicable to the `maven`\nartifact type only.",
                                   "type": "string"
                                 },
                                 "sha512sum": {
-                                  "description": "SHA512 checksum of the artifact. Optional. If specified, the checksum will be verified while building the new container. If not specified, the downloaded artifact will not be verified. Not applicable to the `maven` artifact type.",
+                                  "description": "SHA512 checksum of the artifact. Optional. If specified, the checksum will be\nverified while building the new container. If not specified, the downloaded\nartifact will not be verified. Not applicable to the `maven` artifact type.",
                                   "type": "string"
                                 },
                                 "type": {
-                                  "description": "Artifact type. Currently, the supported artifact types are `tgz`, `jar`, `zip`, `other` and `maven`.",
+                                  "description": "Artifact type. Currently, the supported artifact types are `tgz`, `jar`, `zip`,\n`other` and `maven`.",
                                   "type": "string"
                                 },
                                 "url": {
-                                  "description": "URL of the artifact which will be downloaded. Strimzi does not do any security scanning of the downloaded artifacts. For security reasons, you should first verify the artifacts manually and configure the checksum verification to make sure the same artifact is used in the automated build. Required for `jar`, `zip`, `tgz` and `other` artifacts. Not applicable to the `maven` artifact type.",
+                                  "description": "URL of the artifact which will be downloaded. Strimzi does not do any security\nscanning of the downloaded artifacts. For security reasons, you should first\nverify the artifacts manually and configure the checksum verification to make\nsure the same artifact is used in the automated build. Required for `jar`,\n`zip`, `tgz` and `other` artifacts. Not applicable to the `maven` artifact\ntype.",
                                   "type": "string"
                                 },
                                 "version": {
@@ -353,7 +358,7 @@
                             "type": "array"
                           },
                           "name": {
-                            "description": "The unique name of the connector plugin. Will be used to generate the path where the connector artifacts will be stored. The name has to be unique within the KafkaConnect resource. The name has to follow the following pattern: `^[a-z][-_a-z0-9]*[a-z]$`. Required.",
+                            "description": "The unique name of the connector plugin. Will be used to generate the path\nwhere the connector artifacts will be stored. The name has to be unique within\nthe KafkaConnect resource. The name has to follow the following pattern:\n`^[a-z][-_a-z0-9]*[a-z]$`. Required.",
                             "type": "string"
                           }
                         },
@@ -394,22 +399,22 @@
                   "type": "string"
                 },
                 "config": {
-                  "description": "The Kafka Connect configuration. Properties with the following prefixes cannot be set: ssl., sasl., security., listeners, plugin.path, rest., bootstrap.servers, consumer.interceptor.classes, producer.interceptor.classes (with the exception of: ssl.endpoint.identification.algorithm, ssl.cipher.suites, ssl.protocol, ssl.enabled.protocols).",
+                  "description": "The Kafka Connect configuration. Properties with the following prefixes cannot\nbe set: ssl., sasl., security., listeners, plugin.path, rest.,\nbootstrap.servers, consumer.interceptor.classes, producer.interceptor.classes\n(with the exception of: ssl.endpoint.identification.algorithm,\nssl.cipher.suites, ssl.protocol, ssl.enabled.protocols).",
                   "x-kubernetes-preserve-unknown-fields": true
                 },
                 "externalConfiguration": {
-                  "description": "Pass data from Secrets or ConfigMaps to the Kafka Connect pods and use them to configure connectors.",
+                  "description": "Pass data from Secrets or ConfigMaps to the Kafka Connect pods and use them to\nconfigure connectors.",
                   "properties": {
                     "env": {
-                      "description": "Makes data from a Secret or ConfigMap available in the Kafka Connect pods as environment variables.",
+                      "description": "Makes data from a Secret or ConfigMap available in the Kafka Connect pods as\nenvironment variables.",
                       "items": {
                         "properties": {
                           "name": {
-                            "description": "Name of the environment variable which will be passed to the Kafka Connect pods. The name of the environment variable cannot start with `KAFKA_` or `STRIMZI_`.",
+                            "description": "Name of the environment variable which will be passed to the Kafka Connect\npods. The name of the environment variable cannot start with `KAFKA_` or\n`STRIMZI_`.",
                             "type": "string"
                           },
                           "valueFrom": {
-                            "description": "Value of the environment variable which will be passed to the Kafka Connect pods. It can be passed either as a reference to Secret or ConfigMap field. The field has to specify exactly one Secret or ConfigMap.",
+                            "description": "Value of the environment variable which will be passed to the Kafka Connect\npods. It can be passed either as a reference to Secret or ConfigMap field. The\nfield has to specify exactly one Secret or ConfigMap.",
                             "properties": {
                               "configMapKeyRef": {
                                 "description": "Reference to a key in a ConfigMap.",
@@ -464,11 +469,11 @@
                       "type": "array"
                     },
                     "volumes": {
-                      "description": "Makes data from a Secret or ConfigMap available in the Kafka Connect pods as volumes.",
+                      "description": "Makes data from a Secret or ConfigMap available in the Kafka Connect pods as\nvolumes.",
                       "items": {
                         "properties": {
                           "configMap": {
-                            "description": "Reference to a key in a ConfigMap. Exactly one Secret or ConfigMap has to be specified.",
+                            "description": "Reference to a key in a ConfigMap. Exactly one Secret or ConfigMap has to be\nspecified.",
                             "properties": {
                               "defaultMode": {
                                 "description": "DefaultMode corresponds to the JSON schema field \"defaultMode\".",
@@ -513,7 +518,7 @@
                             "type": "string"
                           },
                           "secret": {
-                            "description": "Reference to a key in a Secret. Exactly one Secret or ConfigMap has to be specified.",
+                            "description": "Reference to a key in a Secret. Exactly one Secret or ConfigMap has to be\nspecified.",
                             "properties": {
                               "defaultMode": {
                                 "description": "DefaultMode corresponds to the JSON schema field \"defaultMode\".",
@@ -577,7 +582,7 @@
                       "description": "Authentication configuration for connecting to the JMX port.",
                       "properties": {
                         "type": {
-                          "description": "Authentication type. Currently the only supported types are `password`.`password` type creates a username and protected port with no TLS.",
+                          "description": "Authentication type. Currently the only supported types are\n`password`.`password` type creates a username and protected port with no TLS.",
                           "type": "string"
                         }
                       },
@@ -607,11 +612,11 @@
                       "type": "string"
                     },
                     "gcLoggingEnabled": {
-                      "description": "Specifies whether the Garbage Collection logging is enabled. The default is false.",
+                      "description": "Specifies whether the Garbage Collection logging is enabled. The default is\nfalse.",
                       "type": "boolean"
                     },
                     "javaSystemProperties": {
-                      "description": "A map of additional system properties which will be passed using the `-D` option to the JVM.",
+                      "description": "A map of additional system properties which will be passed using the `-D`\noption to the JVM.",
                       "items": {
                         "properties": {
                           "name": {
@@ -636,23 +641,23 @@
                   "description": "Pod liveness checking.",
                   "properties": {
                     "failureThreshold": {
-                      "description": "Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
+                      "description": "Minimum consecutive failures for the probe to be considered failed after having\nsucceeded. Defaults to 3. Minimum value is 1.",
                       "type": "integer"
                     },
                     "initialDelaySeconds": {
-                      "description": "The initial delay before first the health is first checked. Default to 15 seconds. Minimum value is 0.",
+                      "description": "The initial delay before first the health is first checked. Default to 15\nseconds. Minimum value is 0.",
                       "type": "integer"
                     },
                     "periodSeconds": {
-                      "description": "How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1.",
+                      "description": "How often (in seconds) to perform the probe. Default to 10 seconds. Minimum\nvalue is 1.",
                       "type": "integer"
                     },
                     "successThreshold": {
-                      "description": "Minimum consecutive successes for the probe to be considered successful after having failed. Defaults to 1. Must be 1 for liveness. Minimum value is 1.",
+                      "description": "Minimum consecutive successes for the probe to be considered successful after\nhaving failed. Defaults to 1. Must be 1 for liveness. Minimum value is 1.",
                       "type": "integer"
                     },
                     "timeoutSeconds": {
-                      "description": "The timeout for each attempted health check. Default to 5 seconds. Minimum value is 1.",
+                      "description": "The timeout for each attempted health check. Default to 5 seconds. Minimum\nvalue is 1.",
                       "type": "integer"
                     }
                   },
@@ -711,7 +716,7 @@
                       "type": "string"
                     },
                     "valueFrom": {
-                      "description": "ConfigMap entry where the Prometheus JMX Exporter configuration is stored. For details of the structure of this configuration, see the {JMXExporter}.",
+                      "description": "ConfigMap entry where the Prometheus JMX Exporter configuration is stored. For\ndetails of the structure of this configuration, see the {JMXExporter}.",
                       "properties": {
                         "configMapKeyRef": {
                           "description": "Reference to the key in the ConfigMap containing the configuration.",
@@ -745,10 +750,10 @@
                   "additionalProperties": false
                 },
                 "rack": {
-                  "description": "Configuration of the node label which will be used as the `client.rack` consumer configuration.",
+                  "description": "Configuration of the node label which will be used as the `client.rack`\nconsumer configuration.",
                   "properties": {
                     "topologyKey": {
-                      "description": "A key that matches labels assigned to the Kubernetes cluster nodes. The value of the label is used to set a broker's `broker.rack` config, and the `client.rack` config for Kafka Connect or MirrorMaker 2.0.",
+                      "description": "A key that matches labels assigned to the Kubernetes cluster nodes. The value\nof the label is used to set a broker's `broker.rack` config, and the\n`client.rack` config for Kafka Connect or MirrorMaker 2.0.",
                       "type": "string"
                     }
                   },
@@ -762,23 +767,23 @@
                   "description": "Pod readiness checking.",
                   "properties": {
                     "failureThreshold": {
-                      "description": "Minimum consecutive failures for the probe to be considered failed after having succeeded. Defaults to 3. Minimum value is 1.",
+                      "description": "Minimum consecutive failures for the probe to be considered failed after having\nsucceeded. Defaults to 3. Minimum value is 1.",
                       "type": "integer"
                     },
                     "initialDelaySeconds": {
-                      "description": "The initial delay before first the health is first checked. Default to 15 seconds. Minimum value is 0.",
+                      "description": "The initial delay before first the health is first checked. Default to 15\nseconds. Minimum value is 0.",
                       "type": "integer"
                     },
                     "periodSeconds": {
-                      "description": "How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1.",
+                      "description": "How often (in seconds) to perform the probe. Default to 10 seconds. Minimum\nvalue is 1.",
                       "type": "integer"
                     },
                     "successThreshold": {
-                      "description": "Minimum consecutive successes for the probe to be considered successful after having failed. Defaults to 1. Must be 1 for liveness. Minimum value is 1.",
+                      "description": "Minimum consecutive successes for the probe to be considered successful after\nhaving failed. Defaults to 1. Must be 1 for liveness. Minimum value is 1.",
                       "type": "integer"
                     },
                     "timeoutSeconds": {
-                      "description": "The timeout for each attempted health check. Default to 5 seconds. Minimum value is 1.",
+                      "description": "The timeout for each attempted health check. Default to 5 seconds. Minimum\nvalue is 1.",
                       "type": "integer"
                     }
                   },
@@ -790,7 +795,7 @@
                   "type": "integer"
                 },
                 "resources": {
-                  "description": "The maximum limits for CPU and memory resources and the requested initial resources.",
+                  "description": "The maximum limits for CPU and memory resources and the requested initial\nresources.",
                   "properties": {
                     "limits": {
                       "description": "Limits corresponds to the JSON schema field \"limits\".",
@@ -805,31 +810,31 @@
                   "additionalProperties": false
                 },
                 "template": {
-                  "description": "Template for Kafka Connect and Kafka Mirror Maker 2 resources. The template allows users to specify how the `Deployment`, `Pods` and `Service` are generated.",
+                  "description": "Template for Kafka Connect and Kafka Mirror Maker 2 resources. The template\nallows users to specify how the `Deployment`, `Pods` and `Service` are\ngenerated.",
                   "properties": {
                     "apiService": {
                       "description": "Template for Kafka Connect API `Service`.",
                       "properties": {
                         "ipFamilies": {
-                          "description": "Specifies the IP Families used by the service. Available options are `IPv4` and `IPv6. If unspecified, Kubernetes will choose the default value based on the `ipFamilyPolicy` setting. Available on Kubernetes 1.20 and newer.",
+                          "description": "Specifies the IP Families used by the service. Available options are `IPv4` and\n`IPv6. If unspecified, Kubernetes will choose the default value based on the\n`ipFamilyPolicy` setting. Available on Kubernetes 1.20 and newer.",
                           "items": {
                             "type": "string"
                           },
                           "type": "array"
                         },
                         "ipFamilyPolicy": {
-                          "description": "Specifies the IP Family Policy used by the service. Available options are `SingleStack`, `PreferDualStack` and `RequireDualStack`. `SingleStack` is for a single IP family. `PreferDualStack` is for two IP families on dual-stack configured clusters or a single IP family on single-stack clusters. `RequireDualStack` fails unless there are two IP families on dual-stack configured clusters. If unspecified, Kubernetes will choose the default value based on the service type. Available on Kubernetes 1.20 and newer.",
+                          "description": "Specifies the IP Family Policy used by the service. Available options are\n`SingleStack`, `PreferDualStack` and `RequireDualStack`. `SingleStack` is for a\nsingle IP family. `PreferDualStack` is for two IP families on dual-stack\nconfigured clusters or a single IP family on single-stack clusters.\n`RequireDualStack` fails unless there are two IP families on dual-stack\nconfigured clusters. If unspecified, Kubernetes will choose the default value\nbased on the service type. Available on Kubernetes 1.20 and newer.",
                           "type": "string"
                         },
                         "metadata": {
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -841,17 +846,17 @@
                       "additionalProperties": false
                     },
                     "buildConfig": {
-                      "description": "Template for the Kafka Connect BuildConfig used to build new container images. The BuildConfig is used only on OpenShift.",
+                      "description": "Template for the Kafka Connect BuildConfig used to build new container images.\nThe BuildConfig is used only on OpenShift.",
                       "properties": {
                         "metadata": {
                           "description": "Metadata to apply to the `PodDisruptionBudgetTemplate` resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -867,7 +872,7 @@
                       "additionalProperties": false
                     },
                     "buildContainer": {
-                      "description": "Template for the Kafka Connect Build container. The build container is used only on Kubernetes.",
+                      "description": "Template for the Kafka Connect Build container. The build container is used\nonly on Kubernetes.",
                       "properties": {
                         "env": {
                           "description": "Environment variables which should be applied to the container.",
@@ -891,7 +896,7 @@
                           "description": "Security context for the container.",
                           "properties": {
                             "allowPrivilegeEscalation": {
-                              "description": "AllowPrivilegeEscalation corresponds to the JSON schema field \"allowPrivilegeEscalation\".",
+                              "description": "AllowPrivilegeEscalation corresponds to the JSON schema field\n\"allowPrivilegeEscalation\".",
                               "type": "boolean"
                             },
                             "capabilities": {
@@ -924,7 +929,7 @@
                               "type": "string"
                             },
                             "readOnlyRootFilesystem": {
-                              "description": "ReadOnlyRootFilesystem corresponds to the JSON schema field \"readOnlyRootFilesystem\".",
+                              "description": "ReadOnlyRootFilesystem corresponds to the JSON schema field\n\"readOnlyRootFilesystem\".",
                               "type": "boolean"
                             },
                             "runAsGroup": {
@@ -985,7 +990,7 @@
                                   "type": "string"
                                 },
                                 "gmsaCredentialSpecName": {
-                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field \"gmsaCredentialSpecName\".",
+                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field\n\"gmsaCredentialSpecName\".",
                                   "type": "string"
                                 },
                                 "hostProcess": {
@@ -1009,7 +1014,7 @@
                       "additionalProperties": false
                     },
                     "buildPod": {
-                      "description": "Template for Kafka Connect Build `Pods`. The build pod is used only on Kubernetes.",
+                      "description": "Template for Kafka Connect Build `Pods`. The build pod is used only on\nKubernetes.",
                       "properties": {
                         "affinity": {
                           "description": "The pod's affinity rules.",
@@ -1018,7 +1023,7 @@
                               "description": "NodeAffinity corresponds to the JSON schema field \"nodeAffinity\".",
                               "properties": {
                                 "preferredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"preferredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"preferredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "preference": {
@@ -1089,7 +1094,7 @@
                                   "type": "array"
                                 },
                                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"requiredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"requiredDuringSchedulingIgnoredDuringExecution\".",
                                   "properties": {
                                     "nodeSelectorTerms": {
                                       "description": "NodeSelectorTerms corresponds to the JSON schema field \"nodeSelectorTerms\".",
@@ -1163,7 +1168,7 @@
                               "description": "PodAffinity corresponds to the JSON schema field \"podAffinity\".",
                               "properties": {
                                 "preferredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"preferredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"preferredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "podAffinityTerm": {
@@ -1267,7 +1272,7 @@
                                   "type": "array"
                                 },
                                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"requiredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"requiredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "labelSelector": {
@@ -1367,7 +1372,7 @@
                               "description": "PodAntiAffinity corresponds to the JSON schema field \"podAntiAffinity\".",
                               "properties": {
                                 "preferredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"preferredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"preferredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "podAffinityTerm": {
@@ -1471,7 +1476,7 @@
                                   "type": "array"
                                 },
                                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"requiredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"requiredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "labelSelector": {
@@ -1572,11 +1577,11 @@
                           "additionalProperties": false
                         },
                         "enableServiceLinks": {
-                          "description": "Indicates whether information about services should be injected into Pod's environment variables.",
+                          "description": "Indicates whether information about services should be injected into Pod's\nenvironment variables.",
                           "type": "boolean"
                         },
                         "hostAliases": {
-                          "description": "The pod's HostAliases. HostAliases is an optional list of hosts and IPs that will be injected into the Pod's hosts file if specified.",
+                          "description": "The pod's HostAliases. HostAliases is an optional list of hosts and IPs that\nwill be injected into the Pod's hosts file if specified.",
                           "items": {
                             "properties": {
                               "hostnames": {
@@ -1597,7 +1602,7 @@
                           "type": "array"
                         },
                         "imagePullSecrets": {
-                          "description": "List of references to secrets in the same namespace to use for pulling any of the images used by this Pod. When the `STRIMZI_IMAGE_PULL_SECRETS` environment variable in Cluster Operator and the `imagePullSecrets` option are specified, only the `imagePullSecrets` variable is used and the `STRIMZI_IMAGE_PULL_SECRETS` variable is ignored.",
+                          "description": "List of references to secrets in the same namespace to use for pulling any of\nthe images used by this Pod. When the `STRIMZI_IMAGE_PULL_SECRETS` environment\nvariable in Cluster Operator and the `imagePullSecrets` option are specified,\nonly the `imagePullSecrets` variable is used and the\n`STRIMZI_IMAGE_PULL_SECRETS` variable is ignored.",
                           "items": {
                             "properties": {
                               "name": {
@@ -1614,11 +1619,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -1626,11 +1631,11 @@
                           "additionalProperties": false
                         },
                         "priorityClassName": {
-                          "description": "The name of the priority class used to assign priority to the pods. For more information about priority classes, see {K8sPriorityClass}.",
+                          "description": "The name of the priority class used to assign priority to the pods. For more\ninformation about priority classes, see {K8sPriorityClass}.",
                           "type": "string"
                         },
                         "schedulerName": {
-                          "description": "The name of the scheduler used to dispatch this `Pod`. If not specified, the default scheduler will be used.",
+                          "description": "The name of the scheduler used to dispatch this `Pod`. If not specified, the\ndefault scheduler will be used.",
                           "type": "string"
                         },
                         "securityContext": {
@@ -1727,7 +1732,7 @@
                                   "type": "string"
                                 },
                                 "gmsaCredentialSpecName": {
-                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field \"gmsaCredentialSpecName\".",
+                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field\n\"gmsaCredentialSpecName\".",
                                   "type": "string"
                                 },
                                 "hostProcess": {
@@ -1747,11 +1752,11 @@
                           "additionalProperties": false
                         },
                         "terminationGracePeriodSeconds": {
-                          "description": "The grace period is the duration in seconds after the processes running in the pod are sent a termination signal, and the time when the processes are forcibly halted with a kill signal. Set this value to longer than the expected cleanup time for your process. Value must be a non-negative integer. A zero value indicates delete immediately. You might need to increase the grace period for very large Kafka clusters, so that the Kafka brokers have enough time to transfer their work to another broker before they are terminated. Defaults to 30 seconds.",
+                          "description": "The grace period is the duration in seconds after the processes running in the\npod are sent a termination signal, and the time when the processes are forcibly\nhalted with a kill signal. Set this value to longer than the expected cleanup\ntime for your process. Value must be a non-negative integer. A zero value\nindicates delete immediately. You might need to increase the grace period for\nvery large Kafka clusters, so that the Kafka brokers have enough time to\ntransfer their work to another broker before they are terminated. Defaults to\n30 seconds.",
                           "type": "integer"
                         },
                         "tmpDirSizeLimit": {
-                          "description": "Defines the total amount (for example `1Gi`) of local storage required for temporary EmptyDir volume (`/tmp`). Default value is `5Mi`.",
+                          "description": "Defines the total amount (for example `1Gi`) of local storage required for\ntemporary EmptyDir volume (`/tmp`). Default value is `5Mi`.",
                           "type": "string"
                         },
                         "tolerations": {
@@ -1872,11 +1877,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -1894,11 +1899,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -1934,7 +1939,7 @@
                           "description": "Security context for the container.",
                           "properties": {
                             "allowPrivilegeEscalation": {
-                              "description": "AllowPrivilegeEscalation corresponds to the JSON schema field \"allowPrivilegeEscalation\".",
+                              "description": "AllowPrivilegeEscalation corresponds to the JSON schema field\n\"allowPrivilegeEscalation\".",
                               "type": "boolean"
                             },
                             "capabilities": {
@@ -1967,7 +1972,7 @@
                               "type": "string"
                             },
                             "readOnlyRootFilesystem": {
-                              "description": "ReadOnlyRootFilesystem corresponds to the JSON schema field \"readOnlyRootFilesystem\".",
+                              "description": "ReadOnlyRootFilesystem corresponds to the JSON schema field\n\"readOnlyRootFilesystem\".",
                               "type": "boolean"
                             },
                             "runAsGroup": {
@@ -2028,7 +2033,7 @@
                                   "type": "string"
                                 },
                                 "gmsaCredentialSpecName": {
-                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field \"gmsaCredentialSpecName\".",
+                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field\n\"gmsaCredentialSpecName\".",
                                   "type": "string"
                                 },
                                 "hostProcess": {
@@ -2055,18 +2060,18 @@
                       "description": "Template for Kafka Connect `Deployment`.",
                       "properties": {
                         "deploymentStrategy": {
-                          "description": "Pod replacement strategy for deployment configuration changes. Valid values are `RollingUpdate` and `Recreate`. Defaults to `RollingUpdate`.",
+                          "description": "Pod replacement strategy for deployment configuration changes. Valid values are\n`RollingUpdate` and `Recreate`. Defaults to `RollingUpdate`.",
                           "type": "string"
                         },
                         "metadata": {
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -2081,25 +2086,25 @@
                       "description": "Template for Kafka Connect headless `Service`.",
                       "properties": {
                         "ipFamilies": {
-                          "description": "Specifies the IP Families used by the service. Available options are `IPv4` and `IPv6. If unspecified, Kubernetes will choose the default value based on the `ipFamilyPolicy` setting. Available on Kubernetes 1.20 and newer.",
+                          "description": "Specifies the IP Families used by the service. Available options are `IPv4` and\n`IPv6. If unspecified, Kubernetes will choose the default value based on the\n`ipFamilyPolicy` setting. Available on Kubernetes 1.20 and newer.",
                           "items": {
                             "type": "string"
                           },
                           "type": "array"
                         },
                         "ipFamilyPolicy": {
-                          "description": "Specifies the IP Family Policy used by the service. Available options are `SingleStack`, `PreferDualStack` and `RequireDualStack`. `SingleStack` is for a single IP family. `PreferDualStack` is for two IP families on dual-stack configured clusters or a single IP family on single-stack clusters. `RequireDualStack` fails unless there are two IP families on dual-stack configured clusters. If unspecified, Kubernetes will choose the default value based on the service type. Available on Kubernetes 1.20 and newer.",
+                          "description": "Specifies the IP Family Policy used by the service. Available options are\n`SingleStack`, `PreferDualStack` and `RequireDualStack`. `SingleStack` is for a\nsingle IP family. `PreferDualStack` is for two IP families on dual-stack\nconfigured clusters or a single IP family on single-stack clusters.\n`RequireDualStack` fails unless there are two IP families on dual-stack\nconfigured clusters. If unspecified, Kubernetes will choose the default value\nbased on the service type. Available on Kubernetes 1.20 and newer.",
                           "type": "string"
                         },
                         "metadata": {
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -2135,7 +2140,7 @@
                           "description": "Security context for the container.",
                           "properties": {
                             "allowPrivilegeEscalation": {
-                              "description": "AllowPrivilegeEscalation corresponds to the JSON schema field \"allowPrivilegeEscalation\".",
+                              "description": "AllowPrivilegeEscalation corresponds to the JSON schema field\n\"allowPrivilegeEscalation\".",
                               "type": "boolean"
                             },
                             "capabilities": {
@@ -2168,7 +2173,7 @@
                               "type": "string"
                             },
                             "readOnlyRootFilesystem": {
-                              "description": "ReadOnlyRootFilesystem corresponds to the JSON schema field \"readOnlyRootFilesystem\".",
+                              "description": "ReadOnlyRootFilesystem corresponds to the JSON schema field\n\"readOnlyRootFilesystem\".",
                               "type": "boolean"
                             },
                             "runAsGroup": {
@@ -2229,7 +2234,7 @@
                                   "type": "string"
                                 },
                                 "gmsaCredentialSpecName": {
-                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field \"gmsaCredentialSpecName\".",
+                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field\n\"gmsaCredentialSpecName\".",
                                   "type": "string"
                                 },
                                 "hostProcess": {
@@ -2259,11 +2264,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -2284,7 +2289,7 @@
                               "description": "NodeAffinity corresponds to the JSON schema field \"nodeAffinity\".",
                               "properties": {
                                 "preferredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"preferredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"preferredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "preference": {
@@ -2355,7 +2360,7 @@
                                   "type": "array"
                                 },
                                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"requiredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"requiredDuringSchedulingIgnoredDuringExecution\".",
                                   "properties": {
                                     "nodeSelectorTerms": {
                                       "description": "NodeSelectorTerms corresponds to the JSON schema field \"nodeSelectorTerms\".",
@@ -2429,7 +2434,7 @@
                               "description": "PodAffinity corresponds to the JSON schema field \"podAffinity\".",
                               "properties": {
                                 "preferredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"preferredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"preferredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "podAffinityTerm": {
@@ -2533,7 +2538,7 @@
                                   "type": "array"
                                 },
                                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"requiredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"requiredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "labelSelector": {
@@ -2633,7 +2638,7 @@
                               "description": "PodAntiAffinity corresponds to the JSON schema field \"podAntiAffinity\".",
                               "properties": {
                                 "preferredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"preferredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "PreferredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"preferredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "podAffinityTerm": {
@@ -2737,7 +2742,7 @@
                                   "type": "array"
                                 },
                                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema field \"requiredDuringSchedulingIgnoredDuringExecution\".",
+                                  "description": "RequiredDuringSchedulingIgnoredDuringExecution corresponds to the JSON schema\nfield \"requiredDuringSchedulingIgnoredDuringExecution\".",
                                   "items": {
                                     "properties": {
                                       "labelSelector": {
@@ -2838,11 +2843,11 @@
                           "additionalProperties": false
                         },
                         "enableServiceLinks": {
-                          "description": "Indicates whether information about services should be injected into Pod's environment variables.",
+                          "description": "Indicates whether information about services should be injected into Pod's\nenvironment variables.",
                           "type": "boolean"
                         },
                         "hostAliases": {
-                          "description": "The pod's HostAliases. HostAliases is an optional list of hosts and IPs that will be injected into the Pod's hosts file if specified.",
+                          "description": "The pod's HostAliases. HostAliases is an optional list of hosts and IPs that\nwill be injected into the Pod's hosts file if specified.",
                           "items": {
                             "properties": {
                               "hostnames": {
@@ -2863,7 +2868,7 @@
                           "type": "array"
                         },
                         "imagePullSecrets": {
-                          "description": "List of references to secrets in the same namespace to use for pulling any of the images used by this Pod. When the `STRIMZI_IMAGE_PULL_SECRETS` environment variable in Cluster Operator and the `imagePullSecrets` option are specified, only the `imagePullSecrets` variable is used and the `STRIMZI_IMAGE_PULL_SECRETS` variable is ignored.",
+                          "description": "List of references to secrets in the same namespace to use for pulling any of\nthe images used by this Pod. When the `STRIMZI_IMAGE_PULL_SECRETS` environment\nvariable in Cluster Operator and the `imagePullSecrets` option are specified,\nonly the `imagePullSecrets` variable is used and the\n`STRIMZI_IMAGE_PULL_SECRETS` variable is ignored.",
                           "items": {
                             "properties": {
                               "name": {
@@ -2880,11 +2885,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -2892,11 +2897,11 @@
                           "additionalProperties": false
                         },
                         "priorityClassName": {
-                          "description": "The name of the priority class used to assign priority to the pods. For more information about priority classes, see {K8sPriorityClass}.",
+                          "description": "The name of the priority class used to assign priority to the pods. For more\ninformation about priority classes, see {K8sPriorityClass}.",
                           "type": "string"
                         },
                         "schedulerName": {
-                          "description": "The name of the scheduler used to dispatch this `Pod`. If not specified, the default scheduler will be used.",
+                          "description": "The name of the scheduler used to dispatch this `Pod`. If not specified, the\ndefault scheduler will be used.",
                           "type": "string"
                         },
                         "securityContext": {
@@ -2993,7 +2998,7 @@
                                   "type": "string"
                                 },
                                 "gmsaCredentialSpecName": {
-                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field \"gmsaCredentialSpecName\".",
+                                  "description": "GmsaCredentialSpecName corresponds to the JSON schema field\n\"gmsaCredentialSpecName\".",
                                   "type": "string"
                                 },
                                 "hostProcess": {
@@ -3013,11 +3018,11 @@
                           "additionalProperties": false
                         },
                         "terminationGracePeriodSeconds": {
-                          "description": "The grace period is the duration in seconds after the processes running in the pod are sent a termination signal, and the time when the processes are forcibly halted with a kill signal. Set this value to longer than the expected cleanup time for your process. Value must be a non-negative integer. A zero value indicates delete immediately. You might need to increase the grace period for very large Kafka clusters, so that the Kafka brokers have enough time to transfer their work to another broker before they are terminated. Defaults to 30 seconds.",
+                          "description": "The grace period is the duration in seconds after the processes running in the\npod are sent a termination signal, and the time when the processes are forcibly\nhalted with a kill signal. Set this value to longer than the expected cleanup\ntime for your process. Value must be a non-negative integer. A zero value\nindicates delete immediately. You might need to increase the grace period for\nvery large Kafka clusters, so that the Kafka brokers have enough time to\ntransfer their work to another broker before they are terminated. Defaults to\n30 seconds.",
                           "type": "integer"
                         },
                         "tmpDirSizeLimit": {
-                          "description": "Defines the total amount (for example `1Gi`) of local storage required for temporary EmptyDir volume (`/tmp`). Default value is `5Mi`.",
+                          "description": "Defines the total amount (for example `1Gi`) of local storage required for\ntemporary EmptyDir volume (`/tmp`). Default value is `5Mi`.",
                           "type": "string"
                         },
                         "tolerations": {
@@ -3135,18 +3140,18 @@
                       "description": "Template for Kafka Connect `PodDisruptionBudget`.",
                       "properties": {
                         "maxUnavailable": {
-                          "description": "Maximum number of unavailable pods to allow automatic Pod eviction. A Pod eviction is allowed when the `maxUnavailable` number of pods or fewer are unavailable after the eviction. Setting this value to 0 prevents all voluntary evictions, so the pods must be evicted manually. Defaults to 1.",
+                          "description": "Maximum number of unavailable pods to allow automatic Pod eviction. A Pod\neviction is allowed when the `maxUnavailable` number of pods or fewer are\nunavailable after the eviction. Setting this value to 0 prevents all voluntary\nevictions, so the pods must be evicted manually. Defaults to 1.",
                           "type": "integer"
                         },
                         "metadata": {
                           "description": "Metadata to apply to the `PodDisruptionBudgetTemplate` resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -3164,11 +3169,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -3186,11 +3191,11 @@
                           "description": "Metadata applied to the resource.",
                           "properties": {
                             "annotations": {
-                              "description": "Annotations added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Annotations added to the resource template. Can be applied to different\nresources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             },
                             "labels": {
-                              "description": "Labels added to the resource template. Can be applied to different resources such as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
+                              "description": "Labels added to the resource template. Can be applied to different resources\nsuch as `StatefulSets`, `Deployments`, `Pods`, and `Services`.",
                               "x-kubernetes-preserve-unknown-fields": true
                             }
                           },
@@ -3238,7 +3243,7 @@
                   "description": "The configuration of tracing in Kafka Connect.",
                   "properties": {
                     "type": {
-                      "description": "Type of the tracing used. Currently the only supported types are `jaeger` for OpenTracing (Jaeger) tracing and `opentelemetry` for OpenTelemetry tracing. The OpenTracing (Jaeger) tracing is deprecated.",
+                      "description": "Type of the tracing used. Currently the only supported types are `jaeger` for\nOpenTracing (Jaeger) tracing and `opentelemetry` for OpenTelemetry tracing. The\nOpenTracing (Jaeger) tracing is deprecated.",
                       "type": "string"
                     }
                   },
@@ -3249,7 +3254,7 @@
                   "additionalProperties": false
                 },
                 "version": {
-                  "description": "The Kafka Connect version. Defaults to {DefaultKafkaVersion}. Consult the user documentation to understand the process required to upgrade or downgrade the version.",
+                  "description": "The Kafka Connect version. Defaults to {DefaultKafkaVersion}. Consult the user\ndocumentation to understand the process required to upgrade or downgrade the\nversion.",
                   "type": "string"
                 }
               },
@@ -3266,7 +3271,7 @@
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "description": "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations",
+                  "description": "Annotations is an unstructured key value map stored with a resource that may be\nset by external tools to store and retrieve arbitrary metadata. They are not\nqueryable and should be preserved when modifying objects.\nMore info: http://kubernetes.io/docs/user-guide/annotations",
                   "type": "object"
                 },
                 "config": {
@@ -3281,7 +3286,7 @@
                   "additionalProperties": {
                     "type": "string"
                   },
-                  "description": "Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels",
+                  "description": "Map of string keys and values that can be used to organize and categorize\n(scope and select) objects. May match selectors of replication controllers\nand services.\nMore info: http://kubernetes.io/docs/user-guide/labels",
                   "type": "object"
                 },
                 "namespace": {
@@ -3291,12 +3296,12 @@
                   "type": "string"
                 },
                 "partitions": {
-                  "description": "The number of partitions the topic should have. This cannot be decreased after topic creation. It can be increased after topic creation, but it is important to understand the consequences that has, especially for topics with semantic partitioning. When absent this will default to the broker configuration for `num.partitions`.",
+                  "description": "The number of partitions the topic should have. This cannot be decreased after\ntopic creation. It can be increased after topic creation, but it is important\nto understand the consequences that has, especially for topics with semantic\npartitioning. When absent this will default to the broker configuration for\n`num.partitions`.",
                   "format": "int32",
                   "type": "integer"
                 },
                 "replicas": {
-                  "description": "The number of replicas the topic should have. When absent this will default to the broker configuration for `default.replication.factor`.",
+                  "description": "The number of replicas the topic should have. When absent this will default to\nthe broker configuration for `default.replication.factor`.",
                   "format": "int32",
                   "type": "integer"
                 }
@@ -3321,28 +3326,28 @@
           "type": "integer"
         },
         "conditions": {
-          "description": "Conditions represents the observations of Connects current state. Known .status.conditions.type are: \"Ready\" and \"Degraded\"",
+          "description": "Conditions represents the observations of Connects current state.\nKnown .status.conditions.type are: \"Ready\" and \"Degraded\"",
           "items": {
-            "description": "Condition contains details for one aspect of the current state of this API Resource. --- This struct is intended for direct use as an array at the field path .status.conditions.  For example, \n type FooStatus struct{ // Represents the observations of a foo's current state. // Known .status.conditions.type are: \"Available\", \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge // +listType=map // +listMapKey=type Conditions []metav1.Condition `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"` \n // other fields }",
+            "description": "Condition contains details for one aspect of the current state of this API Resource.",
             "properties": {
               "lastTransitionTime": {
-                "description": "lastTransitionTime is the last time the condition transitioned from one status to another. This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
+                "description": "lastTransitionTime is the last time the condition transitioned from one status to another.\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
                 "format": "date-time",
                 "type": "string"
               },
               "message": {
-                "description": "message is a human readable message indicating details about the transition. This may be an empty string.",
+                "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
                 "maxLength": 32768,
                 "type": "string"
               },
               "observedGeneration": {
-                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon. For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date with respect to the current state of the instance.",
+                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
                 "format": "int64",
                 "minimum": 0,
                 "type": "integer"
               },
               "reason": {
-                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition. Producers of specific condition types may define expected values and meanings for this field, and whether the values are considered a guaranteed API. The value should be a CamelCase string. This field may not be empty.",
+                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
                 "maxLength": 1024,
                 "minLength": 1,
                 "pattern": "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$",
@@ -3358,7 +3363,7 @@
                 "type": "string"
               },
               "type": {
-                "description": "type of condition in CamelCase or in foo.example.com/CamelCase. --- Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be useful (see .node.status.conditions), the ability to deconflict is important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)",
+                "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
                 "maxLength": 316,
                 "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
                 "type": "string"
@@ -3384,32 +3389,32 @@
           "additionalProperties": {
             "properties": {
               "apiVersion": {
-                "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+                "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
                 "type": "string"
               },
               "conditions": {
-                "description": "Conditions represents the observations of the current state of any resources owned by the resource. Known .status.conditions.type are: \"Ready\" and \"Degraded\"",
+                "description": "Conditions represents the observations of the current state of any resources owned by the resource.\nKnown .status.conditions.type are: \"Ready\" and \"Degraded\"",
                 "items": {
-                  "description": "Condition contains details for one aspect of the current state of this API Resource. --- This struct is intended for direct use as an array at the field path .status.conditions.  For example, \n type FooStatus struct{ // Represents the observations of a foo's current state. // Known .status.conditions.type are: \"Available\", \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge // +listType=map // +listMapKey=type Conditions []metav1.Condition `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"` \n // other fields }",
+                  "description": "Condition contains details for one aspect of the current state of this API Resource.",
                   "properties": {
                     "lastTransitionTime": {
-                      "description": "lastTransitionTime is the last time the condition transitioned from one status to another. This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
+                      "description": "lastTransitionTime is the last time the condition transitioned from one status to another.\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
                       "format": "date-time",
                       "type": "string"
                     },
                     "message": {
-                      "description": "message is a human readable message indicating details about the transition. This may be an empty string.",
+                      "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
                       "maxLength": 32768,
                       "type": "string"
                     },
                     "observedGeneration": {
-                      "description": "observedGeneration represents the .metadata.generation that the condition was set based upon. For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date with respect to the current state of the instance.",
+                      "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
                       "format": "int64",
                       "minimum": 0,
                       "type": "integer"
                     },
                     "reason": {
-                      "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition. Producers of specific condition types may define expected values and meanings for this field, and whether the values are considered a guaranteed API. The value should be a CamelCase string. This field may not be empty.",
+                      "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
                       "maxLength": 1024,
                       "minLength": 1,
                       "pattern": "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$",
@@ -3425,7 +3430,7 @@
                       "type": "string"
                     },
                     "type": {
-                      "description": "type of condition in CamelCase or in foo.example.com/CamelCase. --- Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be useful (see .node.status.conditions), the ability to deconflict is important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)",
+                      "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
                       "maxLength": 316,
                       "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
                       "type": "string"
@@ -3448,7 +3453,7 @@
                 "x-kubernetes-list-type": "map"
               },
               "kind": {
-                "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+                "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
                 "type": "string"
               },
               "metadata": {

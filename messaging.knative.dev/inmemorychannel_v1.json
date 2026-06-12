@@ -22,6 +22,10 @@
                   "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.",
                   "type": "string"
                 },
+                "audience": {
+                  "description": "Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.",
+                  "type": "string"
+                },
                 "ref": {
                   "description": "Ref points to an Addressable.",
                   "properties": {
@@ -67,6 +71,24 @@
           "description": "This is the list of subscriptions for this subscribable.",
           "items": {
             "properties": {
+              "auth": {
+                "description": "Auth provides the relevant information for OIDC authentication.",
+                "properties": {
+                  "serviceAccountName": {
+                    "description": "ServiceAccountName is the name of the generated service account used for this components OIDC authentication.",
+                    "type": "string"
+                  },
+                  "serviceAccountNames": {
+                    "description": "ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
               "delivery": {
                 "description": "DeliverySpec contains options controlling the event delivery",
                 "properties": {
@@ -83,6 +105,10 @@
                     "properties": {
                       "CACerts": {
                         "description": "Certification Authority (CA) certificates in PEM format that the source trusts when sending events to the sink.",
+                        "type": "string"
+                      },
+                      "audience": {
+                        "description": "Audience is the OIDC audience. This only needs to be set if the target is not an Addressable and thus the Audience can't be received from the target itself. If specified, it takes precedence over the target's Audience.",
                         "type": "string"
                       },
                       "ref": {
@@ -131,12 +157,28 @@
                 "format": "int64",
                 "type": "integer"
               },
+              "name": {
+                "description": "The name of the subscription",
+                "type": "string"
+              },
+              "namespace": {
+                "description": "The namespace of the subscription",
+                "type": "string"
+              },
+              "replyAudience": {
+                "description": "ReplyAudience is the OIDC audience for the replyUri.",
+                "type": "string"
+              },
               "replyCACerts": {
                 "description": "Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.",
                 "type": "string"
               },
               "replyUri": {
                 "description": "ReplyURI is the endpoint for the reply",
+                "type": "string"
+              },
+              "subscriberAudience": {
+                "description": "SubscriberAudience is the OIDC audience for the subscriberUri.",
                 "type": "string"
               },
               "subscriberCACerts": {
@@ -170,6 +212,9 @@
             "CACerts": {
               "type": "string"
             },
+            "audience": {
+              "type": "string"
+            },
             "name": {
               "type": "string"
             },
@@ -185,6 +230,9 @@
           "items": {
             "properties": {
               "CACerts": {
+                "type": "string"
+              },
+              "audience": {
                 "type": "string"
               },
               "name": {
@@ -265,6 +313,10 @@
           "type": "object",
           "additionalProperties": false
         },
+        "deadLetterSinkAudience": {
+          "description": "OIDC audience of the dead letter sink.",
+          "type": "string"
+        },
         "deadLetterSinkCACerts": {
           "description": "Certification Authority (CA) certificates in PEM format according to https://www.rfc-editor.org/rfc/rfc7468.",
           "type": "string"
@@ -278,10 +330,46 @@
           "format": "int64",
           "type": "integer"
         },
+        "policies": {
+          "description": "List of applied EventPolicies",
+          "items": {
+            "properties": {
+              "apiVersion": {
+                "description": "The API version of the applied EventPolicy. This indicates, which version of EventPolicy is supported by the resource.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The name of the applied EventPolicy",
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
         "subscribers": {
           "description": "This is the list of subscription's statuses for this channel.",
           "items": {
             "properties": {
+              "auth": {
+                "description": "Auth provides the relevant information for OIDC authentication.",
+                "properties": {
+                  "serviceAccountName": {
+                    "description": "ServiceAccountName is the name of the generated service account used for this components OIDC authentication.",
+                    "type": "string"
+                  },
+                  "serviceAccountNames": {
+                    "description": "ServiceAccountNames is the list of names of the generated service accounts used for this components OIDC authentication.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
               "message": {
                 "description": "A human readable message indicating details of Ready status.",
                 "type": "string"

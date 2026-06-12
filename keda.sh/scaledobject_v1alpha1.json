@@ -147,10 +147,6 @@
                 },
                 "metricType": {
                   "description": "MetricTargetType specifies the type of metric being targeted, and should be either\n\"Value\", \"AverageValue\", or \"Utilization\"",
-                  "enum": [
-                    "AverageValue",
-                    "Value"
-                  ],
                   "type": "string"
                 },
                 "target": {
@@ -171,16 +167,6 @@
         "fallback": {
           "description": "Fallback is the spec for fallback options",
           "properties": {
-            "behavior": {
-              "default": "static",
-              "enum": [
-                "static",
-                "currentReplicas",
-                "currentReplicasIfHigher",
-                "currentReplicasIfLower"
-              ],
-              "type": "string"
-            },
             "failureThreshold": {
               "format": "int32",
               "type": "integer"
@@ -300,9 +286,6 @@
     "status": {
       "description": "ScaledObjectStatus is the status for a ScaledObject resource",
       "properties": {
-        "authenticationsTypes": {
-          "type": "string"
-        },
         "compositeScalerName": {
           "type": "string"
         },
@@ -408,9 +391,6 @@
           "additionalProperties": false
         },
         "scaleTargetKind": {
-          "type": "string"
-        },
-        "triggersTypes": {
           "type": "string"
         }
       },

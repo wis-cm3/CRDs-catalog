@@ -14,26 +14,6 @@
     "spec": {
       "description": "The specification of the Kafka Connector.",
       "properties": {
-        "alterOffsets": {
-          "description": "Configuration for altering offsets.",
-          "properties": {
-            "fromConfigMap": {
-              "description": "Reference to the ConfigMap where the new offsets are stored.",
-              "properties": {
-                "name": {
-                  "type": "string"
-                }
-              },
-              "type": "object",
-              "additionalProperties": false
-            }
-          },
-          "required": [
-            "fromConfigMap"
-          ],
-          "type": "object",
-          "additionalProperties": false
-        },
         "autoRestart": {
           "description": "Automatic restart of connector and tasks configuration.",
           "properties": {
@@ -54,29 +34,9 @@
           "type": "string"
         },
         "config": {
-          "description": "The Kafka Connector configuration. The following properties cannot be set: name, connector.class, tasks.max.",
+          "description": "The Kafka Connector configuration. The following properties cannot be set: connector.class, tasks.max.",
           "type": "object",
           "x-kubernetes-preserve-unknown-fields": true
-        },
-        "listOffsets": {
-          "description": "Configuration for listing offsets.",
-          "properties": {
-            "toConfigMap": {
-              "description": "Reference to the ConfigMap where the list of offsets will be written to.",
-              "properties": {
-                "name": {
-                  "type": "string"
-                }
-              },
-              "type": "object",
-              "additionalProperties": false
-            }
-          },
-          "required": [
-            "toConfigMap"
-          ],
-          "type": "object",
-          "additionalProperties": false
         },
         "pause": {
           "description": "Whether the connector should be paused. Defaults to false.",
@@ -95,10 +55,6 @@
           "description": "The maximum number of tasks for the Kafka Connector.",
           "minimum": 1,
           "type": "integer"
-        },
-        "version": {
-          "description": "Desired version or version range to respect when starting the Kafka Connector. This is only supported when using Kafka Connect version 4.1.0 and higher.",
-          "type": "string"
         }
       },
       "type": "object",

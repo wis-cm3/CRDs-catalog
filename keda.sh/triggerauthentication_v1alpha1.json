@@ -186,9 +186,6 @@
                   "parameter": {
                     "type": "string"
                   },
-                  "secretKey": {
-                    "type": "string"
-                  },
                   "versionId": {
                     "type": "string"
                   },
@@ -360,25 +357,6 @@
           ],
           "type": "object",
           "additionalProperties": false
-        },
-        "boundServiceAccountToken": {
-          "items": {
-            "properties": {
-              "parameter": {
-                "type": "string"
-              },
-              "serviceAccountName": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "parameter",
-              "serviceAccountName"
-            ],
-            "type": "object",
-            "additionalProperties": false
-          },
-          "type": "array"
         },
         "configMapTargetRef": {
           "items": {

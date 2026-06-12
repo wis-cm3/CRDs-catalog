@@ -7087,12 +7087,6 @@
                             },
                             "signerName": {
                               "type": "string"
-                            },
-                            "userAnnotations": {
-                              "additionalProperties": {
-                                "type": "string"
-                              },
-                              "type": "object"
                             }
                           },
                           "required": [
