@@ -126,7 +126,7 @@
               "description": "Privileges to be granted.\nSee https://www.postgresql.org/docs/current/sql-grant.html for available privileges.",
               "items": {
                 "description": "GrantPrivilege represents a privilege to be granted",
-                "pattern": "^[A-Z]+$",
+                "pattern": "^[A-Z]+( [A-Z]+)*$",
                 "type": "string"
               },
               "minItems": 1,
@@ -217,7 +217,7 @@
               "additionalProperties": false
             },
             "schema": {
-              "description": "Schema in which the default privileges are applied",
+              "description": "Schema in which the default privileges are applied.\nNot applicable when objectType is schema.",
               "type": "string"
             },
             "targetRole": {
@@ -235,10 +235,19 @@
           },
           "required": [
             "objectType",
-            "schema",
             "targetRole"
           ],
           "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "schema is required when objectType is not schema",
+              "rule": "!has(self.objectType) || self.objectType == 'schema' || has(self.schema)"
+            },
+            {
+              "message": "schema must not be set when objectType is schema",
+              "rule": "!has(self.objectType) || self.objectType != 'schema' || !has(self.schema)"
+            }
+          ],
           "additionalProperties": false
         },
         "managementPolicies": {

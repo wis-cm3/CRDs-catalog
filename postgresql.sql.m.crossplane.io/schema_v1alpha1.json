@@ -110,6 +110,15 @@
               "type": "object",
               "additionalProperties": false
             },
+            "dropBehavior": {
+              "default": "RESTRICT",
+              "description": "DropBehavior configures deletion behavior: CASCADE will automatically drop\nobjects (tables, functions, etc.) that are contained in the schema, and in\nturn all objects that depend on those objects. The default setting of\nRESTRICT will refuse to drop the schema if it contains any objects.",
+              "enum": [
+                "CASCADE",
+                "RESTRICT"
+              ],
+              "type": "string"
+            },
             "revokePublicOnSchema": {
               "description": "RevokePublicOnSchema apply a \"REVOKE ALL ON SCHEMA public FROM public\" statement",
               "type": "boolean"

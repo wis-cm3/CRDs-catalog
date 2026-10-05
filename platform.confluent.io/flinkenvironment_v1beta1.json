@@ -27,24 +27,65 @@
           "type": "object",
           "additionalProperties": false
         },
+        "computePoolDefaults": {
+          "x-kubernetes-preserve-unknown-fields": true
+        },
         "flinkApplicationDefaults": {
           "x-kubernetes-preserve-unknown-fields": true
         },
+        "kubernetesClusterName": {
+          "type": "string"
+        },
         "kubernetesNamespace": {
-          "type": "string",
-          "x-kubernetes-validations": [
-            {
-              "message": "kubernetesNamespace is immutable",
-              "rule": "self == oldSelf"
+          "type": "string"
+        },
+        "secrets": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "statementDefaults": {
+          "properties": {
+            "detached": {
+              "properties": {
+                "flinkConfiguration": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "interactive": {
+              "properties": {
+                "flinkConfiguration": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
             }
-          ]
+          },
+          "type": "object",
+          "additionalProperties": false
         }
       },
       "required": [
-        "flinkApplicationDefaults",
         "kubernetesNamespace"
       ],
       "type": "object",
+      "x-kubernetes-validations": [
+        {
+          "message": "kubernetesNamespace is immutable",
+          "rule": "self.kubernetesNamespace == oldSelf.kubernetesNamespace"
+        }
+      ],
       "additionalProperties": false
     },
     "status": {
@@ -107,9 +148,88 @@
           },
           "type": "array"
         },
+        "kubernetesCluster": {
+          "properties": {
+            "kubernetesVersion": {
+              "type": "string"
+            },
+            "lastHeartbeatTimestamp": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "state": {
+              "enum": [
+                "CONNECTED",
+                "DECOMMISSIONED",
+                "DISCONNECTED"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
         "observedGeneration": {
           "format": "int64",
           "type": "integer"
+        },
+        "resourceSummary": {
+          "properties": {
+            "jobManager": {
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "cpu": {
+                  "type": "number"
+                },
+                "memory": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "taskManager": {
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "cpu": {
+                  "type": "number"
+                },
+                "memory": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "resources": {
+          "properties": {
+            "applications": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "statements": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
         }
       },
       "type": "object",

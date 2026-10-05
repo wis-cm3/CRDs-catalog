@@ -37,6 +37,29 @@
               "type": "object",
               "additionalProperties": false
             },
+            "secretKeyMapping": {
+              "description": "SecretKeyMapping allows overriding the default secret key names used\nto read credentials from the connection secret. When not specified,\nstandard Crossplane keys are used: \"endpoint\", \"port\", \"username\", \"password\".",
+              "properties": {
+                "endpoint": {
+                  "description": "Endpoint overrides the key used to read the host/endpoint. Default: \"endpoint\".",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Password overrides the key used to read the password. Default: \"password\".",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port overrides the key used to read the port. Default: \"port\".",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "Username overrides the key used to read the username. Default: \"username\".",
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
             "source": {
               "description": "Source of the provider credentials.",
               "enum": [

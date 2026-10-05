@@ -14,6 +14,117 @@
     "spec": {
       "description": "TrafficPolicySpec defines the desired state of a traffic policy.",
       "properties": {
+        "acl": {
+          "description": "ACL configures IP-based access control for HTTP requests.\nRules are evaluated using longest-prefix matching on the effictive client IP\nfrom envoy base on settings. See the UseRemoteAddress, XffTrustedCIDRs,\nXffNumTrustedHops settings under ListenerPolicy -> HttpSettings for details.\n\nWhen multiple TrafficPolicy objects target the same route, their ACL fields are\ndeep-merged by default: rules are unioned (higher-priority policy's rules first),\nand singleton fields (defaultAction, denyResponse) are taken from the higher-priority\npolicy. If singleton fields conflict between policies, the merge falls back to\nshallow (higher-priority policy wins entirely). Gateway-level and route-level ACL\npolicies are kept in separate merge groups and are never combined with each other;\na route-level ACL completely replaces the gateway-level ACL for that route.",
+          "properties": {
+            "defaultAction": {
+              "description": "DefaultAction is the action to take when no rule matches the client IP.",
+              "enum": [
+                "allow",
+                "deny"
+              ],
+              "type": "string"
+            },
+            "denyResponse": {
+              "description": "DenyResponse customizes the HTTP response sent when a request is denied.",
+              "properties": {
+                "blockedByHeaderName": {
+                  "description": "BlockedByHeaderName, when set, adds a response header with this name on every deny.\nThe header value mirrors the blocked-by dynamic metadata: the matched rule's name,\n\"rule\" for an unnamed rule, or \"default\" for a default-action deny.",
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "headers": {
+                  "description": "Headers are additional response headers to attach on every deny.",
+                  "items": {
+                    "description": "ACLResponseHeader defines a response header to include in deny responses.",
+                    "properties": {
+                      "name": {
+                        "description": "Name is the header name.",
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "value": {
+                        "description": "Value is the header value.",
+                        "maxLength": 4096,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "maxItems": 16,
+                  "type": "array"
+                },
+                "statusCode": {
+                  "description": "StatusCode is the HTTP status code returned on deny. Defaults to 403.",
+                  "format": "int32",
+                  "maximum": 599,
+                  "minimum": 100,
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "x-kubernetes-validations": [
+                {
+                  "message": "at least one of the fields in [statusCode headers blockedByHeaderName] must be set",
+                  "rule": "[has(self.statusCode),has(self.headers),has(self.blockedByHeaderName)].filter(x,x==true).size() >= 1"
+                }
+              ],
+              "additionalProperties": false
+            },
+            "rules": {
+              "description": "Rules is a list of IP/CIDR-based rules. Longest-prefix match wins regardless of rule order.",
+              "items": {
+                "description": "ACLRule defines an IP/CIDR-based ACL rule.",
+                "properties": {
+                  "action": {
+                    "description": "Action determines what to do when a client IP matches this rule.",
+                    "enum": [
+                      "allow",
+                      "deny"
+                    ],
+                    "type": "string"
+                  },
+                  "cidrs": {
+                    "description": "CIDRs is a list of IP addresses or CIDR ranges (e.g. \"10.0.0.0/8\", \"2001:db8::/32\", \"192.168.1.1\", \"::1\").\nBare IPs without a prefix are treated as /32 for IPv4 and /128 for IPv6.\nAll entries share the same name and action.",
+                    "items": {
+                      "description": "IPOrCIDR accepts either a bare IP address or an address range in CIDR notation.\nA bare IP without a prefix length is treated as /32 for IPv4 and /128 for IPv6.\nNote: The regex for the IP validation patterns was taken from https://www.ditig.com/validating-ipv4-and-ipv6-addresses-with-regexp",
+                      "pattern": "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$|^((?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|:(?::[0-9A-Fa-f]{1,4}){1,7}|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,6}))(\\/(12[0-8]|1[0-1][0-9]|[1-9][0-9]|[0-9]))?$",
+                      "type": "string"
+                    },
+                    "maxItems": 256,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "name": {
+                    "description": "Name is an optional rule identifier emitted as blocked-by dynamic metadata on deny.",
+                    "maxLength": 256,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "action",
+                  "cidrs"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "maxItems": 256,
+              "type": "array"
+            }
+          },
+          "required": [
+            "defaultAction"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
         "apiKeyAuth": {
           "description": "APIKeyAuth authenticates users based on a configured API Key.",
           "properties": {
@@ -132,7 +243,7 @@
           "additionalProperties": false
         },
         "autoHostRewrite": {
-          "description": "AutoHostRewrite rewrites the Host header to the DNS name of the selected upstream.\nNOTE: This field is only honored for HTTPRoute targets.\nNOTE: If `autoHostRewrite` is set on a route that also has a [URLRewrite filter](https://gateway-api.sigs.k8s.io/reference/spec/#httpurlrewritefilter)\nconfigured to override the `hostname`, the `hostname` value will be used and `autoHostRewrite` will be ignored.",
+          "description": "AutoHostRewrite rewrites the Host header to the DNS name of the selected upstream.\nNOTE: This field is only honored for HTTPRoute targets.\nNOTE: If `autoHostRewrite` is set on a route that also has a [URLRewrite filter](https://gateway-api.sigs.k8s.io/reference/api-spec/main/spec/#httpurlrewritefilter)\nconfigured to override the `hostname`, the `hostname` value will be used and `autoHostRewrite` will be ignored.",
           "type": "boolean"
         },
         "basicAuth": {
@@ -230,22 +341,72 @@
           "description": "Compression configures response compression (per-route) and request/response\ndecompression (listener-level insertion triggered by route enable).\nThe response compression configuration is only honored for HTTPRoute targets.",
           "properties": {
             "requestDecompression": {
-              "description": "RequestDecompression controls request decompression.\nIf set, gzip requests will be decompressed.",
+              "description": "RequestDecompression controls request decompression.\nIf set, request bodies in the configured codecs are decompressed before forwarding.",
               "properties": {
                 "disable": {
                   "description": "Disables decompression.",
                   "type": "object"
+                },
+                "libraries": {
+                  "default": [
+                    "Gzip"
+                  ],
+                  "description": "Libraries lists the codecs to decompress on request bodies. Envoy selects the decompressor\nby the request's `Content-Encoding` header, so the list order is not significant. Request\nbodies encoded with a codec not in this list are passed through to the backend unchanged.\nDefaults to [Gzip].",
+                  "items": {
+                    "description": "CompressionLibrary identifies a compression codec used to compress responses or decompress requests.",
+                    "enum": [
+                      "Gzip",
+                      "Brotli",
+                      "Zstd"
+                    ],
+                    "type": "string"
+                  },
+                  "maxItems": 3,
+                  "minItems": 1,
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic",
+                  "x-kubernetes-validations": [
+                    {
+                      "message": "libraries must not contain duplicates",
+                      "rule": "self.all(x, self.exists_one(y, y == x))"
+                    }
+                  ]
                 }
               },
               "type": "object",
               "additionalProperties": false
             },
             "responseCompression": {
-              "description": "ResponseCompression controls response compression to the downstream.\nIf set, responses with the appropriate `Accept-Encoding` header with certain textual content types will be compressed using gzip.\nThe content-types that will be compressed are:\n- `application/javascript`\n- `application/json`\n- `application/xhtml+xml`\n- `image/svg+xml`\n- `text/css`\n- `text/html`\n- `text/plain`\n- `text/xml`",
+              "description": "ResponseCompression controls response compression to the downstream.\nIf set, responses with a matching `Accept-Encoding` header and certain textual content types will be compressed.\nThe compression codecs default to gzip and can be selected via `responseCompression.libraries`,\nwhich Envoy negotiates against the request's `Accept-Encoding` header.\nThe content-types that will be compressed are:\n- `application/javascript`\n- `application/json`\n- `application/xhtml+xml`\n- `image/svg+xml`\n- `text/css`\n- `text/html`\n- `text/plain`\n- `text/xml`",
               "properties": {
                 "disable": {
                   "description": "Disables compression.",
                   "type": "object"
+                },
+                "libraries": {
+                  "default": [
+                    "Gzip"
+                  ],
+                  "description": "Libraries lists the compression codecs to offer for responses.\nEnvoy negotiates the codec based on the downstream request's `Accept-Encoding` header,\npicking the highest-quality codec the client accepts. On equal quality the client's\nordering decides. If the client accepts none of the offered codecs, the response is\nsent uncompressed.\nDefaults to [Gzip].",
+                  "items": {
+                    "description": "CompressionLibrary identifies a compression codec used to compress responses or decompress requests.",
+                    "enum": [
+                      "Gzip",
+                      "Brotli",
+                      "Zstd"
+                    ],
+                    "type": "string"
+                  },
+                  "maxItems": 3,
+                  "minItems": 1,
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic",
+                  "x-kubernetes-validations": [
+                    {
+                      "message": "libraries must not contain duplicates",
+                      "rule": "self.all(x, self.exists_one(y, y == x))"
+                    }
+                  ]
                 }
               },
               "type": "object",
@@ -269,7 +430,7 @@
               "type": "boolean"
             },
             "allowHeaders": {
-              "description": "AllowHeaders indicates which HTTP request headers are supported for\naccessing the requested resource.\n\nHeader names are not case sensitive.\n\nMultiple header names in the value of the `Access-Control-Allow-Headers`\nresponse header are separated by a comma (\",\").\n\nWhen the `AllowHeaders` field is configured with one or more headers, the\ngateway must return the `Access-Control-Allow-Headers` response header\nwhich value is present in the `AllowHeaders` field.\n\nIf any header name in the `Access-Control-Request-Headers` request header\nis not included in the list of header names specified by the response\nheader `Access-Control-Allow-Headers`, it will present an error on the\nclient side.\n\nIf any header name in the `Access-Control-Allow-Headers` response header\ndoes not recognize by the client, it will also occur an error on the\nclient side.\n\nA wildcard indicates that the requests with all HTTP headers are allowed.\nThe `Access-Control-Allow-Headers` response header can only use `*`\nwildcard as value when the `AllowCredentials` field is false or omitted.\n\nWhen the `AllowCredentials` field is true and `AllowHeaders` field\nspecified with the `*` wildcard, the gateway must specify one or more\nHTTP headers in the value of the `Access-Control-Allow-Headers` response\nheader. The value of the header `Access-Control-Allow-Headers` is same as\nthe `Access-Control-Request-Headers` header provided by the client. If\nthe header `Access-Control-Request-Headers` is not included in the\nrequest, the gateway will omit the `Access-Control-Allow-Headers`\nresponse header, instead of specifying the `*` wildcard. A Gateway\nimplementation may choose to add implementation-specific default headers.\n\nSupport: Extended",
+              "description": "AllowHeaders indicates which HTTP request headers are supported for\naccessing the requested resource.\n\nHeader names are not case-sensitive.\n\nMultiple header names in the value of the `Access-Control-Allow-Headers`\nresponse header are separated by a comma (\",\").\n\nWhen the `allowHeaders` field is configured with one or more headers, the\ngateway must return the `Access-Control-Allow-Headers` response header\nwhich value is present in the `allowHeaders` field.\n\nIf any header name in the `Access-Control-Request-Headers` request header\nis not included in the list of header names specified by the response\nheader `Access-Control-Allow-Headers`, it will present an error on the\nclient side.\n\nIf any header name in the `Access-Control-Allow-Headers` response header\ndoes not recognize by the client, it will also occur an error on the\nclient side.\n\nA wildcard indicates that the requests with all HTTP headers are allowed.\n\nIf the configuration contains the wildcard `*` in `allowHeaders` and\n`allowCredentials` is set to `false`, the `Access-Control-Allow-Headers`\nresponse header may either contain the wildcard `*` or echo the value\nof the `Access-Control-Request-Headers` request header.\n\nIf the configuration contains the wildcard `*` in `allowHeaders` and\n`allowCredentials` is set to `true`, the gateway must not return `*`\nin the `Access-Control-Allow-Headers` response header. Instead, it must\nreturn one or more header names matching the value of the\n`Access-Control-Request-Headers` request header.\nIf the `Access-Control-Request-Headers` header is not present in the\nrequest, the gateway must omit the `Access-Control-Allow-Headers`\nresponse header.\n\nSupport: Extended",
               "items": {
                 "description": "HTTPHeaderName is the name of an HTTP header.\n\nValid values include:\n\n* \"Authorization\"\n* \"Set-Cookie\"\n\nInvalid values include:\n\n  - \":method\" - \":\" is an invalid character. This means that HTTP/2 pseudo\n    headers are not currently supported by this type.\n  - \"/invalid\" - \"/ \" is an invalid character",
                 "maxLength": 256,
@@ -279,10 +440,16 @@
               },
               "maxItems": 64,
               "type": "array",
-              "x-kubernetes-list-type": "set"
+              "x-kubernetes-list-type": "set",
+              "x-kubernetes-validations": [
+                {
+                  "message": "AllowHeaders cannot contain '*' alongside other headers",
+                  "rule": "!('*' in self && self.size() > 1)"
+                }
+              ]
             },
             "allowMethods": {
-              "description": "AllowMethods indicates which HTTP methods are supported for accessing the\nrequested resource.\n\nValid values are any method defined by RFC9110, along with the special\nvalue `*`, which represents all HTTP methods are allowed.\n\nMethod names are case sensitive, so these values are also case-sensitive.\n(See https://www.rfc-editor.org/rfc/rfc2616#section-5.1.1)\n\nMultiple method names in the value of the `Access-Control-Allow-Methods`\nresponse header are separated by a comma (\",\").\n\nA CORS-safelisted method is a method that is `GET`, `HEAD`, or `POST`.\n(See https://fetch.spec.whatwg.org/#cors-safelisted-method) The\nCORS-safelisted methods are always allowed, regardless of whether they\nare specified in the `AllowMethods` field.\n\nWhen the `AllowMethods` field is configured with one or more methods, the\ngateway must return the `Access-Control-Allow-Methods` response header\nwhich value is present in the `AllowMethods` field.\n\nIf the HTTP method of the `Access-Control-Request-Method` request header\nis not included in the list of methods specified by the response header\n`Access-Control-Allow-Methods`, it will present an error on the client\nside.\n\nThe `Access-Control-Allow-Methods` response header can only use `*`\nwildcard as value when the `AllowCredentials` field is false or omitted.\n\nWhen the `AllowCredentials` field is true and `AllowMethods` field\nspecified with the `*` wildcard, the gateway must specify one HTTP method\nin the value of the Access-Control-Allow-Methods response header. The\nvalue of the header `Access-Control-Allow-Methods` is same as the\n`Access-Control-Request-Method` header provided by the client. If the\nheader `Access-Control-Request-Method` is not included in the request,\nthe gateway will omit the `Access-Control-Allow-Methods` response header,\ninstead of specifying the `*` wildcard. A Gateway implementation may\nchoose to add implementation-specific default methods.\n\nSupport: Extended",
+              "description": "AllowMethods indicates which HTTP methods are supported for accessing the\nrequested resource.\n\nValid values are any method defined by RFC9110, along with the special\nvalue `*`, which represents all HTTP methods are allowed.\n\nMethod names are case-sensitive, so these values are also case-sensitive.\n(See https://www.rfc-editor.org/rfc/rfc2616#section-5.1.1)\n\nMultiple method names in the value of the `Access-Control-Allow-Methods`\nresponse header are separated by a comma (\",\").\n\nA CORS-safelisted method is a method that is `GET`, `HEAD`, or `POST`.\n(See https://fetch.spec.whatwg.org/#cors-safelisted-method) The\nCORS-safelisted methods are always allowed, regardless of whether they\nare specified in the `allowMethods` field.\n\nWhen the `allowMethods` field is configured with one or more methods, the\ngateway must return the `Access-Control-Allow-Methods` response header\nwhich value is present in the `allowMethods` field.\n\nIf the HTTP method of the `Access-Control-Request-Method` request header\nis not included in the list of methods specified by the response header\n`Access-Control-Allow-Methods`, it will present an error on the client\nside.\n\nIf the configuration contains the wildcard `*` in `allowMethods` and\n`allowCredentials` is set to `false`, the `Access-Control-Allow-Methods`\nresponse header may either contain the wildcard `*` or echo the value\nof the `Access-Control-Request-Method` request header.\n\nIf the configuration contains the wildcard `*` in `allowMethods` and\n`allowCredentials` is set to `true`, the gateway must not return `*`\nin the `Access-Control-Allow-Methods` response header. Instead, it must\nreturn a single HTTP method matching the value of the\n`Access-Control-Request-Method` request header.\nIf the `Access-Control-Request-Method` header is not present in the request,\nthe gateway must omit the `Access-Control-Allow-Methods` response header.\n\nSupport: Extended",
               "items": {
                 "enum": [
                   "GET",
@@ -309,12 +476,12 @@
               ]
             },
             "allowOrigins": {
-              "description": "AllowOrigins indicates whether the response can be shared with requested\nresource from the given `Origin`.\n\nThe `Origin` consists of a scheme and a host, with an optional port, and\ntakes the form `<scheme>://<host>(:<port>)`.\n\nValid values for scheme are: `http` and `https`.\n\nValid values for port are any integer between 1 and 65535 (the list of\navailable TCP/UDP ports). Note that, if not included, port `80` is\nassumed for `http` scheme origins, and port `443` is assumed for `https`\norigins. This may affect origin matching.\n\nThe host part of the origin may contain the wildcard character `*`. These\nwildcard characters behave as follows:\n\n* `*` is a greedy match to the _left_, including any number of\n  DNS labels to the left of its position. This also means that\n  `*` will include any number of period `.` characters to the\n  left of its position.\n* A wildcard by itself matches all hosts.\n\nAn origin value that includes _only_ the `*` character indicates requests\nfrom all `Origin`s are allowed.\n\nWhen the `AllowOrigins` field is configured with multiple origins, it\nmeans the server supports clients from multiple origins. If the request\n`Origin` matches the configured allowed origins, the gateway must return\nthe given `Origin` and sets value of the header\n`Access-Control-Allow-Origin` same as the `Origin` header provided by the\nclient.\n\nThe status code of a successful response to a \"preflight\" request is\nalways an OK status (i.e., 204 or 200).\n\nIf the request `Origin` does not match the configured allowed origins,\nthe gateway returns 204/200 response but doesn't set the relevant\ncross-origin response headers. Alternatively, the gateway responds with\n403 status to the \"preflight\" request is denied, coupled with omitting\nthe CORS headers. The cross-origin request fails on the client side.\nTherefore, the client doesn't attempt the actual cross-origin request.\n\nThe `Access-Control-Allow-Origin` response header can only use `*`\nwildcard as value when the `AllowCredentials` field is false or omitted.\n\nWhen the `AllowCredentials` field is true and `AllowOrigins` field\nspecified with the `*` wildcard, the gateway must return a single origin\nin the value of the `Access-Control-Allow-Origin` response header,\ninstead of specifying the `*` wildcard. The value of the header\n`Access-Control-Allow-Origin` is same as the `Origin` header provided by\nthe client.\n\nSupport: Extended",
+              "description": "AllowOrigins indicates whether the response can be shared with requested\nresource from the given `Origin`.\n\nThe `Origin` consists of a scheme and a host, with an optional port, and\ntakes the form `<scheme>://<host>(:<port>)`.\n\nValid values for scheme are: `http` and `https`.\n\nValid values for port are any integer between 1 and 65535 (the list of\navailable TCP/UDP ports). Note that, if not included, port `80` is\nassumed for `http` scheme origins, and port `443` is assumed for `https`\norigins. This may affect origin matching.\n\nThe host part of the origin may contain the wildcard character `*`. These\nwildcard characters behave as follows:\n\n* `*` is a greedy match to the _left_, including any number of\n  DNS labels to the left of its position. This also means that\n  `*` will include any number of period `.` characters to the\n  left of its position.\n* A wildcard by itself matches all hosts.\n\nAn origin value that includes _only_ the `*` character indicates requests\nfrom all `Origin`s are allowed.\n\nWhen the `allowOrigins` field is configured with multiple origins, it\nmeans the server supports clients from multiple origins. If the request\n`Origin` matches the configured allowed origins, the gateway must return\nthe given `Origin` and sets value of the header\n`Access-Control-Allow-Origin` same as the `Origin` header provided by the\nclient.\n\nThe status code of a successful response to a \"preflight\" request is\nalways an OK status (i.e., 204 or 200).\n\nIf the request `Origin` does not match the configured allowed origins,\nthe gateway returns 204/200 response but doesn't set the relevant\ncross-origin response headers. Alternatively, the gateway responds with\n403 status to the \"preflight\" request is denied, coupled with omitting\nthe CORS headers. The cross-origin request fails on the client side.\nTherefore, the client doesn't attempt the actual cross-origin request.\n\nConversely, if the request `Origin` matches one of the configured\nallowed origins, the gateway sets the response header\n`Access-Control-Allow-Origin` to the same value as the `Origin`\nheader provided by the client.\n\nIf the configuration contains the wildcard `*` in `allowOrigins` and\n`allowCredentials` is set to `false`, the `Access-Control-Allow-Origin`\nresponse header may either contain the wildcard `*` or echo the value\nof the `Origin` request header.\n\nIf the configuration contains the wildcard `*` in `allowOrigins` and\n`allowCredentials` is set to `true`, the gateway must not return `*`\nin the `Access-Control-Allow-Origin` response header. Instead, it must\nreturn a single origin matching the value of the `Origin` request header.\n\nSupport: Extended",
               "items": {
-                "description": "The CORSOrigin MUST NOT be a relative URI, and it MUST follow the URI syntax and\nencoding rules specified in RFC3986.  The CORSOrigin MUST include both a\nscheme (e.g., \"http\" or \"spiffe\") and a scheme-specific-part, or it should be a single '*' character.\nURIs that include an authority MUST include a fully qualified domain name or\nIP address as the host.\n<gateway:util:excludeFromCRD> The below regex was generated to simplify the assertion of scheme://host:<port> being port optional </gateway:util:excludeFromCRD>",
+                "description": "The CORSOrigin MUST NOT be a relative URI, and it MUST follow the URI syntax and\nencoding rules specified in RFC3986.  The CORSOrigin MUST include both a\nscheme (\"http\" or \"https\") and a scheme-specific-part, or it should be a single '*' character.\nURIs that include an authority MUST include a fully qualified domain name or\nIP address as the host.",
                 "maxLength": 253,
                 "minLength": 1,
-                "pattern": "(^\\*$)|(^([a-zA-Z][a-zA-Z0-9+\\-.]+):\\/\\/([^:/?#]+)(:([0-9]{1,5}))?$)",
+                "pattern": "(^\\*$)|(^(http(s)?):\\/\\/(((\\*\\.)?([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9-]+|\\*)(:([0-9]{1,5}))?)$)",
                 "type": "string"
               },
               "maxItems": 64,
@@ -332,7 +499,7 @@
               "type": "object"
             },
             "exposeHeaders": {
-              "description": "ExposeHeaders indicates which HTTP response headers can be exposed\nto client-side scripts in response to a cross-origin request.\n\nA CORS-safelisted response header is an HTTP header in a CORS response\nthat it is considered safe to expose to the client scripts.\nThe CORS-safelisted response headers include the following headers:\n`Cache-Control`\n`Content-Language`\n`Content-Length`\n`Content-Type`\n`Expires`\n`Last-Modified`\n`Pragma`\n(See https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name)\nThe CORS-safelisted response headers are exposed to client by default.\n\nWhen an HTTP header name is specified using the `ExposeHeaders` field,\nthis additional header will be exposed as part of the response to the\nclient.\n\nHeader names are not case sensitive.\n\nMultiple header names in the value of the `Access-Control-Expose-Headers`\nresponse header are separated by a comma (\",\").\n\nA wildcard indicates that the responses with all HTTP headers are exposed\nto clients. The `Access-Control-Expose-Headers` response header can only\nuse `*` wildcard as value when the `AllowCredentials` field is false or omitted.\n\nSupport: Extended",
+              "description": "ExposeHeaders indicates which HTTP response headers can be exposed\nto client-side scripts in response to a cross-origin request.\n\nA CORS-safelisted response header is an HTTP header in a CORS response\nthat it is considered safe to expose to the client scripts.\nThe CORS-safelisted response headers include the following headers:\n`Cache-Control`\n`Content-Language`\n`Content-Length`\n`Content-Type`\n`Expires`\n`Last-Modified`\n`Pragma`\n(See https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name)\nThe CORS-safelisted response headers are exposed to client by default.\n\nWhen an HTTP header name is specified using the `exposeHeaders` field,\nthis additional header will be exposed as part of the response to the\nclient.\n\nHeader names are not case-sensitive.\n\nMultiple header names in the value of the `Access-Control-Expose-Headers`\nresponse header are separated by a comma (\",\").\n\nA wildcard indicates that the responses with all HTTP headers are exposed\nto clients.\n\nIf the configuration contains the wildcard `*` in `exposeHeaders` and\n`allowCredentials` is set to `false`, the `Access-Control-Expose-Headers`\nresponse header can contain the wildcard `*`.\n\nIf the configuration contains the wildcard `*` in `exposeHeaders` and\n`allowCredentials` is set to `true`, the gateway cannot use the `*`\nin the `Access-Control-Expose-Headers` response header.\n\nSupport: Extended",
               "items": {
                 "description": "HTTPHeaderName is the name of an HTTP header.\n\nValid values include:\n\n* \"Authorization\"\n* \"Set-Cookie\"\n\nInvalid values include:\n\n  - \":method\" - \":\" is an invalid character. This means that HTTP/2 pseudo\n    headers are not currently supported by this type.\n  - \"/invalid\" - \"/ \" is an invalid character",
                 "maxLength": 256,
@@ -346,7 +513,7 @@
             },
             "maxAge": {
               "default": 5,
-              "description": "MaxAge indicates the duration (in seconds) for the client to cache the\nresults of a \"preflight\" request.\n\nThe information provided by the `Access-Control-Allow-Methods` and\n`Access-Control-Allow-Headers` response headers can be cached by the\nclient until the time specified by `Access-Control-Max-Age` elapses.\n\nThe default value of `Access-Control-Max-Age` response header is 5\n(seconds).",
+              "description": "MaxAge indicates the duration (in seconds) for the client to cache the\nresults of a \"preflight\" request.\n\nThe information provided by the `Access-Control-Allow-Methods` and\n`Access-Control-Allow-Headers` response headers can be cached by the\nclient until the time specified by `Access-Control-Max-Age` elapses.\n\nThe default value of `Access-Control-Max-Age` response header is 5\n(seconds).\n\nWhen the `MaxAge` field is unspecified, the gateway sets the response\nheader \"Access-Control-Max-Age: 5\" by default.",
               "format": "int32",
               "minimum": 1,
               "type": "integer"
@@ -609,6 +776,124 @@
           ],
           "additionalProperties": false
         },
+        "faultInjection": {
+          "description": "FaultInjection configures fault injection for chaos engineering and\nresiliency testing. Supports delay injection, abort injection,\nand response rate limiting.",
+          "properties": {
+            "abort": {
+              "description": "Abort injects HTTP or gRPC errors to terminate requests early.",
+              "properties": {
+                "grpcStatus": {
+                  "description": "GrpcStatus is the gRPC status code to return when aborting a request.",
+                  "format": "int32",
+                  "maximum": 16,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "httpStatus": {
+                  "description": "HttpStatus is the HTTP status code to return when aborting a request.",
+                  "format": "int32",
+                  "maximum": 599,
+                  "minimum": 200,
+                  "type": "integer"
+                },
+                "percentage": {
+                  "default": 100,
+                  "description": "Percentage of requests to abort. Defaults to 100.",
+                  "format": "int32",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "x-kubernetes-validations": [
+                {
+                  "message": "exactly one of the fields in [httpStatus grpcStatus] must be set",
+                  "rule": "[has(self.httpStatus),has(self.grpcStatus)].filter(x,x==true).size() == 1"
+                }
+              ],
+              "additionalProperties": false
+            },
+            "delay": {
+              "description": "Delay injects latency into requests before forwarding upstream.",
+              "properties": {
+                "fixedDelay": {
+                  "description": "FixedDelay is the duration to delay before forwarding the request.",
+                  "type": "string",
+                  "x-kubernetes-validations": [
+                    {
+                      "message": "invalid duration value",
+                      "rule": "matches(self, '^([0-9]{1,5}(h|m|s|ms)){1,4}$')"
+                    },
+                    {
+                      "message": "must be at least 1ms",
+                      "rule": "duration(self) >= duration('1ms')"
+                    },
+                    {
+                      "message": "must not exceed 1h",
+                      "rule": "duration(self) <= duration('1h')"
+                    }
+                  ]
+                },
+                "percentage": {
+                  "default": 100,
+                  "description": "Percentage of requests to inject the delay on. Defaults to 100.",
+                  "format": "int32",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "fixedDelay"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            },
+            "disable": {
+              "description": "Disable the fault injection filter.\nCan be used to disable fault injection policies applied at a higher level\nin the config hierarchy.",
+              "type": "object"
+            },
+            "maxActiveFaults": {
+              "description": "MaxActiveFaults limits the number of concurrent active faults.\nWhen this limit is reached, new requests will not have faults injected.\nIf not specified, defaults to unlimited.",
+              "format": "int32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "responseRateLimit": {
+              "description": "ResponseRateLimit limits the response body data rate to simulate\nslow or degraded upstream connections.",
+              "properties": {
+                "kbitsPerSecond": {
+                  "description": "KbitsPerSecond limits the response rate to the specified kilobits per second.",
+                  "format": "int64",
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "percentage": {
+                  "default": 100,
+                  "description": "Percentage of requests to apply the rate limit on. Defaults to 100.",
+                  "format": "int32",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "kbitsPerSecond"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "at least one of the fields in [delay abort responseRateLimit disable] must be set",
+              "rule": "[has(self.delay),has(self.abort),has(self.responseRateLimit),has(self.disable)].filter(x,x==true).size() >= 1"
+            }
+          ],
+          "additionalProperties": false
+        },
         "headerModifiers": {
           "description": "HeaderModifiers defines the policy to modify request and response headers.",
           "properties": {
@@ -616,40 +901,74 @@
               "description": "Request modifies request headers.",
               "properties": {
                 "add": {
-                  "description": "Add adds the given header(s) (name, value) to the request\nbefore the action. It appends to any existing values associated\nwith the header name.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  add:\n  - name: \"my-header\"\n    value: \"bar,baz\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: foo,bar,baz",
+                  "description": "Add adds the given header(s) (name, value) to the request before the action.\nIt appends to any existing values associated with the header name.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  add:\n  - name: \"my-header\"\n    value: \"bar,baz\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: foo,bar,baz",
                   "items": {
-                    "description": "HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.",
+                    "description": "HTTPHeader represents a single header name/value pair. Exactly one of value or secretRef must\nbe set. When using secretRef, name and key interact as follows:\n  - Both present: name is the header name, key is the Secret data key.\n  - name absent, key present: the key is also used as the header name.\n  - name present, key absent: the name is also used as the Secret data key.\n  - Both absent: every entry in the Secret is injected as a header (data key -> header name).",
                     "properties": {
                       "name": {
-                        "description": "Name is the name of the HTTP Header to be matched. Name matching MUST be\ncase-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).\n\nIf multiple entries specify equivalent header names, the first entry with\nan equivalent name MUST be considered for a match. Subsequent entries\nwith an equivalent header name MUST be ignored. Due to the\ncase-insensitivity of header names, \"foo\" and \"Foo\" are considered\nequivalent.",
+                        "description": "Name is the HTTP header field name. Name matching is case-insensitive.\n(See https://tools.ietf.org/html/rfc7230#section-3.2.)\nRequired when value is set. When secretRef is used, if omitted the Secret data key is\nused as the header name; if both name and key are omitted every Secret entry is injected\nas a header.",
                         "maxLength": 256,
                         "minLength": 1,
                         "pattern": "^[A-Za-z0-9!#$%&'*+\\-.^_\\x60|~]+$",
                         "type": "string"
                       },
+                      "secretRef": {
+                        "description": "SecretRef sources the header value from a key in a Kubernetes Secret.\nMutually exclusive with value.",
+                        "properties": {
+                          "key": {
+                            "description": "Key is the key within the Secret's data map to use as the header value. When omitted and\nthe parent HTTPHeader.name is set, that name is used as the key. When both key and name are\nomitted, all entries in the Secret are injected as headers.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "pattern": "^[-._a-zA-Z0-9]+$",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "Name is the name of the Kubernetes Secret.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "namespace": {
+                            "description": "Namespace is the namespace of the Secret. If omitted, defaults to the namespace of the\nreferencing policy. Cross-namespace references require a ReferenceGrant in the target\nnamespace permitting access from the policy's namespace.",
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": "object",
+                        "additionalProperties": false
+                      },
                       "value": {
-                        "description": "Value is the value of HTTP Header to be matched.",
+                        "description": "Value is an inline string value for the header. Mutually exclusive with secretRef.\nMust consist of printable US-ASCII characters. (See https://tools.ietf.org/html/rfc7230#section-3.2.)",
                         "maxLength": 4096,
                         "minLength": 1,
+                        "pattern": "^[!-~]+([\\t ]?[!-~]+)*$",
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "name",
-                      "value"
-                    ],
                     "type": "object",
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "name is required when using an inline value",
+                        "rule": "has(self.value) ? has(self.name) : true"
+                      },
+                      {
+                        "message": "exactly one of the fields in [value secretRef] must be set",
+                        "rule": "[has(self.value),has(self.secretRef)].filter(x,x==true).size() == 1"
+                      }
+                    ],
                     "additionalProperties": false
                   },
                   "maxItems": 16,
                   "type": "array",
-                  "x-kubernetes-list-map-keys": [
-                    "name"
-                  ],
-                  "x-kubernetes-list-type": "map"
+                  "x-kubernetes-list-type": "atomic"
                 },
                 "remove": {
-                  "description": "Remove the given header(s) from the HTTP request before the action. The\nvalue of Remove is a list of HTTP header names. Note that the header\nnames are case-insensitive (see\nhttps://datatracker.ietf.org/doc/html/rfc2616#section-4.2).\n\nInput:\n  GET /foo HTTP/1.1\n  my-header1: foo\n  my-header2: bar\n  my-header3: baz\n\nConfig:\n  remove: [\"my-header1\", \"my-header3\"]\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header2: bar",
+                  "description": "Remove the given header(s) from the HTTP request before the action. The\nvalue of Remove is a list of HTTP header names. Note that header names are\ncase-insensitive (see [RFC 2616, Section 4.2](https://datatracker.ietf.org/doc/html/rfc2616#section-4.2)).\n\nInput:\n  GET /foo HTTP/1.1\n  my-header1: foo\n  my-header2: bar\n  my-header3: baz\n\nConfig:\n  remove: [\"my-header1\", \"my-header3\"]\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header2: bar",
                   "items": {
                     "type": "string"
                   },
@@ -658,80 +977,154 @@
                   "x-kubernetes-list-type": "set"
                 },
                 "set": {
-                  "description": "Set overwrites the request with the given header (name, value)\nbefore the action.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  set:\n  - name: \"my-header\"\n    value: \"bar\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: bar",
+                  "description": "Set overwrites the request with the given header (name, value) before the action.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  set:\n  - name: \"my-header\"\n    value: \"bar\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: bar",
                   "items": {
-                    "description": "HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.",
+                    "description": "HTTPHeader represents a single header name/value pair. Exactly one of value or secretRef must\nbe set. When using secretRef, name and key interact as follows:\n  - Both present: name is the header name, key is the Secret data key.\n  - name absent, key present: the key is also used as the header name.\n  - name present, key absent: the name is also used as the Secret data key.\n  - Both absent: every entry in the Secret is injected as a header (data key -> header name).",
                     "properties": {
                       "name": {
-                        "description": "Name is the name of the HTTP Header to be matched. Name matching MUST be\ncase-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).\n\nIf multiple entries specify equivalent header names, the first entry with\nan equivalent name MUST be considered for a match. Subsequent entries\nwith an equivalent header name MUST be ignored. Due to the\ncase-insensitivity of header names, \"foo\" and \"Foo\" are considered\nequivalent.",
+                        "description": "Name is the HTTP header field name. Name matching is case-insensitive.\n(See https://tools.ietf.org/html/rfc7230#section-3.2.)\nRequired when value is set. When secretRef is used, if omitted the Secret data key is\nused as the header name; if both name and key are omitted every Secret entry is injected\nas a header.",
                         "maxLength": 256,
                         "minLength": 1,
                         "pattern": "^[A-Za-z0-9!#$%&'*+\\-.^_\\x60|~]+$",
                         "type": "string"
                       },
+                      "secretRef": {
+                        "description": "SecretRef sources the header value from a key in a Kubernetes Secret.\nMutually exclusive with value.",
+                        "properties": {
+                          "key": {
+                            "description": "Key is the key within the Secret's data map to use as the header value. When omitted and\nthe parent HTTPHeader.name is set, that name is used as the key. When both key and name are\nomitted, all entries in the Secret are injected as headers.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "pattern": "^[-._a-zA-Z0-9]+$",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "Name is the name of the Kubernetes Secret.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "namespace": {
+                            "description": "Namespace is the namespace of the Secret. If omitted, defaults to the namespace of the\nreferencing policy. Cross-namespace references require a ReferenceGrant in the target\nnamespace permitting access from the policy's namespace.",
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": "object",
+                        "additionalProperties": false
+                      },
                       "value": {
-                        "description": "Value is the value of HTTP Header to be matched.",
+                        "description": "Value is an inline string value for the header. Mutually exclusive with secretRef.\nMust consist of printable US-ASCII characters. (See https://tools.ietf.org/html/rfc7230#section-3.2.)",
                         "maxLength": 4096,
                         "minLength": 1,
+                        "pattern": "^[!-~]+([\\t ]?[!-~]+)*$",
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "name",
-                      "value"
-                    ],
                     "type": "object",
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "name is required when using an inline value",
+                        "rule": "has(self.value) ? has(self.name) : true"
+                      },
+                      {
+                        "message": "exactly one of the fields in [value secretRef] must be set",
+                        "rule": "[has(self.value),has(self.secretRef)].filter(x,x==true).size() == 1"
+                      }
+                    ],
                     "additionalProperties": false
                   },
                   "maxItems": 16,
                   "type": "array",
-                  "x-kubernetes-list-map-keys": [
-                    "name"
-                  ],
-                  "x-kubernetes-list-type": "map"
+                  "x-kubernetes-list-type": "atomic"
                 }
               },
               "type": "object",
+              "x-kubernetes-validations": [
+                {
+                  "message": "at least one of the fields in [set add remove] must be set",
+                  "rule": "[has(self.set),has(self.add),has(self.remove)].filter(x,x==true).size() >= 1"
+                }
+              ],
               "additionalProperties": false
             },
             "response": {
               "description": "Response modifies response headers.",
               "properties": {
                 "add": {
-                  "description": "Add adds the given header(s) (name, value) to the request\nbefore the action. It appends to any existing values associated\nwith the header name.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  add:\n  - name: \"my-header\"\n    value: \"bar,baz\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: foo,bar,baz",
+                  "description": "Add adds the given header(s) (name, value) to the request before the action.\nIt appends to any existing values associated with the header name.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  add:\n  - name: \"my-header\"\n    value: \"bar,baz\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: foo,bar,baz",
                   "items": {
-                    "description": "HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.",
+                    "description": "HTTPHeader represents a single header name/value pair. Exactly one of value or secretRef must\nbe set. When using secretRef, name and key interact as follows:\n  - Both present: name is the header name, key is the Secret data key.\n  - name absent, key present: the key is also used as the header name.\n  - name present, key absent: the name is also used as the Secret data key.\n  - Both absent: every entry in the Secret is injected as a header (data key -> header name).",
                     "properties": {
                       "name": {
-                        "description": "Name is the name of the HTTP Header to be matched. Name matching MUST be\ncase-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).\n\nIf multiple entries specify equivalent header names, the first entry with\nan equivalent name MUST be considered for a match. Subsequent entries\nwith an equivalent header name MUST be ignored. Due to the\ncase-insensitivity of header names, \"foo\" and \"Foo\" are considered\nequivalent.",
+                        "description": "Name is the HTTP header field name. Name matching is case-insensitive.\n(See https://tools.ietf.org/html/rfc7230#section-3.2.)\nRequired when value is set. When secretRef is used, if omitted the Secret data key is\nused as the header name; if both name and key are omitted every Secret entry is injected\nas a header.",
                         "maxLength": 256,
                         "minLength": 1,
                         "pattern": "^[A-Za-z0-9!#$%&'*+\\-.^_\\x60|~]+$",
                         "type": "string"
                       },
+                      "secretRef": {
+                        "description": "SecretRef sources the header value from a key in a Kubernetes Secret.\nMutually exclusive with value.",
+                        "properties": {
+                          "key": {
+                            "description": "Key is the key within the Secret's data map to use as the header value. When omitted and\nthe parent HTTPHeader.name is set, that name is used as the key. When both key and name are\nomitted, all entries in the Secret are injected as headers.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "pattern": "^[-._a-zA-Z0-9]+$",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "Name is the name of the Kubernetes Secret.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "namespace": {
+                            "description": "Namespace is the namespace of the Secret. If omitted, defaults to the namespace of the\nreferencing policy. Cross-namespace references require a ReferenceGrant in the target\nnamespace permitting access from the policy's namespace.",
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": "object",
+                        "additionalProperties": false
+                      },
                       "value": {
-                        "description": "Value is the value of HTTP Header to be matched.",
+                        "description": "Value is an inline string value for the header. Mutually exclusive with secretRef.\nMust consist of printable US-ASCII characters. (See https://tools.ietf.org/html/rfc7230#section-3.2.)",
                         "maxLength": 4096,
                         "minLength": 1,
+                        "pattern": "^[!-~]+([\\t ]?[!-~]+)*$",
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "name",
-                      "value"
-                    ],
                     "type": "object",
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "name is required when using an inline value",
+                        "rule": "has(self.value) ? has(self.name) : true"
+                      },
+                      {
+                        "message": "exactly one of the fields in [value secretRef] must be set",
+                        "rule": "[has(self.value),has(self.secretRef)].filter(x,x==true).size() == 1"
+                      }
+                    ],
                     "additionalProperties": false
                   },
                   "maxItems": 16,
                   "type": "array",
-                  "x-kubernetes-list-map-keys": [
-                    "name"
-                  ],
-                  "x-kubernetes-list-type": "map"
+                  "x-kubernetes-list-type": "atomic"
                 },
                 "remove": {
-                  "description": "Remove the given header(s) from the HTTP request before the action. The\nvalue of Remove is a list of HTTP header names. Note that the header\nnames are case-insensitive (see\nhttps://datatracker.ietf.org/doc/html/rfc2616#section-4.2).\n\nInput:\n  GET /foo HTTP/1.1\n  my-header1: foo\n  my-header2: bar\n  my-header3: baz\n\nConfig:\n  remove: [\"my-header1\", \"my-header3\"]\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header2: bar",
+                  "description": "Remove the given header(s) from the HTTP request before the action. The\nvalue of Remove is a list of HTTP header names. Note that header names are\ncase-insensitive (see [RFC 2616, Section 4.2](https://datatracker.ietf.org/doc/html/rfc2616#section-4.2)).\n\nInput:\n  GET /foo HTTP/1.1\n  my-header1: foo\n  my-header2: bar\n  my-header3: baz\n\nConfig:\n  remove: [\"my-header1\", \"my-header3\"]\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header2: bar",
                   "items": {
                     "type": "string"
                   },
@@ -740,40 +1133,80 @@
                   "x-kubernetes-list-type": "set"
                 },
                 "set": {
-                  "description": "Set overwrites the request with the given header (name, value)\nbefore the action.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  set:\n  - name: \"my-header\"\n    value: \"bar\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: bar",
+                  "description": "Set overwrites the request with the given header (name, value) before the action.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  set:\n  - name: \"my-header\"\n    value: \"bar\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: bar",
                   "items": {
-                    "description": "HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.",
+                    "description": "HTTPHeader represents a single header name/value pair. Exactly one of value or secretRef must\nbe set. When using secretRef, name and key interact as follows:\n  - Both present: name is the header name, key is the Secret data key.\n  - name absent, key present: the key is also used as the header name.\n  - name present, key absent: the name is also used as the Secret data key.\n  - Both absent: every entry in the Secret is injected as a header (data key -> header name).",
                     "properties": {
                       "name": {
-                        "description": "Name is the name of the HTTP Header to be matched. Name matching MUST be\ncase-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).\n\nIf multiple entries specify equivalent header names, the first entry with\nan equivalent name MUST be considered for a match. Subsequent entries\nwith an equivalent header name MUST be ignored. Due to the\ncase-insensitivity of header names, \"foo\" and \"Foo\" are considered\nequivalent.",
+                        "description": "Name is the HTTP header field name. Name matching is case-insensitive.\n(See https://tools.ietf.org/html/rfc7230#section-3.2.)\nRequired when value is set. When secretRef is used, if omitted the Secret data key is\nused as the header name; if both name and key are omitted every Secret entry is injected\nas a header.",
                         "maxLength": 256,
                         "minLength": 1,
                         "pattern": "^[A-Za-z0-9!#$%&'*+\\-.^_\\x60|~]+$",
                         "type": "string"
                       },
+                      "secretRef": {
+                        "description": "SecretRef sources the header value from a key in a Kubernetes Secret.\nMutually exclusive with value.",
+                        "properties": {
+                          "key": {
+                            "description": "Key is the key within the Secret's data map to use as the header value. When omitted and\nthe parent HTTPHeader.name is set, that name is used as the key. When both key and name are\nomitted, all entries in the Secret are injected as headers.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "pattern": "^[-._a-zA-Z0-9]+$",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "Name is the name of the Kubernetes Secret.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "namespace": {
+                            "description": "Namespace is the namespace of the Secret. If omitted, defaults to the namespace of the\nreferencing policy. Cross-namespace references require a ReferenceGrant in the target\nnamespace permitting access from the policy's namespace.",
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": "object",
+                        "additionalProperties": false
+                      },
                       "value": {
-                        "description": "Value is the value of HTTP Header to be matched.",
+                        "description": "Value is an inline string value for the header. Mutually exclusive with secretRef.\nMust consist of printable US-ASCII characters. (See https://tools.ietf.org/html/rfc7230#section-3.2.)",
                         "maxLength": 4096,
                         "minLength": 1,
+                        "pattern": "^[!-~]+([\\t ]?[!-~]+)*$",
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "name",
-                      "value"
-                    ],
                     "type": "object",
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "name is required when using an inline value",
+                        "rule": "has(self.value) ? has(self.name) : true"
+                      },
+                      {
+                        "message": "exactly one of the fields in [value secretRef] must be set",
+                        "rule": "[has(self.value),has(self.secretRef)].filter(x,x==true).size() == 1"
+                      }
+                    ],
                     "additionalProperties": false
                   },
                   "maxItems": 16,
                   "type": "array",
-                  "x-kubernetes-list-map-keys": [
-                    "name"
-                  ],
-                  "x-kubernetes-list-type": "map"
+                  "x-kubernetes-list-type": "atomic"
                 }
               },
               "type": "object",
+              "x-kubernetes-validations": [
+                {
+                  "message": "at least one of the fields in [set add remove] must be set",
+                  "rule": "[has(self.set),has(self.add),has(self.remove)].filter(x,x==true).size() >= 1"
+                }
+              ],
               "additionalProperties": false
             }
           },
@@ -784,6 +1217,66 @@
               "rule": "[has(self.request),has(self.response)].filter(x,x==true).size() >= 1"
             }
           ],
+          "additionalProperties": false
+        },
+        "internalRedirect": {
+          "description": "InternalRedirect handles upstream 3xx redirects inside the gateway.\nApplies only to routes that forward traffic to a backend.",
+          "properties": {
+            "allowCrossSchemeRedirect": {
+              "description": "AllowCrossSchemeRedirect permits redirects across http/https schemes.\nDefaults to false.",
+              "type": "boolean"
+            },
+            "maxRedirects": {
+              "description": "MaxRedirects caps followed redirects for a single downstream request.\nDefaults to 1.",
+              "format": "int32",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "redirectResponseCodes": {
+              "description": "RedirectResponseCodes are upstream status codes that trigger internal redirects.\nIf unset, only 302 redirects are followed.",
+              "items": {
+                "description": "InternalRedirectResponseCode is a 3xx response code supported for internal redirects.",
+                "enum": [
+                  301,
+                  302,
+                  303,
+                  307,
+                  308
+                ],
+                "format": "int32",
+                "type": "integer"
+              },
+              "maxItems": 5,
+              "minItems": 1,
+              "type": "array",
+              "x-kubernetes-validations": [
+                {
+                  "message": "redirectResponseCodes must not contain duplicates",
+                  "rule": "self.all(c, self.exists_one(c2, c2 == c))"
+                }
+              ]
+            },
+            "responseHeadersToCopy": {
+              "description": "ResponseHeadersToCopy are copied from the redirect response to the\ninternally redirected request.",
+              "items": {
+                "description": "HTTPHeaderName is the name of an HTTP header.\n\nValid values include:\n\n* \"Authorization\"\n* \"Set-Cookie\"\n\nInvalid values include:\n\n  - \":method\" - \":\" is an invalid character. This means that HTTP/2 pseudo\n    headers are not currently supported by this type.\n  - \"/invalid\" - \"/ \" is an invalid character",
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9!#$%&'*+\\-.^_\\x60|~]+$",
+                "type": "string"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array",
+              "x-kubernetes-validations": [
+                {
+                  "message": "responseHeadersToCopy must not contain duplicates",
+                  "rule": "self.all(h, self.exists_one(h2, h2 == h))"
+                }
+              ]
+            }
+          },
+          "type": "object",
           "additionalProperties": false
         },
         "jwtAuth": {
@@ -971,6 +1464,20 @@
             "local": {
               "description": "Local defines a local rate limiting policy.",
               "properties": {
+                "percentEnabled": {
+                  "description": "PercentEnabled specifies the percentage of requests for which the rate limiter is enabled.",
+                  "format": "int32",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "percentEnforced": {
+                  "description": "PercentEnforced specifies the percentage of requests for which the rate limiter is enforced.",
+                  "format": "int32",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "integer"
+                },
                 "tokenBucket": {
                   "description": "TokenBucket represents the configuration for a token bucket local rate-limiting mechanism.\nIt defines the parameters for controlling the rate at which requests are allowed.",
                   "properties": {
@@ -1059,7 +1566,7 @@
           "additionalProperties": false
         },
         "retry": {
-          "description": "Retry defines the policy for retrying requests.\nIt is applicable to HTTPRoutes, Gateway listeners and XListenerSets, and ignored for other targeted kinds.",
+          "description": "Retry defines the policy for retrying requests.\nIt is applicable to HTTPRoutes, GRPCRoutes, Gateways, Gateway listeners, and\nListenerSets, and ignored for other targeted kinds.\nWhen attached above the route level, the retry policy applies to all routes it\ncovers; a route-level retry policy (from a more specific TrafficPolicy or the\nbuilt-in HTTPRoute retry) takes precedence.",
           "properties": {
             "attempts": {
               "default": 1,
@@ -1084,7 +1591,7 @@
               ]
             },
             "perTryTimeout": {
-              "description": "PerTryTimeout specifies the timeout per retry attempt (incliding the initial attempt).\nIf a global timeout is configured on a route, this timeout must be less than the global\nroute timeout.\nIt is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as \"1s\" or \"500ms\".",
+              "description": "PerTryTimeout specifies the timeout per retry attempt (including the initial attempt).\nIf a global timeout is configured on a route, this timeout must be less than the global\nroute timeout.\nIt is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as \"1s\" or \"500ms\".",
               "type": "string",
               "x-kubernetes-validations": [
                 {
@@ -1126,7 +1633,7 @@
             "statusCodes": {
               "description": "StatusCodes specifies the HTTP status codes in the range 400-599 that should be retried in addition\nto the conditions specified in RetryOn.",
               "items": {
-                "description": "HTTPRouteRetryStatusCode defines an HTTP response status code for\nwhich a backend request should be retried.\n\nImplementations MUST support the following status codes as retryable:\n\n* 500\n* 502\n* 503\n* 504\n\nImplementations MAY support specifying additional discrete values in the\n500-599 range.\n\nImplementations MAY support specifying discrete values in the 400-499 range,\nwhich are often inadvisable to retry.\n\n<gateway:experimental>",
+                "description": "HTTPRouteRetryStatusCode defines an HTTP response status code for\nwhich a backend request should be retried.\n\nImplementations MUST support the following status codes as retriable:\n\n* 500\n* 502\n* 503\n* 504\n\nImplementations MAY support specifying additional discrete values in the\n500-599 range.\n\nImplementations MAY support specifying discrete values in the 400-499 range,\nwhich are often inadvisable to retry.\n\n<gateway:experimental>",
                 "maximum": 599,
                 "minimum": 400,
                 "type": "integer"
@@ -1143,6 +1650,13 @@
             }
           ],
           "additionalProperties": false
+        },
+        "statPrefix": {
+          "description": "StatPrefix sets a custom prefix on the Envoy route so that per-route\nstatistics are emitted for the targeted routes. When set, Envoy emits stats under\n`vhost.<vhost>.route.<statPrefix>.*`.\n\nThe value is composed of stat-safe literal characters (letters, digits,\nand `_ % . -`) and/or `{{ \"{{ ... }}\" }}` template tokens that are substituted at\ntranslation time with metadata from the route the policy is applied to.\nThe supported template variables are:\n  - `{{ \"{{route_name}}\" }}`: the name of the route resource (e.g. HTTPRoute).\n  - `{{ \"{{route_namespace}}\" }}`: the namespace of the route resource.\n  - `{{ \"{{rule_name}}\" }}`: the name of the matched route rule, or empty if the\n    rule is unnamed.\n\nFor example, `{{ \"{{route_namespace}}\" }}.{{ \"{{route_name}}\" }}` renders to\n`my-ns.my-route`. Whitespace is permitted only inside the braces of a\ntemplate token; unmatched braces, unsupported variable names, and any\nother characters are rejected.\n\nRecommended value: `{{ \"{{route_namespace}}\" }}.{{ \"{{route_name}}\" }}.{{ \"{{rule_name}}\" }}`,\nwhich uniquely identifies each route rule.\n\nNOTE: This field is only honored for HTTPRoute and GRPCRoute targets.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^([a-zA-Z0-9_%.-]|\\{\\{\\s*(route_name|route_namespace|rule_name)\\s*\\}\\})+$",
+          "type": "string"
         },
         "targetRefs": {
           "description": "TargetRefs specifies the target resources by reference to attach the policy to.",
@@ -1189,8 +1703,8 @@
           "type": "array",
           "x-kubernetes-validations": [
             {
-              "message": "targetRefs may only reference Gateway, HTTPRoute, or ListenerSet resources",
-              "rule": "self.all(r, (r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind.endsWith('ListenerSet')))"
+              "message": "targetRefs may only reference Gateway, HTTPRoute, GRPCRoute, or ListenerSet resources",
+              "rule": "self.all(r, (r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute' || r.kind.endsWith('ListenerSet')))"
             }
           ]
         },
@@ -1238,13 +1752,13 @@
           "type": "array",
           "x-kubernetes-validations": [
             {
-              "message": "targetSelectors may only reference Gateway, HTTPRoute, or ListenerSet resources",
-              "rule": "self.all(r, (r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind.endsWith('ListenerSet')))"
+              "message": "targetSelectors may only reference Gateway, HTTPRoute, GRPCRoute, or ListenerSet resources",
+              "rule": "self.all(r, (r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute' || r.kind.endsWith('ListenerSet')))"
             }
           ]
         },
         "timeouts": {
-          "description": "Timeouts defines the timeouts for requests\nIt is applicable to HTTPRoutes and ignored for other targeted kinds.",
+          "description": "Timeouts defines the timeouts for requests.\nIt is applicable to HTTPRoutes, GRPCRoutes, and Gateways (including individual\nGateway listeners via sectionName), and ignored for other targeted kinds.\nWhen attached above the route level, the timeouts apply to all routes it\ncovers; a route-level timeout (from a more specific TrafficPolicy or the\nbuilt-in HTTPRoute timeouts) takes precedence.",
           "properties": {
             "request": {
               "description": "Request specifies a timeout for an individual request from the gateway to a backend.\nThis spans between the point at which the entire downstream request (i.e. end-of-stream) has been\nprocessed and when the backend response has been completely processed.\nA value of 0 effectively disables the timeout.\nIt is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as \"1s\" or \"500ms\".",
@@ -1270,6 +1784,173 @@
           "type": "object",
           "additionalProperties": false
         },
+        "tracing": {
+          "description": "Tracing configures per-route tracing overrides.\nThese settings override the listener-level tracing configuration\n(configured via ListenerPolicy) for matched routes.\nThe tracing provider (e.g., OpenTelemetry collector endpoint) must be\nconfigured at the listener level via ListenerPolicy. Without a listener-level\ntracing provider, route-level settings have no effect.\nNOTE: This field is only honored for HTTPRoute and GRPCRoute targets.",
+          "properties": {
+            "attributes": {
+              "description": "Additional attributes to add to active spans for this route.\nThese are merged with listener-level attributes configured via ListenerPolicy.\nOn name collision, route-level attributes take priority.",
+              "items": {
+                "description": "Describes attributes for the active span.\nRef: https://www.envoyproxy.io/docs/envoy/latest/api-v3/type/tracing/v3/custom_tag.proto#envoy-v3-api-msg-type-tracing-v3-customtag",
+                "maxProperties": 2,
+                "minProperties": 1,
+                "properties": {
+                  "environment": {
+                    "description": "An environment attribute value.",
+                    "properties": {
+                      "defaultValue": {
+                        "description": "When the environment variable is not found, the attribute value will be populated with this default value if specified,\notherwise no attribute will be populated.",
+                        "type": "string"
+                      },
+                      "name": {
+                        "description": "Environment variable name to obtain the value to populate the attribute value.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "literal": {
+                    "description": "A literal attribute value.",
+                    "properties": {
+                      "value": {
+                        "description": "Static literal value to populate the attribute value.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "value"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "metadata": {
+                    "description": "An attribute to obtain the value from the metadata.",
+                    "properties": {
+                      "defaultValue": {
+                        "description": "When no valid metadata is found, the attribute value would be populated with this default value if specified, otherwise no attribute would be populated.",
+                        "type": "string"
+                      },
+                      "kind": {
+                        "description": "Specify what kind of metadata to obtain attribute value from",
+                        "enum": [
+                          "Request",
+                          "Route",
+                          "Cluster",
+                          "Host"
+                        ],
+                        "type": "string"
+                      },
+                      "metadataKey": {
+                        "description": "Metadata key to define the path to retrieve the attribute value.",
+                        "properties": {
+                          "key": {
+                            "description": "The key name of the Metadata from which to retrieve the Struct",
+                            "type": "string"
+                          },
+                          "path": {
+                            "description": "The path used to retrieve a specific Value from the Struct. This can be either a prefix or a full path,\ndepending on the use case",
+                            "items": {
+                              "description": "Specifies a segment in a path for retrieving values from Metadata.",
+                              "properties": {
+                                "key": {
+                                  "description": "The key used to retrieve the value in the struct",
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key"
+                              ],
+                              "type": "object",
+                              "additionalProperties": false
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "path"
+                        ],
+                        "type": "object",
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "metadataKey"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "name": {
+                    "description": "The name of the attribute",
+                    "type": "string"
+                  },
+                  "requestHeader": {
+                    "description": "A request header attribute value.",
+                    "properties": {
+                      "defaultValue": {
+                        "description": "When the header does not exist, the attribute value will be populated with this default value if specified,\notherwise no attribute will be populated.",
+                        "type": "string"
+                      },
+                      "name": {
+                        "description": "Header name to obtain the value to populate the attribute value.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object",
+                "additionalProperties": false
+              },
+              "maxItems": 16,
+              "type": "array"
+            },
+            "clientSampling": {
+              "description": "Target percentage of requests that will be force traced if the\nx-client-trace-id header is set. Overrides the listener-level setting.",
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "disable": {
+              "description": "Disable tracing for this route.\nCan be used to disable tracing for specific routes when listener-level\ntracing is configured via ListenerPolicy.",
+              "type": "object"
+            },
+            "overallSampling": {
+              "description": "Target percentage of requests that will be traced after all other\nsampling checks have been applied. This acts as an upper limit on\nthe total configured sampling rate. Overrides the listener-level setting.",
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "randomSampling": {
+              "description": "Target percentage of requests that will be randomly selected for\ntrace generation. Overrides the listener-level setting.",
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "disable is mutually exclusive with other tracing fields",
+              "rule": "!has(self.disable) || (!has(self.clientSampling) && !has(self.randomSampling) && !has(self.overallSampling) && !has(self.attributes))"
+            }
+          ],
+          "additionalProperties": false
+        },
         "transformation": {
           "description": "Transformation is used to mutate and transform requests and responses\nbefore forwarding them to the destination.",
           "properties": {
@@ -1277,7 +1958,7 @@
               "description": "Request is used to modify the request path.",
               "properties": {
                 "add": {
-                  "description": "Add is a list of headers to add to the request and what that value should be set to.\nIf there is already a header with these values then append the value as an extra entry.\nAdd is not supported on arm64 build, see https://github.com/kgateway-dev/kgateway/blob/v2.2.x/docs/guides/transformation.md for details",
+                  "description": "Add is a list of headers to add to the request and what that value should be set to.\nIf there is already a header with these values then append the value as an extra entry.\nAdd is not supported on arm64 build, see docs/guides/transformation.md for details",
                   "items": {
                     "properties": {
                       "name": {
@@ -1307,20 +1988,69 @@
                   "properties": {
                     "parseAs": {
                       "default": "AsString",
-                      "description": "ParseAs defines what auto formatting should be applied to the body.\nThis can make interacting with keys within a json body much easier if AsJson is selected.",
+                      "description": "ParseAs defines what auto formatting should be applied to the body.\nThis can make interacting with keys within a json body much easier if AsJson is selected.\nWhen set to None, it will not buffer the body and will skip all body processing. In\naddition, attempt to extract json variables from the body using inja template in the header\nwill result in 400 response.",
                       "enum": [
                         "AsString",
-                        "AsJson"
+                        "AsJson",
+                        "None"
                       ],
                       "type": "string"
                     },
                     "value": {
-                      "description": "Value is the template to apply to generate the output value for the body.\nOnly Inja templates are supported.",
+                      "description": "Value is the template to apply to generate the output value for the body.\nOnly Inja templates are supported. If ParseAs field is set to None,\nthis Value field is ignored and no body transformation will be done.",
                       "type": "string"
                     }
                   },
                   "type": "object",
                   "additionalProperties": false
+                },
+                "dynamicMetadata": {
+                  "description": "DynamicMetadata is a list of dynamic metadata entries to set.\nThe values are stored in Envoy dynamic metadata and can be used in access log\ntemplates or consumed by other filters down the chain.",
+                  "items": {
+                    "description": "DynamicMetadataTransformation defines a single dynamic metadata entry to set.",
+                    "properties": {
+                      "key": {
+                        "description": "Key is the metadata key within the namespace.",
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "description": "Namespace is the dynamic metadata namespace.",
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "value": {
+                        "description": "Value is the value to set in dynamic metadata.",
+                        "properties": {
+                          "stringValue": {
+                            "description": "StringValue is an Inja template whose rendered output is stored as the metadata string value.",
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "x-kubernetes-validations": [
+                          {
+                            "message": "exactly one of the fields in [stringValue] must be set",
+                            "rule": "[has(self.stringValue)].filter(x,x==true).size() == 1"
+                          }
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "namespace",
+                      "value"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "maxItems": 16,
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic"
                 },
                 "remove": {
                   "description": "Remove is a list of header names to remove from the request/response.",
@@ -1365,7 +2095,7 @@
               "description": "Response is used to modify the response path.",
               "properties": {
                 "add": {
-                  "description": "Add is a list of headers to add to the request and what that value should be set to.\nIf there is already a header with these values then append the value as an extra entry.\nAdd is not supported on arm64 build, see https://github.com/kgateway-dev/kgateway/blob/v2.2.x/docs/guides/transformation.md for details",
+                  "description": "Add is a list of headers to add to the request and what that value should be set to.\nIf there is already a header with these values then append the value as an extra entry.\nAdd is not supported on arm64 build, see docs/guides/transformation.md for details",
                   "items": {
                     "properties": {
                       "name": {
@@ -1395,20 +2125,69 @@
                   "properties": {
                     "parseAs": {
                       "default": "AsString",
-                      "description": "ParseAs defines what auto formatting should be applied to the body.\nThis can make interacting with keys within a json body much easier if AsJson is selected.",
+                      "description": "ParseAs defines what auto formatting should be applied to the body.\nThis can make interacting with keys within a json body much easier if AsJson is selected.\nWhen set to None, it will not buffer the body and will skip all body processing. In\naddition, attempt to extract json variables from the body using inja template in the header\nwill result in 400 response.",
                       "enum": [
                         "AsString",
-                        "AsJson"
+                        "AsJson",
+                        "None"
                       ],
                       "type": "string"
                     },
                     "value": {
-                      "description": "Value is the template to apply to generate the output value for the body.\nOnly Inja templates are supported.",
+                      "description": "Value is the template to apply to generate the output value for the body.\nOnly Inja templates are supported. If ParseAs field is set to None,\nthis Value field is ignored and no body transformation will be done.",
                       "type": "string"
                     }
                   },
                   "type": "object",
                   "additionalProperties": false
+                },
+                "dynamicMetadata": {
+                  "description": "DynamicMetadata is a list of dynamic metadata entries to set.\nThe values are stored in Envoy dynamic metadata and can be used in access log\ntemplates or consumed by other filters down the chain.",
+                  "items": {
+                    "description": "DynamicMetadataTransformation defines a single dynamic metadata entry to set.",
+                    "properties": {
+                      "key": {
+                        "description": "Key is the metadata key within the namespace.",
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "description": "Namespace is the dynamic metadata namespace.",
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "value": {
+                        "description": "Value is the value to set in dynamic metadata.",
+                        "properties": {
+                          "stringValue": {
+                            "description": "StringValue is an Inja template whose rendered output is stored as the metadata string value.",
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "x-kubernetes-validations": [
+                          {
+                            "message": "exactly one of the fields in [stringValue] must be set",
+                            "rule": "[has(self.stringValue)].filter(x,x==true).size() == 1"
+                          }
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "namespace",
+                      "value"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "maxItems": 16,
+                  "type": "array",
+                  "x-kubernetes-list-type": "atomic"
                 },
                 "remove": {
                   "description": "Remove is a list of header names to remove from the request/response.",
@@ -1494,19 +2273,23 @@
       "x-kubernetes-validations": [
         {
           "message": "autoHostRewrite can only be used when targeting HTTPRoute resources",
-          "rule": "!has(self.autoHostRewrite) || ((has(self.targetRefs) && self.targetRefs.all(r, r.kind == 'HTTPRoute')) || (has(self.targetSelectors) && self.targetSelectors.all(r, r.kind == 'HTTPRoute')))"
+          "rule": "!has(self.autoHostRewrite) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'HTTPRoute')) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'HTTPRoute')))"
+        },
+        {
+          "message": "urlRewrite can only be used when targeting HTTPRoute resources",
+          "rule": "!has(self.urlRewrite) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'HTTPRoute')) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'HTTPRoute')))"
+        },
+        {
+          "message": "tracing can only be used when targeting HTTPRoute or GRPCRoute resources",
+          "rule": "!has(self.tracing) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')))"
+        },
+        {
+          "message": "statPrefix can only be used when targeting HTTPRoute or GRPCRoute resources",
+          "rule": "!has(self.statPrefix) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')))"
         },
         {
           "message": "retry.perTryTimeout must be less than timeouts.request",
           "rule": "has(self.retry) && has(self.timeouts) ? (has(self.retry.perTryTimeout) && has(self.timeouts.request) ? duration(self.retry.perTryTimeout) < duration(self.timeouts.request) : true) : true"
-        },
-        {
-          "message": "targetRefs[].sectionName must be set when targeting Gateway resources with retry policy",
-          "rule": "has(self.retry) && has(self.targetRefs) ? self.targetRefs.all(r, (r.kind == 'Gateway' ? has(r.sectionName) : true )) : true"
-        },
-        {
-          "message": "targetSelectors[].sectionName must be set when targeting Gateway resources with retry policy",
-          "rule": "has(self.retry) && has(self.targetSelectors) ? self.targetSelectors.all(r, (r.kind == 'Gateway' ? has(r.sectionName) : true )) : true"
         }
       ],
       "additionalProperties": false

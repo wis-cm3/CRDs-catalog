@@ -18,12 +18,31 @@
         "forProvider": {
           "description": "UserParameters define the desired state of a MySQL user instance.",
           "properties": {
+            "authenticationPlugin": {
+              "description": "AuthenticationPlugin selects a non-default MySQL authentication plugin\nfor the user. When set, the user is created with\nCREATE USER ... IDENTIFIED WITH <plugin> [AS '<authString>'] and no\npassword is generated or required.\n\nMost commonly used for AWS RDS IAM authentication, where the DB user\nhas no static password and clients authenticate via short-lived IAM\nauth tokens. Example:\n  authenticationPlugin:\n    name: AWSAuthenticationPlugin\n    authString: RDS\n\nWhen AuthenticationPlugin is set, PasswordSecretRef must not be set\nand the connection secret will not contain a password.",
+              "properties": {
+                "authString": {
+                  "description": "AuthString is the optional auth string passed to the plugin via the\nAS clause. For AWSAuthenticationPlugin set this to \"RDS\". For native\npassword plugins, leave empty and use PasswordSecretRef instead.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name is the auth plugin name. Examples: \"AWSAuthenticationPlugin\",\n\"mysql_native_password\", \"caching_sha2_password\", \"auth_socket\".",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            },
             "binlog": {
               "description": "BinLog defines whether the create, delete, update operations of this user are propagated to replicas. Defaults to true",
               "type": "boolean"
             },
             "passwordSecretRef": {
-              "description": "PasswordSecretRef references the secret that contains the password used\nfor this user. If no reference is given, a password will be auto-generated.",
+              "description": "PasswordSecretRef references the secret that contains the password used\nfor this user. If no reference is given, a password will be auto-generated.\nCannot be set together with AuthenticationPlugin.",
               "properties": {
                 "key": {
                   "type": "string"
@@ -65,6 +84,12 @@
             }
           },
           "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "authenticationPlugin and passwordSecretRef are mutually exclusive",
+              "rule": "!(has(self.authenticationPlugin) && has(self.passwordSecretRef))"
+            }
+          ],
           "additionalProperties": false
         },
         "managementPolicies": {
@@ -136,6 +161,25 @@
         "atProvider": {
           "description": "A UserObservation represents the observed state of a MySQL user.",
           "properties": {
+            "authenticationPlugin": {
+              "description": "AuthenticationPlugin reflects the user's actual authentication plugin\nas read from mysql.user. Populated only when the observed plugin is a\nnon-default-password plugin (e.g., AWSAuthenticationPlugin). Used by\nthe reconciler to detect drift between the desired\nspec.forProvider.authenticationPlugin and what's actually configured\non the DB so plugin changes are not silently ignored.",
+              "properties": {
+                "authString": {
+                  "description": "AuthString is the optional auth string passed to the plugin via the\nAS clause. For AWSAuthenticationPlugin set this to \"RDS\". For native\npassword plugins, leave empty and use PasswordSecretRef instead.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name is the auth plugin name. Examples: \"AWSAuthenticationPlugin\",\n\"mysql_native_password\", \"caching_sha2_password\", \"auth_socket\".",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object",
+              "additionalProperties": false
+            },
             "resourceOptionsAsClauses": {
               "description": "ResourceOptionsAsClauses represents the applied resource options",
               "items": {

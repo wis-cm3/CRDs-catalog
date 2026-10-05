@@ -35,6 +35,11 @@
         "keepAlive": {
           "description": "KeepAlive defines the keep-alive settings.",
           "properties": {
+            "minTimeout": {
+              "description": "MinTimeout defines the timeout for which the keep-alive client connection\nwill not be closed on the server side for connection reuse or on\ngraceful shutdown of worker processes.\nDefault: https://nginx.org/en/docs/http/ngx_http_core_module.html#keepalive_min_timeout.",
+              "pattern": "^[0-9]{1,4}(ms|s|m|h)?$",
+              "type": "string"
+            },
             "requests": {
               "description": "Requests sets the maximum number of requests that can be served through one keep-alive connection.\nAfter the maximum number of requests are made, the connection is closed. Closing connections periodically\nis necessary to free per-connection memory allocations. Therefore, using too high maximum number of requests\nis not recommended as it can lead to excessive memory usage.\nDefault: https://nginx.org/en/docs/http/ngx_http_core_module.html#keepalive_requests.",
               "format": "int32",
@@ -253,13 +258,15 @@
             },
             "required": [
               "ancestorRef",
+              "conditions",
               "controllerName"
             ],
             "type": "object",
             "additionalProperties": false
           },
           "maxItems": 16,
-          "type": "array"
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
         }
       },
       "required": [
