@@ -16,7 +16,7 @@
       "description": "UserSpec defines the desired state of User.\n\nYou create users and assign them specific permissions by using an access\nstring. You assign the users to Access Control Lists aligned with a specific\nrole (administrators, human resources) that are then deployed to one or more\nMemoryDB clusters.",
       "properties": {
         "accessString": {
-          "description": "Access permissions string used for this user.",
+          "description": "Access permissions string used for this user.\n\nRegex Pattern: `\\S`",
           "type": "string"
         },
         "authenticationMode": {
@@ -56,7 +56,7 @@
           "additionalProperties": false
         },
         "name": {
-          "description": "The name of the user. This value must be unique as it also serves as the\nuser identifier.",
+          "description": "The name of the user. This value must be unique as it also serves as the\nuser identifier.\n\nRegex Pattern: `^[a-zA-Z][a-zA-Z0-9\\-]*$`",
           "type": "string"
         },
         "tags": {
@@ -99,6 +99,10 @@
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
               "type": "string"
             },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
             "region": {
               "description": "Region is the AWS region in which the resource exists or will exist.",
               "type": "string"
@@ -133,7 +137,7 @@
           "additionalProperties": false
         },
         "conditions": {
-          "description": "All CRS managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
           "items": {
             "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
             "properties": {

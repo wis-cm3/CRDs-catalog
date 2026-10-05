@@ -1,0 +1,192 @@
+{
+  "description": "Policy is the Schema for the Policies API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "PolicySpec defines the desired state of Policy.\n\nRepresents a complete policy resource within the AgentCore Policy system.\nPolicies are ARN-able resources that contain Cedar policy statements and\nassociated metadata for controlling agent behavior and access decisions.\nEach policy belongs to a policy engine and defines fine-grained authorization\nrules that are evaluated in real-time as agents interact with tools through\nGateway. Policies use the Cedar policy language to specify who (principals\nbased on OAuth claims like username, role, or scope) can perform what actions\n(tool calls) on which resources (Gateways), with optional conditions for\nattribute-based access control. Multiple policies can apply to a single request,\nwith Cedar's forbid-wins semantics ensuring that security restrictions are\nnever accidentally overridden.",
+      "properties": {
+        "definition": {
+          "description": "The Cedar policy statement that defines the access control rules. This contains\nthe actual policy logic written in Cedar policy language, specifying effect\n(permit or forbid), principals, actions, resources, and conditions for agent\nbehavior control.",
+          "properties": {
+            "cedar": {
+              "description": "Represents a Cedar policy statement within the AgentCore Policy system. Cedar\nis a policy language designed for authorization that provides human-readable,\nanalyzable, and high-performance policy evaluation for controlling agent\nbehavior and access decisions.",
+              "properties": {
+                "statement": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "description": {
+          "description": "A human-readable description of the policy's purpose and functionality (1-4,096\ncharacters). This helps policy administrators understand the policy's intent,\nbusiness rules, and operational scope. Use this field to document why the\npolicy exists, what business requirement it addresses, and any special considerations\nfor maintenance. Clear descriptions are essential for policy governance,\nauditing, and troubleshooting.",
+          "type": "string"
+        },
+        "enforcementMode": {
+          "description": "The enforcement mode for the policy. Run this policy in LOG_ONLY mode to\ncollect data on how it affects your application. Once you are satisfied with\nthe data gathered, switch the policy to ACTIVE. Defaults to ACTIVE.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The customer-assigned immutable name for the policy. Must be unique within\nthe account. This name is used for policy identification and cannot be changed\nafter creation.\n\nRegex Pattern: `^[A-Za-z][A-Za-z0-9_]*$`",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "policyEngineID": {
+          "description": "The identifier of the policy engine which contains this policy. Policy engines\ngroup related policies and provide the execution context for policy evaluation.\n\nRegex Pattern: `^[A-Za-z][A-Za-z0-9_]*-[a-z0-9_]{10}$`",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "policyEngineRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "validationMode": {
+          "description": "The validation mode for the policy creation. Determines how Cedar analyzer\nvalidation results are handled during policy creation. FAIL_ON_ANY_FINDINGS\n(default) runs the Cedar analyzer to validate the policy against the Cedar\nschema and tool context, failing creation if the analyzer detects any validation\nissues to ensure strict conformance. IGNORE_ALL_FINDINGS runs the Cedar analyzer\nbut allows policy creation even if validation issues are detected, useful\nfor testing or when the policy schema is evolving. Use FAIL_ON_ANY_FINDINGS\nfor production policies to ensure correctness, and IGNORE_ALL_FINDINGS only\nwhen you understand and accept the analyzer findings.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "definition",
+        "name"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "PolicyStatus defines the observed state of Policy",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "createdAt": {
+          "description": "The timestamp when the policy was originally created.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "description": "The unique identifier for the created policy. This is a system-generated\nidentifier consisting of the user name plus a 10-character generated suffix,\nused for all subsequent policy operations.\n\nRegex Pattern: `^[A-Za-z][A-Za-z0-9_]*-[a-z0-9_]{10}$`",
+          "type": "string"
+        },
+        "status": {
+          "description": "The current status of the policy. A status of ACTIVE indicates the policy\nis ready for use.",
+          "type": "string"
+        },
+        "statusReasons": {
+          "description": "Additional information about the policy status. This provides details about\nany failures or the current state of the policy.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "updatedAt": {
+          "description": "The timestamp when the policy was last modified. This tracks the most recent\nchanges to the policy configuration.",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

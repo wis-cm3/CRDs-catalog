@@ -1,0 +1,394 @@
+{
+  "description": "Table is the Schema for the Tables API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "TableSpec defines the desired state of Table.",
+      "properties": {
+        "encryptionConfiguration": {
+          "description": "The encryption configuration to use for the table. This configuration specifies\nthe encryption algorithm and, if using SSE-KMS, the KMS key to use for encrypting\nthe table.\n\nIf you choose SSE-KMS encryption you must grant the S3 Tables maintenance\nprincipal access to your KMS key. For more information, see Permissions requirements\nfor S3 Tables SSE-KMS encryption (https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-kms-permissions.html).",
+          "properties": {
+            "kmsKeyARN": {
+              "type": "string"
+            },
+            "kmsKeyRef": {
+              "description": "Reference field for KMSKeyARN",
+              "properties": {
+                "from": {
+                  "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "sseAlgorithm": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ],
+          "additionalProperties": false
+        },
+        "format": {
+          "description": "The format for the table.",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "metadata": {
+          "description": "The metadata for the table.",
+          "properties": {
+            "iceberg": {
+              "description": "Contains details about the metadata for an Iceberg table.",
+              "properties": {
+                "partitionSpec": {
+                  "description": "Defines how data in an Iceberg table is partitioned. Partitioning helps optimize\nquery performance by organizing data into separate files based on field values.\nEach partition field specifies a transform to apply to a source field.",
+                  "properties": {
+                    "fields": {
+                      "items": {
+                        "description": "Defines a single partition field in an Iceberg partition specification.",
+                        "properties": {
+                          "fieldID": {
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "sourceID": {
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "transform": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      },
+                      "type": "array"
+                    },
+                    "specID": {
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "properties": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "schema": {
+                  "description": "Contains details about the schema for an Iceberg table.",
+                  "properties": {
+                    "fields": {
+                      "items": {
+                        "description": "Contains details about a schema field.",
+                        "properties": {
+                          "id": {
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "writeOrder": {
+                  "description": "Defines the sort order for data within an Iceberg table. Sorting data can\nimprove query performance by enabling more efficient data skipping.",
+                  "properties": {
+                    "fields": {
+                      "items": {
+                        "description": "Defines a single sort field in an Iceberg sort order specification.",
+                        "properties": {
+                          "direction": {
+                            "type": "string"
+                          },
+                          "nullOrder": {
+                            "type": "string"
+                          },
+                          "sourceID": {
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "transform": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      },
+                      "type": "array"
+                    },
+                    "orderID": {
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "additionalProperties": false
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ],
+          "additionalProperties": false
+        },
+        "metadataLocation": {
+          "description": "The metadata location of the table.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name for the table.\n\nRegex Pattern: `^[0-9a-z_]*$`",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "The namespace to associated with the table.\n\nRegex Pattern: `^[0-9a-z_]*$`",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "namespaceRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "storageClassConfiguration": {
+          "description": "The storage class configuration for the table. If not specified, the table\ninherits the storage class configuration from its table bucket. Specify this\nparameter to override the bucket's default storage class for this table.",
+          "properties": {
+            "storageClass": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ],
+          "additionalProperties": false
+        },
+        "tableBucketARN": {
+          "description": "The Amazon Resource Name (ARN) of the table bucket to create the table in.\n\nRegex Pattern: `^(arn:aws[-a-z0-9]*:[a-z0-9]+:[-a-z0-9]*:[0-9]{12}:bucket/[a-z0-9_-]{3,63})$`",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "tableBucketRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A map of user-defined tags that you would like to apply to the table that\nyou are creating. A tag is a key-value pair that you apply to your resources.\nTags can help you organize, track costs for, and control access to resources.\nFor more information, see Tagging for cost allocation or attribute-based\naccess control (ABAC) (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html).\n\nYou must have the s3tables:TagResource permission in addition to s3tables:CreateTable\npermission to create a table with tags.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "format",
+        "name"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "TableStatus defines the observed state of Table",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "createdAt": {
+          "description": "The date and time the table bucket was created at.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "modifiedAt": {
+          "description": "The date and time the table was last modified on.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "namespaceID": {
+          "description": "The unique identifier of the namespace containing this table.",
+          "type": "string"
+        },
+        "tableBucketID": {
+          "description": "The unique identifier of the table bucket containing this table.",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type of the table.",
+          "type": "string"
+        },
+        "versionToken": {
+          "description": "The version token of the table.",
+          "type": "string"
+        },
+        "warehouseLocation": {
+          "description": "The warehouse location of the table.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

@@ -20,17 +20,18 @@
           "type": "string"
         },
         "family": {
-          "description": "The DB parameter group family name. A DB parameter group can be associated\nwith one and only one DB parameter group family, and can be applied only\nto a DB instance running a database engine and engine version compatible\nwith that DB parameter group family.\n\nTo list all of the available parameter group families for a DB engine, use\nthe following command:\n\naws rds describe-db-engine-versions --query \"DBEngineVersions[].DBParameterGroupFamily\"\n--engine\n\nFor example, to list all of the available parameter group families for the\nMySQL DB engine, use the following command:\n\naws rds describe-db-engine-versions --query \"DBEngineVersions[].DBParameterGroupFamily\"\n--engine mysql\n\nThe output contains duplicates.\n\nThe following are the valid DB engine values:\n\n  - aurora-mysql\n\n  - aurora-postgresql\n\n  - db2-ae\n\n  - db2-se\n\n  - mysql\n\n  - oracle-ee\n\n  - oracle-ee-cdb\n\n  - oracle-se2\n\n  - oracle-se2-cdb\n\n  - postgres\n\n  - sqlserver-ee\n\n  - sqlserver-se\n\n  - sqlserver-ex\n\n  - sqlserver-web",
+          "description": "The DB parameter group family name. A DB parameter group can be associated\nwith one and only one DB parameter group family, and can be applied only\nto a DB instance running a database engine and engine version compatible\nwith that DB parameter group family.\n\nTo list all of the available parameter group families for a DB engine, use\nthe following command:\n\naws rds describe-db-engine-versions --query \"DBEngineVersions[].DBParameterGroupFamily\"\n--engine\n\nFor example, to list all of the available parameter group families for the\nMySQL DB engine, use the following command:\n\naws rds describe-db-engine-versions --query \"DBEngineVersions[].DBParameterGroupFamily\"\n--engine mysql\n\nThe output contains duplicates.\n\nThe following are the valid DB engine values:\n\n   * aurora-mysql\n\n   * aurora-postgresql\n\n   * db2-ae\n\n   * db2-se\n\n   * mysql\n\n   * oracle-ee\n\n   * oracle-ee-cdb\n\n   * oracle-se2\n\n   * oracle-se2-cdb\n\n   * postgres\n\n   * sqlserver-ee\n\n   * sqlserver-se\n\n   * sqlserver-ex\n\n   * sqlserver-web",
           "type": "string"
         },
         "name": {
-          "description": "The name of the DB parameter group.\n\nConstraints:\n\n  - Must be 1 to 255 letters, numbers, or hyphens.\n\n  - First character must be a letter\n\n  - Can't end with a hyphen or contain two consecutive hyphens\n\nThis value is stored as a lowercase string.",
+          "description": "The name of the DB parameter group.\n\nConstraints:\n\n   * Must be 1 to 255 letters, numbers, or hyphens.\n\n   * First character must be a letter\n\n   * Can't end with a hyphen or contain two consecutive hyphens\n\nThis value is stored as a lowercase string.",
           "type": "string"
         },
         "parameterOverrides": {
           "additionalProperties": {
             "type": "string"
           },
+          "description": "Map keys are the parameter name and the values are the parameter value.\n\nThese are ONLY user-defined parameter overrides for the DB parameter group.\n\nThis does not contain default or system parameters.",
           "type": "object"
         },
         "tags": {
@@ -71,6 +72,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {

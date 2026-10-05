@@ -104,6 +104,9 @@
                   "format": "int64",
                   "type": "integer"
                 },
+                "nestedVirtualization": {
+                  "type": "string"
+                },
                 "threadsPerCore": {
                   "format": "int64",
                   "type": "integer"
@@ -162,7 +165,7 @@
               "type": "array"
             },
             "enclaveOptions": {
-              "description": "Indicates whether the instance is enabled for Amazon Web Services Nitro Enclaves.\nFor more information, see What is Amazon Web Services Nitro Enclaves? (https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave.html)\nin the Amazon Web Services Nitro Enclaves User Guide.",
+              "description": "Indicates whether the instance is enabled for Amazon Web Services Nitro Enclaves.\nFor more information, see What is Nitro Enclaves? (https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave.html)\nin the Amazon Web Services Nitro Enclaves User Guide.",
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -502,7 +505,7 @@
               "additionalProperties": false
             },
             "metadataOptions": {
-              "description": "The metadata options for the instance. For more information, see Instance\nmetadata and user data (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html)\nin the Amazon EC2 User Guide.",
+              "description": "The metadata options for the instance. For more information, see Use instance\nmetadata to manage your EC2 instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html)\nin the Amazon EC2 User Guide.",
               "properties": {
                 "httpEndpoint": {
                   "type": "string"
@@ -603,7 +606,7 @@
                   },
                   "ipv6Prefixes": {
                     "items": {
-                      "description": "Describes the IPv4 prefix option for a network interface.",
+                      "description": "Describes the IPv6 prefix option for a network interface.",
                       "properties": {
                         "ipv6Prefix": {
                           "type": "string"
@@ -722,6 +725,35 @@
               },
               "type": "array"
             },
+            "tagSpecifications": {
+              "items": {
+                "description": "The tags specification for the resources that are created during instance\nlaunch.",
+                "properties": {
+                  "resourceType": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "items": {
+                      "description": "Describes a tag.",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            },
             "userData": {
               "type": "string"
             }
@@ -735,7 +767,7 @@
           "type": "integer"
         },
         "name": {
-          "description": "A name for the launch template.",
+          "description": "A name for the launch template.\n\nRegex Pattern: `^[a-zA-Z0-9\\(\\)\\.\\-/_]+$`",
           "type": "string"
         },
         "tags": {
@@ -779,6 +811,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {

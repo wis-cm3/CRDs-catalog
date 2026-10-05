@@ -33,10 +33,56 @@
           },
           "type": "array"
         },
+        "gatewayLoadBalancerRefs": {
+          "items": {
+            "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+            "properties": {
+              "from": {
+                "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
         "networkLoadBalancerARNs": {
           "description": "The Amazon Resource Names (ARNs) of the Network Load Balancers.",
           "items": {
             "type": "string"
+          },
+          "type": "array"
+        },
+        "networkLoadBalancerRefs": {
+          "items": {
+            "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+            "properties": {
+              "from": {
+                "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
           },
           "type": "array"
         },
@@ -46,6 +92,13 @@
         },
         "supportedIPAddressTypes": {
           "description": "The supported IP address types. The possible values are ipv4 and ipv6.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "supportedRegions": {
+          "description": "The Regions from which service consumers can access the service.",
           "items": {
             "type": "string"
           },
@@ -86,6 +139,10 @@
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
               "type": "string"
             },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
             "region": {
               "description": "Region is the AWS region in which the resource exists or will exist.",
               "type": "string"
@@ -99,7 +156,7 @@
           "additionalProperties": false
         },
         "availabilityZones": {
-          "description": "The Availability Zones in which the service is available.",
+          "description": "The Availability Zones in which the service is available.\n\nEither AvailabilityZone or AvailabilityZoneId can be specified, but not both",
           "items": {
             "type": "string"
           },

@@ -1,0 +1,643 @@
+{
+  "description": "CapacityProvider is the Schema for the CapacityProviders API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "CapacityProviderSpec defines the desired state of CapacityProvider.\n\nThe details for a capacity provider.",
+      "properties": {
+        "autoScalingGroupProvider": {
+          "description": "The details of the Auto Scaling group for the capacity provider.",
+          "properties": {
+            "autoScalingGroupARN": {
+              "type": "string",
+              "x-kubernetes-validations": [
+                {
+                  "message": "Value is immutable once set",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            },
+            "autoScalingGroupRef": {
+              "description": "Reference field for AutoScalingGroupARN",
+              "properties": {
+                "from": {
+                  "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "managedDraining": {
+              "type": "string"
+            },
+            "managedScaling": {
+              "description": "The managed scaling settings for the Auto Scaling group capacity provider.\n\nWhen managed scaling is turned on, Amazon ECS manages the scale-in and scale-out\nactions of the Auto Scaling group. Amazon ECS manages a target tracking scaling\npolicy using an Amazon ECS managed CloudWatch metric with the specified targetCapacity\nvalue as the target value for the metric. For more information, see Using\nmanaged scaling (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/asg-capacity-providers.html#asg-capacity-providers-managed-scaling)\nin the Amazon Elastic Container Service Developer Guide.\n\nIf managed scaling is off, the user must manage the scaling of the Auto Scaling\ngroup.",
+              "properties": {
+                "instanceWarmupPeriod": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "maximumScalingStepSize": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "minimumScalingStepSize": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "targetCapacity": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "managedTerminationProtection": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "cluster": {
+          "description": "The name of the cluster to associate with the capacity provider. When you\ncreate a capacity provider with Amazon ECS Managed Instances, it becomes\navailable only within the specified cluster.",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "clusterRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "managedInstancesProvider": {
+          "description": "The configuration for the Amazon ECS Managed Instances provider. This configuration\nspecifies how Amazon ECS manages Amazon EC2 instances on your behalf, including\nthe infrastructure role, instance launch template, and tag propagation settings.",
+          "properties": {
+            "autoRepairConfiguration": {
+              "description": "The auto repair configuration for an Amazon ECS Managed Instances capacity\nprovider. When enabled, Amazon ECS automatically replaces container instances\nthat are detected as unhealthy based on container instance health checks,\nincluding accelerated compute device and daemon health checks.",
+              "properties": {
+                "actionsStatus": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "infrastructureOptimization": {
+              "description": "The configuration that controls how Amazon ECS optimizes your infrastructure.",
+              "properties": {
+                "scaleInAfter": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "infrastructureRoleARN": {
+              "type": "string"
+            },
+            "infrastructureRoleRef": {
+              "description": "Reference field for InfrastructureRoleARN",
+              "properties": {
+                "from": {
+                  "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "instanceLaunchTemplate": {
+              "description": "The launch template configuration for Amazon ECS Managed Instances. This\ndefines how Amazon ECS launches Amazon EC2 instances, including the instance\nprofile for your tasks, network and storage configuration, capacity options,\nand instance requirements for flexible instance type selection.",
+              "properties": {
+                "capacityOptionType": {
+                  "type": "string"
+                },
+                "capacityReservations": {
+                  "description": "The Capacity Reservation configurations to be used when using the RESERVED\ncapacity option type.",
+                  "properties": {
+                    "reservationGroupARN": {
+                      "type": "string"
+                    },
+                    "reservationPreference": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "ec2InstanceProfileARN": {
+                  "type": "string"
+                },
+                "ec2InstanceProfileRef": {
+                  "description": "Reference field for EC2InstanceProfileARN",
+                  "properties": {
+                    "from": {
+                      "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "namespace": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "fipsEnabled": {
+                  "type": "boolean"
+                },
+                "instanceMetadataTagsPropagation": {
+                  "type": "boolean"
+                },
+                "instanceRequirements": {
+                  "description": "The instance requirements for attribute-based instance type selection. Instead\nof specifying exact instance types, you define requirements such as vCPU\ncount, memory size, network performance, and accelerator specifications.\nAmazon ECS automatically selects Amazon EC2 instance types that match these\nrequirements, providing flexibility and helping to mitigate capacity constraints.",
+                  "properties": {
+                    "acceleratorCount": {
+                      "description": "The minimum and maximum number of accelerators (such as GPUs) for instance\ntype selection. This is used for workloads that require specific numbers\nof accelerators.",
+                      "properties": {
+                        "max": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "min": {
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "acceleratorManufacturers": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "acceleratorNames": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "acceleratorTotalMemoryMiB": {
+                      "description": "The minimum and maximum total accelerator memory in mebibytes (MiB) for instance\ntype selection. This is important for GPU workloads that require specific\namounts of video memory.",
+                      "properties": {
+                        "max": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "min": {
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "acceleratorTypes": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "allowedInstanceTypes": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "bareMetal": {
+                      "type": "string"
+                    },
+                    "baselineEBSBandwidthMbps": {
+                      "description": "The minimum and maximum baseline Amazon EBS bandwidth in megabits per second\n(Mbps) for instance type selection. This is important for workloads with\nhigh storage I/O requirements.",
+                      "properties": {
+                        "max": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "min": {
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "burstablePerformance": {
+                      "type": "string"
+                    },
+                    "cpuManufacturers": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "excludedInstanceTypes": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "instanceGenerations": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "localStorage": {
+                      "type": "string"
+                    },
+                    "localStorageTypes": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "maxSpotPriceAsPercentageOfOptimalOnDemandPrice": {
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "memoryGiBPerVCPU": {
+                      "description": "The minimum and maximum amount of memory per vCPU in gibibytes (GiB). This\nhelps ensure that instance types have the appropriate memory-to-CPU ratio\nfor your workloads.",
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "memoryMiB": {
+                      "description": "The minimum and maximum amount of memory in mebibytes (MiB) for instance\ntype selection. This ensures that selected instance types have adequate memory\nfor your workloads.",
+                      "properties": {
+                        "max": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "min": {
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "networkBandwidthGbps": {
+                      "description": "The minimum and maximum network bandwidth in gigabits per second (Gbps) for\ninstance type selection. This is important for network-intensive workloads.",
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "networkInterfaceCount": {
+                      "description": "The minimum and maximum number of network interfaces for instance type selection.\nThis is useful for workloads that require multiple network interfaces.",
+                      "properties": {
+                        "max": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "min": {
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "onDemandMaxPricePercentageOverLowestPrice": {
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "requireHibernateSupport": {
+                      "type": "boolean"
+                    },
+                    "spotMaxPricePercentageOverLowestPrice": {
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "totalLocalStorageGB": {
+                      "description": "The minimum and maximum total local storage in gigabytes (GB) for instance\ntypes with local storage. This is useful for workloads that require local\nstorage for temporary data or caching.",
+                      "properties": {
+                        "max": {
+                          "type": "number"
+                        },
+                        "min": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "vCPUCount": {
+                      "description": "The minimum and maximum number of vCPUs for instance type selection. This\nallows you to specify a range of vCPU counts that meet your workload requirements.",
+                      "properties": {
+                        "max": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "min": {
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "localStorageConfiguration": {
+                  "description": "The local storage configuration for Amazon ECS Managed Instances. This defines\nhow ECS uses and configures instance store volumes available on container\ninstance.",
+                  "properties": {
+                    "useLocalStorage": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "monitoring": {
+                  "type": "string"
+                },
+                "networkConfiguration": {
+                  "description": "The network configuration for Amazon ECS Managed Instances. This specifies\nthe VPC subnets and security groups that instances use for network connectivity.\nAmazon ECS Managed Instances support multiple network modes including awsvpc\n(instances receive ENIs for task isolation), host (instances share network\nnamespace with tasks), and none (no external network connectivity), ensuring\nbackward compatibility for migrating workloads from Fargate or Amazon EC2.",
+                  "properties": {
+                    "securityGroupRefs": {
+                      "description": "Reference field for SecurityGroups",
+                      "items": {
+                        "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+                        "properties": {
+                          "from": {
+                            "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "namespace": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      },
+                      "type": "array"
+                    },
+                    "securityGroups": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "subnetRefs": {
+                      "description": "Reference field for Subnets",
+                      "items": {
+                        "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+                        "properties": {
+                          "from": {
+                            "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "namespace": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": false
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": false
+                      },
+                      "type": "array"
+                    },
+                    "subnets": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "storageConfiguration": {
+                  "description": "The storage configuration for Amazon ECS Managed Instances. This defines\nthe data volume configuration for the instances.",
+                  "properties": {
+                    "storageSizeGiB": {
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "propagateTags": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "name": {
+          "description": "The name of the capacity provider. Up to 255 characters are allowed. They\ninclude letters (both upper and lowercase letters), numbers, underscores\n(_), and hyphens (-). The name can't be prefixed with \"aws\", \"ecs\", or \"fargate\".",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "tags": {
+          "description": "The metadata that you apply to the capacity provider to categorize and organize\nthem more conveniently. Each tag consists of a key and an optional value.\nYou define both of them.\n\nThe following basic restrictions apply to tags:\n\n   * Maximum number of tags per resource - 50\n\n   * For each resource, each tag key must be unique, and each tag key can\n   have only one value.\n\n   * Maximum key length - 128 Unicode characters in UTF-8\n\n   * Maximum value length - 256 Unicode characters in UTF-8\n\n   * If your tagging schema is used across multiple services and resources,\n   remember that other services may have restrictions on allowed characters.\n   Generally allowed characters are: letters, numbers, and spaces representable\n   in UTF-8, and the following characters: + - = . _ : / @.\n\n   * Tag keys and values are case-sensitive.\n\n   * Do not use aws:, AWS:, or any upper or lowercase combination of such\n   as a prefix for either keys or values as it is reserved for Amazon Web\n   Services use. You cannot edit or delete tag keys or values with this prefix.\n   Tags with this prefix do not count against your tags per resource limit.",
+          "items": {
+            "description": "The metadata that you apply to a resource to help you categorize and organize\nthem. Each tag consists of a key and an optional value. You define them.\n\nThe following basic restrictions apply to tags:\n\n  - Maximum number of tags per resource - 50\n\n  - For each resource, each tag key must be unique, and each tag key can\n    have only one value.\n\n  - Maximum key length - 128 Unicode characters in UTF-8\n\n  - Maximum value length - 256 Unicode characters in UTF-8\n\n  - If your tagging schema is used across multiple services and resources,\n    remember that other services may have restrictions on allowed characters.\n    Generally allowed characters are: letters, numbers, and spaces representable\n    in UTF-8, and the following characters: + - = . _ : / @.\n\n  - Tag keys and values are case-sensitive.\n\n  - Do not use aws:, AWS:, or any upper or lowercase combination of such\n    as a prefix for either keys or values as it is reserved for Amazon Web\n    Services use. You cannot edit or delete tag keys or values with this prefix.\n    Tags with this prefix do not count against your tags per resource limit.",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "CapacityProviderStatus defines the observed state of CapacityProvider",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "The current status of the capacity provider. Only capacity providers in an\nACTIVE state can be used in a cluster. When a capacity provider is successfully\ndeleted, it has an INACTIVE status.",
+          "type": "string"
+        },
+        "type": {
+          "description": "The type of capacity provider. For Amazon ECS Managed Instances, this value\nis MANAGED_INSTANCES, indicating that Amazon ECS manages the underlying Amazon\nEC2 instances on your behalf.",
+          "type": "string"
+        },
+        "updateStatus": {
+          "description": "The update status of the capacity provider. The following are the possible\nstates that is returned.\n\nDELETE_IN_PROGRESS\n\nThe capacity provider is in the process of being deleted.\n\nDELETE_COMPLETE\n\nThe capacity provider was successfully deleted and has an INACTIVE status.\n\nDELETE_FAILED\n\nThe capacity provider can't be deleted. The update status reason provides\nfurther details about why the delete failed.",
+          "type": "string"
+        },
+        "updateStatusReason": {
+          "description": "The update status reason. This provides further details about the update\nstatus for the capacity provider.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

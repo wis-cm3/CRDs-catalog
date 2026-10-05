@@ -1,0 +1,375 @@
+{
+  "description": "BackupPlan is the Schema for the BackupPlans API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "BackupPlanSpec defines the desired state of BackupPlan.",
+      "properties": {
+        "advancedBackupSettings": {
+          "description": "Specifies a list of BackupOptions for each resource type. These settings\nare only available for Windows Volume Shadow Copy Service (VSS) backup jobs.",
+          "items": {
+            "description": "The backup options for each resource type.",
+            "properties": {
+              "backupOptions": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "resourceType": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "The display name of a backup plan. Must contain 1 to 50 alphanumeric or '-_.'\ncharacters.",
+          "type": "string"
+        },
+        "rules": {
+          "description": "An array of BackupRule objects, each of which specifies a scheduled task\nthat is used to back up a selection of resources.",
+          "items": {
+            "description": "Specifies a scheduled task used to back up a selection of resources.",
+            "properties": {
+              "completionWindowMinutes": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "copyActions": {
+                "items": {
+                  "description": "The details of the copy operation.",
+                  "properties": {
+                    "destinationBackupVaultARN": {
+                      "type": "string"
+                    },
+                    "destinationBackupVaultRef": {
+                      "description": "Reference field for DestinationBackupVaultARN",
+                      "properties": {
+                        "from": {
+                          "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "namespace": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object",
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    },
+                    "lifecycle": {
+                      "description": "Specifies the time period, in days, before a recovery point transitions to\ncold storage or is deleted.\n\nBackups transitioned to cold storage must be stored in cold storage for a\nminimum of 90 days. Therefore, on the console, the retention setting must\nbe 90 days greater than the transition to cold after days setting. The transition\nto cold after days setting can't be changed after a backup has been transitioned\nto cold.\n\nResource types that can transition to cold storage are listed in the Feature\navailability by resource (https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html#features-by-resource)\ntable. Backup ignores this expression for other resource types.\n\nTo remove the existing lifecycle and retention periods and keep your recovery\npoints indefinitely, specify -1 for MoveToColdStorageAfterDays and DeleteAfterDays.",
+                      "properties": {
+                        "deleteAfterDays": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "deleteAfterEvent": {
+                          "type": "string"
+                        },
+                        "moveToColdStorageAfterDays": {
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "optInToArchiveForSupportedResources": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "type": "array"
+              },
+              "enableContinuousBackup": {
+                "type": "boolean"
+              },
+              "indexActions": {
+                "items": {
+                  "description": "This is an optional array within a BackupRule.\n\nIndexAction consists of one ResourceTypes.",
+                  "properties": {
+                    "resourceTypes": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "type": "array"
+              },
+              "lifecycle": {
+                "description": "Specifies the time period, in days, before a recovery point transitions to\ncold storage or is deleted.\n\nBackups transitioned to cold storage must be stored in cold storage for a\nminimum of 90 days. Therefore, on the console, the retention setting must\nbe 90 days greater than the transition to cold after days setting. The transition\nto cold after days setting can't be changed after a backup has been transitioned\nto cold.\n\nResource types that can transition to cold storage are listed in the Feature\navailability by resource (https://docs.aws.amazon.com/aws-backup/latest/devguide/backup-feature-availability.html#features-by-resource)\ntable. Backup ignores this expression for other resource types.\n\nTo remove the existing lifecycle and retention periods and keep your recovery\npoints indefinitely, specify -1 for MoveToColdStorageAfterDays and DeleteAfterDays.",
+                "properties": {
+                  "deleteAfterDays": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "deleteAfterEvent": {
+                    "type": "string"
+                  },
+                  "moveToColdStorageAfterDays": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "optInToArchiveForSupportedResources": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "recoveryPointTags": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "ruleName": {
+                "type": "string"
+              },
+              "scanActions": {
+                "items": {
+                  "description": "Defines a scanning action that specifies the malware scanner and scan mode\nto use.",
+                  "properties": {
+                    "malwareScanner": {
+                      "type": "string"
+                    },
+                    "scanMode": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "type": "array"
+              },
+              "scheduleExpression": {
+                "type": "string"
+              },
+              "scheduleExpressionTimezone": {
+                "type": "string"
+              },
+              "startWindowMinutes": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "targetBackupVaultName": {
+                "type": "string"
+              },
+              "targetBackupVaultRef": {
+                "description": "Reference field for TargetBackupVaultName",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "targetLogicallyAirGappedBackupVaultARN": {
+                "type": "string"
+              },
+              "targetLogicallyAirGappedBackupVaultRef": {
+                "description": "Reference field for TargetLogicallyAirGappedBackupVaultARN",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "scanSettings": {
+          "description": "Contains your scanning configuration for the backup rule and includes the\nmalware scanner, and scan mode of either full or incremental.",
+          "items": {
+            "description": "Contains configuration settings for malware scanning, including the scanner\ntype, target resource types, and scanner role.",
+            "properties": {
+              "malwareScanner": {
+                "type": "string"
+              },
+              "resourceTypes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "scannerRoleARN": {
+                "type": "string"
+              },
+              "scannerRoleRef": {
+                "description": "Reference field for ScannerRoleARN",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "BackupPlanStatus defines the observed state of BackupPlan",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "creationDate": {
+          "description": "The date and time that a backup plan is created, in Unix format and Coordinated\nUniversal Time (UTC). The value of CreationDate is accurate to milliseconds.\nFor example, the value 1516925490.087 represents Friday, January 26, 2018\n12:11:30.087 AM.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "id": {
+          "description": "The ID of the backup plan.",
+          "type": "string"
+        },
+        "lastExecutionDate": {
+          "description": "The last time this backup plan was run. A date and time, in Unix format and\nCoordinated Universal Time (UTC). The value of LastExecutionDate is accurate\nto milliseconds. For example, the value 1516925490.087 represents Friday,\nJanuary 26, 2018 12:11:30.087 AM.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "versionID": {
+          "description": "Unique, randomly generated, Unicode, UTF-8 encoded strings that are at most\n1,024 bytes long. They cannot be edited.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

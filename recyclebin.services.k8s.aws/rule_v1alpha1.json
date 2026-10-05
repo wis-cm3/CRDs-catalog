@@ -1,0 +1,187 @@
+{
+  "description": "Rule is the Schema for the Rules API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "RuleSpec defines the desired state of Rule.",
+      "properties": {
+        "description": {
+          "description": "The retention rule description.\n\nRegex Pattern: `^[\\S ]{0,255}$`",
+          "type": "string"
+        },
+        "lockConfiguration": {
+          "description": "Information about the retention rule lock configuration.",
+          "properties": {
+            "unlockDelay": {
+              "description": "Information about the retention rule unlock delay. The unlock delay is the\nperiod after which a retention rule can be modified or edited after it has\nbeen unlocked by a user with the required permissions. The retention rule\ncan't be modified or deleted during the unlock delay.",
+              "properties": {
+                "unlockDelayUnit": {
+                  "type": "string"
+                },
+                "unlockDelayValue": {
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "resourceTags": {
+          "description": "[Tag-level retention rules only] Specifies the resource tags to use to identify\nresources that are to be retained by a tag-level retention rule. For tag-level\nretention rules, only deleted resources, of the specified resource type,\nthat have one or more of the specified tag key and value pairs are retained.\nIf a resource is deleted, but it does not have any of the specified tag key\nand value pairs, it is immediately deleted without being retained by the\nretention rule.\n\nYou can add the same tag key and value pair to a maximum or five retention\nrules.\n\nTo create a Region-level retention rule, omit this parameter. A Region-level\nretention rule does not have any resource tags specified. It retains all\ndeleted resources of the specified resource type in the Region in which the\nrule is created, even if the resources are not tagged.",
+          "items": {
+            "description": "[Tag-level retention rules only] Information about the resource tags used\nto identify resources that are retained by the retention rule.",
+            "properties": {
+              "resourceTagKey": {
+                "type": "string"
+              },
+              "resourceTagValue": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "resourceType": {
+          "description": "The resource type to be retained by the retention rule. Currently, only Amazon\nEBS snapshots and EBS-backed AMIs are supported. To retain snapshots, specify\nEBS_SNAPSHOT. To retain EBS-backed AMIs, specify EC2_IMAGE.",
+          "type": "string"
+        },
+        "retentionPeriod": {
+          "description": "Information about the retention period for which the retention rule is to\nretain resources.",
+          "properties": {
+            "retentionPeriodUnit": {
+              "type": "string"
+            },
+            "retentionPeriodValue": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "tags": {
+          "description": "Information about the tags to assign to the retention rule.",
+          "items": {
+            "description": "Information about the tags to assign to the retention rule.",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "resourceType",
+        "retentionPeriod"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "RuleStatus defines the observed state of Rule",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "identifier": {
+          "description": "The unique ID of the retention rule.\n\nRegex Pattern: `^[0-9a-zA-Z]{11}$`",
+          "type": "string"
+        },
+        "lockState": {
+          "description": "[Region-level retention rules only] The lock state for the retention rule.\n\n   * locked - The retention rule is locked and can't be modified or deleted.\n\n   * pending_unlock - The retention rule has been unlocked but it is still\n   within the unlock delay period. The retention rule can be modified or\n   deleted only after the unlock delay period has expired.\n\n   * unlocked - The retention rule is unlocked and it can be modified or\n   deleted by any user with the required permissions.\n\n   * null - The retention rule has never been locked. Once a retention rule\n   has been locked, it can transition between the locked and unlocked states\n   only; it can never transition back to null.",
+          "type": "string"
+        },
+        "status": {
+          "description": "The state of the retention rule. Only retention rules that are in the available\nstate retain resources.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

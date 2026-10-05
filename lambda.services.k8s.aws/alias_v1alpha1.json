@@ -67,7 +67,7 @@
           "additionalProperties": false
         },
         "functionName": {
-          "description": "The name or ARN of the Lambda function.\n\nName formats\n\n  - Function name - MyFunction.\n\n  - Function ARN - arn:aws:lambda:us-west-2:123456789012:function:MyFunction.\n\n  - Partial ARN - 123456789012:function:MyFunction.\n\nThe length constraint applies only to the full ARN. If you specify only the\nfunction name, it is limited to 64 characters in length.\n\nRegex Pattern: `^(arn:(aws[a-zA-Z-]*)?:lambda:)?([a-z]{2}(-gov)?-[a-z]+-\\d{1}:)?(\\d{12}:)?(function:)?([a-zA-Z0-9-_]+)(:(\\$LATEST|[a-zA-Z0-9-_]+))?$`",
+          "description": "The name or ARN of the Lambda function.\n\nName formats\n\n   * Function name - MyFunction.\n\n   * Function ARN - arn:aws:lambda:us-west-2:123456789012:function:MyFunction.\n\n   * Partial ARN - 123456789012:function:MyFunction.\n\nThe length constraint applies only to the full ARN. If you specify only the\nfunction name, it is limited to 64 characters in length.\n\nRegex Pattern: `^(arn:(aws[a-zA-Z-]*)?:lambda:)?([a-z]{2}((-gov)|(-iso([a-z]?)))?-[a-z]+-\\d{1}:)?(\\d{12}:)?(function:)?([a-zA-Z0-9-_]+)(:(\\$LATEST|[a-zA-Z0-9-_]+))?$`",
           "type": "string"
         },
         "functionRef": {
@@ -91,12 +91,38 @@
           "additionalProperties": false
         },
         "functionVersion": {
-          "description": "The function version that the alias invokes.\n\nRegex Pattern: `^(\\$LATEST|[0-9]+)$`",
+          "description": "The function version that the alias invokes.\n\nRegex Pattern: `^(\\$LATEST(\\.PUBLISHED)?|[0-9]+)$`",
           "type": "string"
+        },
+        "functionVersionRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
         },
         "name": {
           "description": "The name of the alias.\n\nRegex Pattern: `^(?!^[0-9]+$)([a-zA-Z0-9-_]+)$`",
-          "type": "string"
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
         },
         "permissions": {
           "description": "Permissions configures a set of Lambda permissions to grant to an alias.",
@@ -167,7 +193,6 @@
         }
       },
       "required": [
-        "functionVersion",
         "name"
       ],
       "type": "object",
@@ -185,6 +210,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {

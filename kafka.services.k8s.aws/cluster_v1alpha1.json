@@ -2,25 +2,78 @@
   "description": "Cluster is the Schema for the Clusters API",
   "properties": {
     "apiVersion": {
-      "description": "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
       "type": "string"
     },
     "kind": {
-      "description": "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
       "type": "string"
     },
     "metadata": {
       "type": "object"
     },
     "spec": {
-      "description": "ClusterSpec defines the desired state of Cluster. \n Returns information about a cluster of either the provisioned or the serverless type.",
+      "description": "ClusterSpec defines the desired state of Cluster.\n\nReturns information about a cluster.",
       "properties": {
+        "associatedSCRAMSecretRefs": {
+          "items": {
+            "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+            "properties": {
+              "from": {
+                "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "associatedSCRAMSecrets": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "brokerNodeGroupInfo": {
-          "description": "Information about the brokers.",
+          "description": "Information about the broker nodes in the cluster.",
           "properties": {
             "brokerAZDistribution": {
-              "description": "The distribution of broker nodes across Availability Zones. By default, broker nodes are distributed among the Availability Zones of your Region. Currently, the only supported value is DEFAULT. You can either specify this value explicitly or leave it out.",
+              "description": "The distribution of broker nodes across Availability Zones. This is an optional\nparameter. If you don't specify it, Amazon MSK gives it the value DEFAULT.\nYou can also explicitly set this parameter to the value DEFAULT. No other\nvalues are currently allowed.\n\nAmazon MSK distributes the broker nodes evenly across the Availability Zones\nthat correspond to the subnets you provide when you create the cluster.",
               "type": "string"
+            },
+            "clientSubnetRefs": {
+              "description": "Reference field for ClientSubnets",
+              "items": {
+                "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
             },
             "clientSubnets": {
               "items": {
@@ -31,11 +84,66 @@
             "connectivityInfo": {
               "description": "Information about the broker access configuration.",
               "properties": {
+                "networkType": {
+                  "description": "The network type of the cluster, which is IPv4 or DUAL. The DUAL network\ntype uses both IPv4 and IPv6 addresses for your cluster and its resources.\n\nBy default, a cluster uses the IPv4 network type.",
+                  "type": "string"
+                },
                 "publicAccess": {
-                  "description": "Broker public access control.",
+                  "description": "Public access control for brokers.",
                   "properties": {
-                    "type_": {
+                    "type": {
                       "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": false
+                },
+                "vpcConnectivity": {
+                  "description": "VPC connectivity access control for brokers.",
+                  "properties": {
+                    "clientAuthentication": {
+                      "description": "Includes all client authentication information for VPC connectivity.",
+                      "properties": {
+                        "sasl": {
+                          "description": "Details for SASL client authentication for VPC connectivity.",
+                          "properties": {
+                            "iam": {
+                              "description": "Details for IAM access control for VPC connectivity.",
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "additionalProperties": false
+                            },
+                            "scram": {
+                              "description": "Details for SASL/SCRAM client authentication for VPC connectivity.",
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "additionalProperties": false
+                            }
+                          },
+                          "type": "object",
+                          "additionalProperties": false
+                        },
+                        "tls": {
+                          "description": "Details for TLS client authentication for VPC connectivity.",
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          },
+                          "type": "object",
+                          "additionalProperties": false
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": false
                     }
                   },
                   "type": "object",
@@ -48,6 +156,30 @@
             "instanceType": {
               "type": "string"
             },
+            "securityGroupRefs": {
+              "description": "Reference field for SecurityGroups",
+              "items": {
+                "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            },
             "securityGroups": {
               "items": {
                 "type": "string"
@@ -58,10 +190,10 @@
               "description": "Contains information about storage volumes attached to MSK broker nodes.",
               "properties": {
                 "ebsStorageInfo": {
-                  "description": "Contains information about the EBS storage volumes attached to Apache Kafka broker nodes.",
+                  "description": "Contains information about the EBS storage volumes attached to Apache Kafka\nbroker nodes.",
                   "properties": {
                     "provisionedThroughput": {
-                      "description": "Contains information about provisioned throughput for EBS storage volumes attached to kafka broker nodes.",
+                      "description": "Contains information about provisioned throughput for EBS storage volumes\nattached to kafka broker nodes.",
                       "properties": {
                         "enabled": {
                           "type": "boolean"
@@ -94,8 +226,10 @@
           "description": "Includes all client authentication related information.",
           "properties": {
             "sasl": {
+              "description": "Details for client authentication using SASL.",
               "properties": {
                 "iam": {
+                  "description": "Details for IAM access control.",
                   "properties": {
                     "enabled": {
                       "type": "boolean"
@@ -105,6 +239,7 @@
                   "additionalProperties": false
                 },
                 "scram": {
+                  "description": "Details for SASL/SCRAM client authentication.",
                   "properties": {
                     "enabled": {
                       "type": "boolean"
@@ -134,7 +269,6 @@
               "additionalProperties": false
             },
             "unauthenticated": {
-              "description": "Contains information about unauthenticated traffic to the cluster.",
               "properties": {
                 "enabled": {
                   "type": "boolean"
@@ -148,7 +282,7 @@
           "additionalProperties": false
         },
         "configurationInfo": {
-          "description": "Represents the configuration that you want MSK to use for the cluster.",
+          "description": "Represents the configuration that you want MSK to use for the brokers in\na cluster.",
           "properties": {
             "arn": {
               "type": "string"
@@ -193,7 +327,7 @@
           "additionalProperties": false
         },
         "enhancedMonitoring": {
-          "description": "Specifies the level of monitoring for the MSK cluster. The possible values are DEFAULT, PER_BROKER, PER_TOPIC_PER_BROKER, and PER_TOPIC_PER_PARTITION.",
+          "description": "Specifies the level of monitoring for the MSK cluster. The possible values\nare DEFAULT, PER_BROKER, PER_TOPIC_PER_BROKER, and PER_TOPIC_PER_PARTITION.",
           "type": "string"
         },
         "kafkaVersion": {
@@ -201,13 +335,10 @@
           "type": "string"
         },
         "loggingInfo": {
-          "description": "LoggingInfo details.",
           "properties": {
             "brokerLogs": {
-              "description": "The broker logs configuration for this MSK cluster.",
               "properties": {
                 "cloudWatchLogs": {
-                  "description": "Details of the CloudWatch Logs destination for broker logs.",
                   "properties": {
                     "enabled": {
                       "type": "boolean"
@@ -220,7 +351,6 @@
                   "additionalProperties": false
                 },
                 "firehose": {
-                  "description": "Firehose details for BrokerLogs.",
                   "properties": {
                     "deliveryStream": {
                       "type": "string"
@@ -233,7 +363,6 @@
                   "additionalProperties": false
                 },
                 "s3": {
-                  "description": "The details of the Amazon S3 destination for broker logs.",
                   "properties": {
                     "bucket": {
                       "type": "string"
@@ -261,7 +390,7 @@
           "type": "string"
         },
         "numberOfBrokerNodes": {
-          "description": "The number of Apache Kafka broker nodes in the Amazon MSK cluster.",
+          "description": "The number of broker nodes in the cluster.",
           "format": "int64",
           "type": "integer"
         },
@@ -272,7 +401,7 @@
               "description": "Prometheus settings.",
               "properties": {
                 "jmxExporter": {
-                  "description": "Indicates whether you want to enable or disable the JMX Exporter.",
+                  "description": "Indicates whether you want to turn on or turn off the JMX Exporter.",
                   "properties": {
                     "enabledInBroker": {
                       "type": "boolean"
@@ -282,7 +411,7 @@
                   "additionalProperties": false
                 },
                 "nodeExporter": {
-                  "description": "Indicates whether you want to enable or disable the Node Exporter.",
+                  "description": "Indicates whether you want to turn on or turn off the Node Exporter.",
                   "properties": {
                     "enabledInBroker": {
                       "type": "boolean"
@@ -294,6 +423,21 @@
               },
               "type": "object",
               "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "policy": {
+          "description": "The cluster policy.",
+          "type": "string"
+        },
+        "rebalancing": {
+          "description": "Specifies if intelligent rebalancing should be turned on for the new MSK\nProvisioned cluster with Express brokers. By default, intelligent rebalancing\nstatus is ACTIVE for all new clusters.",
+          "properties": {
+            "status": {
+              "description": "Intelligent rebalancing status. The default intelligent rebalancing status\nis ACTIVE for all new Express-based clusters.",
+              "type": "string"
             }
           },
           "type": "object",
@@ -324,14 +468,18 @@
       "description": "ClusterStatus defines the observed state of Cluster",
       "properties": {
         "ackResourceMetadata": {
-          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member that is used to contain resource sync state, account ownership, constructed ARN for the resource",
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
           "properties": {
             "arn": {
-              "description": "ARN is the Amazon Resource Name for the resource. This is a globally-unique identifier and is set only by the ACK service controller once the controller has orchestrated the creation of the resource OR when it has verified that an \"adopted\" resource (a resource where the ARN annotation was set by the Kubernetes user on the CR) exists and matches the supplied CR's Spec field values. TODO(vijat@): Find a better strategy for resources that do not have ARN in CreateOutputResponse https://github.com/aws/aws-controllers-k8s/issues/270",
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
               "type": "string"
             },
             "ownerAccountID": {
-              "description": "OwnerAccountID is the AWS Account ID of the account that owns the backend AWS service API resource.",
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {
@@ -346,10 +494,40 @@
           "type": "object",
           "additionalProperties": false
         },
+        "bootstrapBrokerString": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringPublicSASLIAM": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringPublicSASLSCRAM": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringPublicTLS": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringSASLIAM": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringSASLSCRAM": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringTLS": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringVPCConnectivitySASLIAM": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringVPCConnectivitySASLSCRAM": {
+          "type": "string"
+        },
+        "bootstrapBrokerStringVPCConnectivityTLS": {
+          "type": "string"
+        },
         "conditions": {
-          "description": "All CRS managed by ACK have a common `Status.Conditions` member that contains a collection of `ackv1alpha1.Condition` objects that describe the various terminal states of the CR and its backend AWS service API resource",
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
           "items": {
-            "description": "Condition is the common struct used by all CRDs managed by ACK service controllers to indicate terminal states  of the CR and its backend AWS service API resource",
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
             "properties": {
               "lastTransitionTime": {
                 "description": "Last time the condition transitioned from one status to another.",
@@ -382,8 +560,18 @@
           },
           "type": "array"
         },
+        "currentVersion": {
+          "description": "The current version of the MSK cluster.",
+          "type": "string"
+        },
         "state": {
-          "description": "The state of the cluster. The possible states are ACTIVE, CREATING, DELETING, FAILED, HEALING, MAINTENANCE, REBOOTING_BROKER, and UPDATING.",
+          "description": "The state of the cluster. The possible states are ACTIVE, CREATING, DELETING,\nFAILED, HEALING, MAINTENANCE, REBOOTING_BROKER, and UPDATING.",
+          "type": "string"
+        },
+        "zookeeperConnectString": {
+          "type": "string"
+        },
+        "zookeeperConnectStringTLS": {
           "type": "string"
         }
       },

@@ -1,0 +1,471 @@
+{
+  "description": "Environment is the Schema for the Environments API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "EnvironmentSpec defines the desired state of Environment.\n\nDescribes an Amazon Managed Workflows for Apache Airflow (MWAA) environment.",
+      "properties": {
+        "airflowConfigurationOptions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A list of key-value pairs containing the Apache Airflow configuration options\nyou want to attach to your environment. For more information, see Apache\nAirflow configuration options (https://docs.aws.amazon.com/mwaa/latest/userguide/configuring-env-variables.html).",
+          "type": "object"
+        },
+        "airflowVersion": {
+          "description": "The Apache Airflow version for your environment. If no value is specified,\nit defaults to the latest version. For more information, see Apache Airflow\nversions on Amazon Managed Workflows for Apache Airflow (Amazon MWAA) (https://docs.aws.amazon.com/mwaa/latest/userguide/airflow-versions.html).\n\nValid values: 1.10.12, 2.0.2, 2.2.2, 2.4.3, 2.5.1, 2.6.3, 2.7.2, 2.8.1, 2.9.2,\n2.10.1, and 2.10.3.\n\nRegex Pattern: `^[0-9a-z.]+$`",
+          "type": "string"
+        },
+        "dagS3Path": {
+          "description": "The relative path to the DAGs folder on your Amazon S3 bucket. For example,\ndags. For more information, see Adding or updating DAGs (https://docs.aws.amazon.com/mwaa/latest/userguide/configuring-dag-folder.html).\n\nRegex Pattern: `.*`",
+          "type": "string"
+        },
+        "endpointManagement": {
+          "description": "Defines whether the VPC endpoints configured for the environment are created,\nand managed, by the customer or by Amazon MWAA. If set to SERVICE, Amazon\nMWAA will create and manage the required VPC endpoints in your VPC. If set\nto CUSTOMER, you must create, and manage, the VPC endpoints for your VPC.\nIf you choose to create an environment in a shared VPC, you must set this\nvalue to CUSTOMER. In a shared VPC deployment, the environment will remain\nin PENDING status until you create the VPC endpoints. If you do not take\naction to create the endpoints within 72 hours, the status will change to\nCREATE_FAILED. You can delete the failed environment and create a new one.",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "environmentClass": {
+          "description": "The environment class type. Valid values: mw1.micro, mw1.small, mw1.medium,\nmw1.large, mw1.xlarge, and mw1.2xlarge. For more information, see Amazon\nMWAA environment class (https://docs.aws.amazon.com/mwaa/latest/userguide/environment-class.html).",
+          "type": "string"
+        },
+        "executionRoleARN": {
+          "description": "The Amazon Resource Name (ARN) of the execution role for your environment.\nAn execution role is an Amazon Web Services Identity and Access Management\n(IAM) role that grants MWAA permission to access Amazon Web Services services\nand resources used by your environment. For example, arn:aws:iam::123456789:role/my-execution-role.\nFor more information, see Amazon MWAA Execution role (https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-create-role.html).\n\nRegex Pattern: `^arn:aws(-[a-z]+)?:iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+$`",
+          "type": "string"
+        },
+        "executionRoleRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "kmsKey": {
+          "description": "The Amazon Web Services Key Management Service (KMS) key to encrypt the data\nin your environment. You can use an Amazon Web Services owned CMK, or a Customer\nmanaged CMK (advanced). For more information, see Create an Amazon MWAA environment\n(https://docs.aws.amazon.com/mwaa/latest/userguide/create-environment.html).\n\nRegex Pattern: `^(((arn:aws(-[a-z]+)?:kms:[a-z]{2}-[a-z]+-\\d:\\d+:)?key\\/)?[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}|(arn:aws(-[a-z]+)?:kms:[a-z]{2}-[a-z]+-\\d:\\d+:)?alias/.+)$`",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "kmsKeyRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "loggingConfiguration": {
+          "description": "Defines the Apache Airflow logs to send to CloudWatch Logs.",
+          "properties": {
+            "dagProcessingLogs": {
+              "description": "Enables the Apache Airflow log type (e.g. DagProcessingLogs) and defines\nthe log level to send to CloudWatch Logs (e.g. INFO).",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "logLevel": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "schedulerLogs": {
+              "description": "Enables the Apache Airflow log type (e.g. DagProcessingLogs) and defines\nthe log level to send to CloudWatch Logs (e.g. INFO).",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "logLevel": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "taskLogs": {
+              "description": "Enables the Apache Airflow log type (e.g. DagProcessingLogs) and defines\nthe log level to send to CloudWatch Logs (e.g. INFO).",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "logLevel": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "webserverLogs": {
+              "description": "Enables the Apache Airflow log type (e.g. DagProcessingLogs) and defines\nthe log level to send to CloudWatch Logs (e.g. INFO).",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "logLevel": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "workerLogs": {
+              "description": "Enables the Apache Airflow log type (e.g. DagProcessingLogs) and defines\nthe log level to send to CloudWatch Logs (e.g. INFO).",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "logLevel": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "maxWebservers": {
+          "description": "The maximum number of web servers that you want to run in your environment.\nAmazon MWAA scales the number of Apache Airflow web servers up to the number\nyou specify for MaxWebservers when you interact with your Apache Airflow\nenvironment using Apache Airflow REST API, or the Apache Airflow CLI. For\nexample, in scenarios where your workload requires network calls to the Apache\nAirflow REST API with a high transaction-per-second (TPS) rate, Amazon MWAA\nwill increase the number of web servers up to the number set in MaxWebserers.\nAs TPS rates decrease Amazon MWAA disposes of the additional web servers,\nand scales down to the number set in MinxWebserers.\n\nValid values: For environments larger than mw1.micro, accepts values from\n2 to 5. Defaults to 2 for all environment sizes except mw1.micro, which defaults\nto 1.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "maxWorkers": {
+          "description": "The maximum number of workers that you want to run in your environment. MWAA\nscales the number of Apache Airflow workers up to the number you specify\nin the MaxWorkers field. For example, 20. When there are no more tasks running,\nand no more in the queue, MWAA disposes of the extra workers leaving the\none worker that is included with your environment, or the number you specify\nin MinWorkers.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "minWebservers": {
+          "description": "The minimum number of web servers that you want to run in your environment.\nAmazon MWAA scales the number of Apache Airflow web servers up to the number\nyou specify for MaxWebservers when you interact with your Apache Airflow\nenvironment using Apache Airflow REST API, or the Apache Airflow CLI. As\nthe transaction-per-second rate, and the network load, decrease, Amazon MWAA\ndisposes of the additional web servers, and scales down to the number set\nin MinxWebserers.\n\nValid values: For environments larger than mw1.micro, accepts values from\n2 to 5. Defaults to 2 for all environment sizes except mw1.micro, which defaults\nto 1.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "minWorkers": {
+          "description": "The minimum number of workers that you want to run in your environment. MWAA\nscales the number of Apache Airflow workers up to the number you specify\nin the MaxWorkers field. When there are no more tasks running, and no more\nin the queue, MWAA disposes of the extra workers leaving the worker count\nyou specify in the MinWorkers field. For example, 2.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the Amazon MWAA environment. For example, MyMWAAEnvironment.\n\nRegex Pattern: `^[a-zA-Z][0-9a-zA-Z-_]*$`",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable once set",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "networkConfiguration": {
+          "description": "The VPC networking components used to secure and enable network traffic between\nthe Amazon Web Services resources for your environment. For more information,\nsee About networking on Amazon MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/networking-about.html).",
+          "properties": {
+            "securityGroupIDs": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "securityGroupRefs": {
+              "description": "Reference field for SecurityGroupIDs",
+              "items": {
+                "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            },
+            "subnetIDs": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "x-kubernetes-validations": [
+                {
+                  "message": "Value is immutable once set",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            },
+            "subnetRefs": {
+              "description": "Reference field for SubnetIDs",
+              "items": {
+                "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+                "properties": {
+                  "from": {
+                    "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "pluginsS3ObjectVersion": {
+          "description": "The version of the plugins.zip file on your Amazon S3 bucket. You must specify\na version each time a plugins.zip file is updated. For more information,\nsee How S3 Versioning works (https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html).",
+          "type": "string"
+        },
+        "pluginsS3Path": {
+          "description": "The relative path to the plugins.zip file on your Amazon S3 bucket. For example,\nplugins.zip. If specified, then the plugins.zip version is required. For\nmore information, see Installing custom plugins (https://docs.aws.amazon.com/mwaa/latest/userguide/configuring-dag-import-plugins.html).\n\nRegex Pattern: `.*`",
+          "type": "string"
+        },
+        "requirementsS3ObjectVersion": {
+          "description": "The version of the requirements.txt file on your Amazon S3 bucket. You must\nspecify a version each time a requirements.txt file is updated. For more\ninformation, see How S3 Versioning works (https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html).",
+          "type": "string"
+        },
+        "requirementsS3Path": {
+          "description": "The relative path to the requirements.txt file on your Amazon S3 bucket.\nFor example, requirements.txt. If specified, then a version is required.\nFor more information, see Installing Python dependencies (https://docs.aws.amazon.com/mwaa/latest/userguide/working-dags-dependencies.html).\n\nRegex Pattern: `.*`",
+          "type": "string"
+        },
+        "schedulers": {
+          "description": "The number of Apache Airflow schedulers to run in your environment. Valid\nvalues:\n\n   * v2 - For environments larger than mw1.micro, accepts values from 2 to\n   5. Defaults to 2 for all environment sizes except mw1.micro, which defaults\n   to 1.\n\n   * v1 - Accepts 1.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "sourceBucketARN": {
+          "description": "The Amazon Resource Name (ARN) of the Amazon S3 bucket where your DAG code\nand supporting files are stored. For example, arn:aws:s3:::my-airflow-bucket-unique-name.\nFor more information, see Create an Amazon S3 bucket for Amazon MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-s3-bucket.html).\n\nRegex Pattern: `^arn:aws(-[a-z]+)?:s3:::[a-z0-9.\\-]+$`",
+          "type": "string"
+        },
+        "sourceBucketRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "startupScriptS3ObjectVersion": {
+          "description": "The version of the startup shell script in your Amazon S3 bucket. You must\nspecify the version ID (https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning-workflows.html)\nthat Amazon S3 assigns to the file every time you update the script.\n\nVersion IDs are Unicode, UTF-8 encoded, URL-ready, opaque strings that are\nno more than 1,024 bytes long. The following is an example:\n\n3sL4kqtJlcpXroDTDmJ+rmSpXd3dIbrHY+MTRCxf3vjVBH40Nr8X8gdRQBpUMLUo\n\nFor more information, see Using a startup script (https://docs.aws.amazon.com/mwaa/latest/userguide/using-startup-script.html).",
+          "type": "string"
+        },
+        "startupScriptS3Path": {
+          "description": "The relative path to the startup shell script in your Amazon S3 bucket. For\nexample, s3://mwaa-environment/startup.sh.\n\nAmazon MWAA runs the script as your environment starts, and before running\nthe Apache Airflow process. You can use this script to install dependencies,\nmodify Apache Airflow configuration options, and set environment variables.\nFor more information, see Using a startup script (https://docs.aws.amazon.com/mwaa/latest/userguide/using-startup-script.html).\n\nRegex Pattern: `.*`",
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The key-value tag pairs you want to associate to your environment. For example,\n\"Environment\": \"Staging\". For more information, see Tagging Amazon Web Services\nresources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).",
+          "type": "object"
+        },
+        "webserverAccessMode": {
+          "description": "Defines the access mode for the Apache Airflow web server. For more information,\nsee Apache Airflow access modes (https://docs.aws.amazon.com/mwaa/latest/userguide/configuring-networking.html).",
+          "type": "string"
+        },
+        "weeklyMaintenanceWindowStart": {
+          "description": "The day and time of the week in Coordinated Universal Time (UTC) 24-hour\nstandard time to start weekly maintenance updates of your environment in\nthe following format: DAY:HH:MM. For example: TUE:03:30. You can specify\na start time in 30 minute increments only.\n\nRegex Pattern: `(MON|TUE|WED|THU|FRI|SAT|SUN):([01]\\d|2[0-3]):(00|30)`",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dagS3Path",
+        "name",
+        "networkConfiguration"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "EnvironmentStatus defines the observed state of Environment",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "createdAt": {
+          "description": "The day and time the environment was created.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "lastUpdate": {
+          "description": "The status of the last update on the environment.",
+          "properties": {
+            "createdAt": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "error": {
+              "description": "Describes the error(s) encountered with the last update of the environment.",
+              "properties": {
+                "errorCode": {
+                  "type": "string"
+                },
+                "errorMessage": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            },
+            "source": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "workerReplacementStrategy": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "status": {
+          "description": "The status of the Amazon MWAA environment.\n\nValid values:\n\n   * CREATING - Indicates the request to create the environment is in progress.\n\n   * CREATING_SNAPSHOT - Indicates the request to update environment details,\n   or upgrade the environment version, is in progress and Amazon MWAA is\n   creating a storage volume snapshot of the Amazon RDS database cluster\n   associated with the environment. A database snapshot is a backup created\n   at a specific point in time. Amazon MWAA uses snapshots to recover environment\n   metadata if the process to update or upgrade an environment fails.\n\n   * CREATE_FAILED - Indicates the request to create the environment failed,\n   and the environment could not be created.\n\n   * AVAILABLE - Indicates the request was successful and the environment\n   is ready to use.\n\n   * PENDING - Indicates the request was successful, but the process to create\n   the environment is paused until you create the required VPC endpoints\n   in your VPC. After you create the VPC endpoints, the process resumes.\n\n   * UPDATING - Indicates the request to update the environment is in progress.\n\n   * ROLLING_BACK - Indicates the request to update environment details,\n   or upgrade the environment version, failed and Amazon MWAA is restoring\n   the environment using the latest storage volume snapshot.\n\n   * DELETING - Indicates the request to delete the environment is in progress.\n\n   * DELETED - Indicates the request to delete the environment is complete,\n   and the environment has been deleted.\n\n   * UNAVAILABLE - Indicates the request failed, but the environment did\n   not return to its previous state and is not stable.\n\n   * UPDATE_FAILED - Indicates the request to update the environment failed,\n   and the environment was restored to its previous state successfully and\n   is ready to use.\n\n   * MAINTENANCE - Indicates that the environment is undergoing maintenance.\n   Depending on the type of work Amazon MWAA is performing, your environment\n   might become unavailable during this process. After all operations are\n   done, your environment will return to its status prior to mainteneace\n   operations.\n\nWe recommend reviewing our troubleshooting guide for a list of common errors\nand their solutions. For more information, see Amazon MWAA troubleshooting\n(https://docs.aws.amazon.com/mwaa/latest/userguide/troubleshooting.html).",
+          "type": "string"
+        },
+        "webserverURL": {
+          "description": "The Apache Airflow web server host name for the Amazon MWAA environment.\nFor more information, see Accessing the Apache Airflow UI (https://docs.aws.amazon.com/mwaa/latest/userguide/access-airflow-ui.html).\n\nRegex Pattern: `^https://.+$`",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

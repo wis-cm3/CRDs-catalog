@@ -72,7 +72,13 @@
           "format": "int32",
           "maximum": 500,
           "minimum": 1,
-          "type": "integer"
+          "type": "integer",
+          "x-kubernetes-validations": [
+            {
+              "message": "Number of shards cannot be changed after index creation",
+              "rule": "self == oldSelf"
+            }
+          ]
         }
       },
       "required": [

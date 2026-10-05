@@ -16,7 +16,7 @@
       "description": "ActivitySpec defines the desired state of Activity.",
       "properties": {
         "name": {
-          "description": "The name of the activity to create. This name must be unique for your Amazon\nWeb Services account and region for 90 days. For more information, see Limits\nRelated to State Machine Executions (https://docs.aws.amazon.com/step-functions/latest/dg/limits.html#service-limits-state-machine-executions)\nin the Step Functions Developer Guide.\n\nA name must not contain:\n\n  - white space",
+          "description": "The name of the activity to create. This name must be unique for your Amazon\nWeb Services account and region for 90 days. For more information, see Limits\nRelated to State Machine Executions (https://docs.aws.amazon.com/step-functions/latest/dg/limits.html#service-limits-state-machine-executions)\nin the Step Functions Developer Guide.\n\nA name must not contain:\n\n   * white space",
           "type": "string",
           "x-kubernetes-validations": [
             {
@@ -61,6 +61,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {

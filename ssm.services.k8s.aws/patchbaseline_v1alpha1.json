@@ -1,0 +1,265 @@
+{
+  "description": "PatchBaseline is the Schema for the PatchBaselines API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "PatchBaselineSpec defines the desired state of PatchBaseline.",
+      "properties": {
+        "approvalRules": {
+          "description": "A set of rules used to include patches in the baseline.",
+          "properties": {
+            "patchRules": {
+              "items": {
+                "description": "Defines an approval rule for a patch baseline.",
+                "properties": {
+                  "approveAfterDays": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "approveUntilDate": {
+                    "type": "string"
+                  },
+                  "complianceLevel": {
+                    "type": "string"
+                  },
+                  "enableNonSecurity": {
+                    "type": "boolean"
+                  },
+                  "patchFilterGroup": {
+                    "description": "A set of patch filters, typically used for approval rules.",
+                    "properties": {
+                      "patchFilters": {
+                        "items": {
+                          "description": "Defines which patches should be included in a patch baseline.\n\nA patch filter consists of a key and a set of values. The filter key is a\npatch property. For example, the available filter keys for WINDOWS are PATCH_SET,\nPRODUCT, PRODUCT_FAMILY, CLASSIFICATION, and MSRC_SEVERITY.\n\nThe filter values define a matching criterion for the patch property indicated\nby the key. For example, if the filter key is PRODUCT and the filter values\nare [\"Office 2013\", \"Office 2016\"], then the filter accepts all patches where\nproduct name is either \"Office 2013\" or \"Office 2016\". The filter values\ncan be exact values for the patch property given as a key, or a wildcard\n(*), which matches all values.\n\nYou can view lists of valid values for the patch properties by running the\nDescribePatchProperties command. For information about which patch properties\ncan be used with each major operating system, see DescribePatchProperties.",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "values": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "additionalProperties": false
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "approvedPatches": {
+          "description": "A list of explicitly approved patches for the baseline.\n\nFor information about accepted formats for lists of approved patches and\nrejected patches, see Package name formats for approved and rejected patch\nlists (https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-approved-rejected-package-name-formats.html)\nin the Amazon Web Services Systems Manager User Guide.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "approvedPatchesComplianceLevel": {
+          "description": "Defines the compliance level for approved patches. When an approved patch\nis reported as missing, this value describes the severity of the compliance\nviolation. The default value is UNSPECIFIED.",
+          "type": "string"
+        },
+        "approvedPatchesEnableNonSecurity": {
+          "description": "Indicates whether the list of approved patches includes non-security updates\nthat should be applied to the managed nodes. The default value is false.\nApplies to Linux managed nodes only.",
+          "type": "boolean"
+        },
+        "clientToken": {
+          "description": "User-provided idempotency token.",
+          "type": "string"
+        },
+        "description": {
+          "description": "A description of the patch baseline.",
+          "type": "string"
+        },
+        "globalFilters": {
+          "description": "A set of global filters used to include patches in the baseline.\n\nThe GlobalFilters parameter can be configured only by using the CLI or an\nAmazon Web Services SDK. It can't be configured from the Patch Manager console,\nand its value isn't displayed in the console.",
+          "properties": {
+            "patchFilters": {
+              "items": {
+                "description": "Defines which patches should be included in a patch baseline.\n\nA patch filter consists of a key and a set of values. The filter key is a\npatch property. For example, the available filter keys for WINDOWS are PATCH_SET,\nPRODUCT, PRODUCT_FAMILY, CLASSIFICATION, and MSRC_SEVERITY.\n\nThe filter values define a matching criterion for the patch property indicated\nby the key. For example, if the filter key is PRODUCT and the filter values\nare [\"Office 2013\", \"Office 2016\"], then the filter accepts all patches where\nproduct name is either \"Office 2013\" or \"Office 2016\". The filter values\ncan be exact values for the patch property given as a key, or a wildcard\n(*), which matches all values.\n\nYou can view lists of valid values for the patch properties by running the\nDescribePatchProperties command. For information about which patch properties\ncan be used with each major operating system, see DescribePatchProperties.",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "additionalProperties": false
+              },
+              "type": "array"
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "name": {
+          "description": "The name of the patch baseline.\n\nRegex Pattern: `^[a-zA-Z0-9_\\-.]{3,128}$`",
+          "type": "string"
+        },
+        "operatingSystem": {
+          "description": "Defines the operating system the patch baseline applies to. The default value\nis WINDOWS.",
+          "type": "string"
+        },
+        "rejectedPatches": {
+          "description": "A list of explicitly rejected patches for the baseline.\n\nFor information about accepted formats for lists of approved patches and\nrejected patches, see Package name formats for approved and rejected patch\nlists (https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-approved-rejected-package-name-formats.html)\nin the Amazon Web Services Systems Manager User Guide.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rejectedPatchesAction": {
+          "description": "The action for Patch Manager to take on patches included in the RejectedPackages\nlist.\n\nALLOW_AS_DEPENDENCY\n\nLinux and macOS: A package in the rejected patches list is installed only\nif it is a dependency of another package. It is considered compliant with\nthe patch baseline, and its status is reported as INSTALLED_OTHER. This is\nthe default action if no option is specified.\n\nWindows Server: Windows Server doesn't support the concept of package dependencies.\nIf a package in the rejected patches list and already installed on the node,\nits status is reported as INSTALLED_OTHER. Any package not already installed\non the node is skipped. This is the default action if no option is specified.\n\nBLOCK\n\nAll OSs: Packages in the rejected patches list, and packages that include\nthem as dependencies, aren't installed by Patch Manager under any circumstances.\nIf a package was installed before it was added to the rejected patches list,\nor is installed outside of Patch Manager afterward, it's considered noncompliant\nwith the patch baseline and its status is reported as INSTALLED_REJECTED.",
+          "type": "string"
+        },
+        "sources": {
+          "description": "Information about the patches to use to update the managed nodes, including\ntarget operating systems and source repositories. Applies to Linux managed\nnodes only.",
+          "items": {
+            "description": "Information about the patches to use to update the managed nodes, including\ntarget operating systems and source repository. Applies to Linux managed\nnodes only.",
+            "properties": {
+              "configuration": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "products": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "tags": {
+          "description": "Optional metadata that you assign to a resource. Tags enable you to categorize\na resource in different ways, such as by purpose, owner, or environment.\nFor example, you might want to tag a patch baseline to identify the severity\nlevel of patches it specifies and the operating system family it applies\nto. In this case, you could specify the following key-value pairs:\n\n   * Key=PatchSeverity,Value=Critical\n\n   * Key=OS,Value=Windows\n\nTo add tags to an existing patch baseline, use the AddTagsToResource operation.",
+          "items": {
+            "description": "Metadata that you assign to your Amazon Web Services resources. Tags enable\nyou to categorize your resources in different ways, for example, by purpose,\nowner, or environment. In Amazon Web Services Systems Manager, you can apply\ntags to Systems Manager documents (SSM documents), managed nodes, maintenance\nwindows, parameters, patch baselines, OpsItems, and OpsMetadata.",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "PatchBaselineStatus defines the observed state of PatchBaseline",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "baselineID": {
+          "description": "The ID of the created patch baseline.\n\nRegex Pattern: `^[a-zA-Z0-9_\\-:/]{20,128}$`",
+          "type": "string"
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

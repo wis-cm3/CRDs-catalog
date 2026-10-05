@@ -1,0 +1,261 @@
+{
+  "description": "FileSystem is the Schema for the FileSystems API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": "string"
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "description": "FileSystemSpec defines the desired state of FileSystem.",
+      "properties": {
+        "acceptBucketWarning": {
+          "description": "Set to true to acknowledge and accept any warnings about the bucket configuration.\nIf not specified, the operation may fail if there are bucket configuration\nwarnings.",
+          "type": "boolean"
+        },
+        "bucket": {
+          "description": "The Amazon Resource Name (ARN) of the S3 bucket that will be accessible through\nthe file system. The bucket must exist and be in the same Amazon Web Services\nRegion as the file system.\n\nRegex Pattern: `^(arn:aws[a-zA-Z0-9-]*:s3:::.+)$`",
+          "type": "string"
+        },
+        "bucketRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "expirationDataRules": {
+          "description": "An array of expiration data rules that control when cached data expires from\nthe file system.",
+          "items": {
+            "description": "Specifies a rule that controls when cached data expires from the file system\nbased on last access time.",
+            "properties": {
+              "daysAfterLastAccess": {
+                "format": "int64",
+                "type": "integer"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "importDataRules": {
+          "description": "An array of import data rules that control how data is imported from S3 into\nthe file system.",
+          "items": {
+            "description": "Specifies a rule that controls how data is imported from S3 into the file\nsystem.",
+            "properties": {
+              "prefix": {
+                "type": "string"
+              },
+              "sizeLessThan": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "trigger": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "kmsKeyID": {
+          "description": "The ARN, key ID, or alias of the KMS key to use for encryption. If not specified,\nthe service uses a service-owned key for encryption. You can specify a KMS\nkey using the following formats: key ID, ARN, key alias, or key alias ARN.\nIf you use KmsKeyId, the file system will be encrypted.\n\nRegex Pattern: `^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|mrk-[0-9a-f]{32}|alias/[a-zA-Z0-9/_-]+|(arn:aws[-a-z]*:kms:[a-z0-9-]+:\\d{12}:((key/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|(key/mrk-[0-9a-f]{32})|(alias/[a-zA-Z0-9/_-]+))))$`",
+          "type": "string"
+        },
+        "kmsKeyRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "policy": {
+          "description": "The JSON-formatted resource policy to apply to the file system. The policy\ndefines the permissions for accessing the file system. The policy must be\na valid JSON document that follows IAM policy syntax.",
+          "type": "string"
+        },
+        "prefix": {
+          "description": "An optional prefix within the S3 bucket to scope the file system access.\nIf specified, the file system provides access only to objects with keys that\nbegin with this prefix. If not specified, the file system provides access\nto the entire bucket.",
+          "type": "string"
+        },
+        "roleARN": {
+          "description": "The ARN of the IAM role that grants the S3 Files service permission to read\nand write data between the file system and the S3 bucket. This role must\nhave the necessary permissions to access the specified bucket and prefix.\n\nRegex Pattern: `^arn:(aws[a-zA-Z-]*)?:iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+$`",
+          "type": "string"
+        },
+        "roleRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
+        },
+        "tags": {
+          "description": "An array of key-value pairs to apply as tags to the file system resource.\nEach tag is a user-defined key-value pair. You can use tags to categorize\nand manage your file systems. Each key must be unique for the resource.",
+          "items": {
+            "description": "A key-value pair for resource tagging.",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    },
+    "status": {
+      "description": "FileSystemStatus defines the observed state of FileSystem",
+      "properties": {
+        "ackResourceMetadata": {
+          "description": "All CRs managed by ACK have a common `Status.ACKResourceMetadata` member\nthat is used to contain resource sync state, account ownership,\nconstructed ARN for the resource",
+          "properties": {
+            "arn": {
+              "description": "ARN is the Amazon Resource Name for the resource. This is a\nglobally-unique identifier and is set only by the ACK service controller\nonce the controller has orchestrated the creation of the resource OR\nwhen it has verified that an \"adopted\" resource (a resource where the\nARN annotation was set by the Kubernetes user on the CR) exists and\nmatches the supplied CR's Spec field values.\nhttps://github.com/aws/aws-controllers-k8s/issues/270",
+              "type": "string"
+            },
+            "ownerAccountID": {
+              "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
+              "type": "string"
+            },
+            "region": {
+              "description": "Region is the AWS region in which the resource exists or will exist.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerAccountID",
+            "region"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "conditions": {
+          "description": "All CRs managed by ACK have a common `Status.Conditions` member that\ncontains a collection of `ackv1alpha1.Condition` objects that describe\nthe various terminal states of the CR and its backend AWS service API\nresource",
+          "items": {
+            "description": "Condition is the common struct used by all CRDs managed by ACK service\ncontrollers to indicate terminal states  of the CR and its backend AWS\nservice API resource",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "Last time the condition transitioned from one status to another.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": "string"
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type is the type of the Condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object",
+            "additionalProperties": false
+          },
+          "type": "array"
+        },
+        "creationTime": {
+          "description": "The time when the file system was created, in seconds since 1970-01-01T00:00:00Z\n(Unix epoch time).",
+          "format": "date-time",
+          "type": "string"
+        },
+        "fileSystemID": {
+          "description": "The ID of the file system, assigned by S3 Files. This ID is used to reference\nthe file system in subsequent API calls.\n\nRegex Pattern: `^(arn:aws[-a-z]*:s3files:[0-9a-z-:]+:file-system/fs-[0-9a-f]{17,40}|fs-[0-9a-f]{17,40})$`",
+          "type": "string"
+        },
+        "latestVersionNumber": {
+          "description": "The version number of the synchronization configuration. Use this value with\nPutSynchronizationConfiguration to ensure optimistic concurrency control.",
+          "format": "int64",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the file system, derived from the Name tag if present.\n\nRegex Pattern: `^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$`",
+          "type": "string"
+        },
+        "ownerID": {
+          "description": "The Amazon Web Services account ID of the file system owner.\n\nRegex Pattern: `^(\\d{12})|(\\d{4}-{4}-\\d{4})$`",
+          "type": "string"
+        },
+        "status": {
+          "description": "The lifecycle state of the file system. Valid values are: AVAILABLE (the\nfile system is available for use), CREATING (the file system is being created),\nDELETING (the file system is being deleted), DELETED (the file system has\nbeen deleted), ERROR (the file system is in an error state), or UPDATING\n(the file system is being updated).",
+          "type": "string"
+        },
+        "statusMessage": {
+          "description": "Additional information about the file system status. This field provides\nmore details when the status is ERROR, or during state transitions.",
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "type": "object"
+}

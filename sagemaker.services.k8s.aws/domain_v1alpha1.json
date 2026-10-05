@@ -16,7 +16,7 @@
       "description": "DomainSpec defines the desired state of Domain.",
       "properties": {
         "appNetworkAccessType": {
-          "description": "Specifies the VPC used for non-EFS traffic. The default value is PublicInternetOnly.\n\n  - PublicInternetOnly - Non-EFS traffic is through a VPC managed by Amazon\n    SageMaker AI, which allows direct internet access\n\n  - VpcOnly - All traffic is through the specified VPC and subnets",
+          "description": "Specifies the VPC used for non-EFS traffic. The default value is PublicInternetOnly.\n\n   * PublicInternetOnly - Non-EFS traffic is through a VPC managed by Amazon\n   SageMaker AI, which allows direct internet access\n\n   * VpcOnly - All traffic is through the specified VPC and subnets",
           "type": "string"
         },
         "appSecurityGroupManagement": {
@@ -847,6 +847,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {

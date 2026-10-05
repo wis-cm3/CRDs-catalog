@@ -51,7 +51,7 @@
           "additionalProperties": false
         },
         "name": {
-          "description": "The name of the state machine.\n\nA name must not contain:\n\n  - white space",
+          "description": "The name of the state machine.\n\nA name must not contain:\n\n   * white space",
           "type": "string",
           "x-kubernetes-validations": [
             {
@@ -60,9 +60,33 @@
             }
           ]
         },
+        "publish": {
+          "description": "Whether to publish an immutable version of the state machine whenever its\nconfiguration is pushed to AWS. Versions are cut on create and on update, so\nleaving this set means every change to the state machine produces a version;\nAWS deduplicates per revision, so an unchanged configuration cuts nothing.\nSetting this back to false stops further versions being cut and does not delete\nany that already exist. Note that stateMachineVersionARN names the version\nholding the configuration last pushed rather than the last version ever\npublished, so the next update carried out with publish set to false clears it.\nThe default is false.",
+          "type": "boolean"
+        },
         "roleARN": {
           "description": "The Amazon Resource Name (ARN) of the IAM role to use for this state machine.",
           "type": "string"
+        },
+        "roleRef": {
+          "description": "AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\ntype to provide more user friendly syntax for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t  name: my-api",
+          "properties": {
+            "from": {
+              "description": "AWSResourceReference provides all the values necessary to reference another\nk8s resource for finding the identifier(Id/ARN/Name)",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "namespace": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "additionalProperties": false
+            }
+          },
+          "type": "object",
+          "additionalProperties": false
         },
         "tags": {
           "description": "Tags to be added when creating a state machine.\n\nAn array of key-value pairs. For more information, see Using Cost Allocation\nTags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)\nin the Amazon Web Services Billing and Cost Management User Guide, and Controlling\nAccess Using IAM Tags (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_iam-tags.html).\n\nTags may only contain Unicode letters, digits, white space, or these symbols:\n_ . : / = + - @.",
@@ -98,8 +122,7 @@
       },
       "required": [
         "definition",
-        "name",
-        "roleARN"
+        "name"
       ],
       "type": "object",
       "additionalProperties": false
@@ -116,6 +139,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {
@@ -169,6 +196,14 @@
         "creationDate": {
           "description": "The date the state machine is created.",
           "format": "date-time",
+          "type": "string"
+        },
+        "revisionID": {
+          "description": "The revision identifier for the state machine.\n\nUse the revisionId parameter to compare between versions of a state machine\nconfiguration used for executions without performing a diff of the properties,\nsuch as definition and roleArn.",
+          "type": "string"
+        },
+        "stateMachineVersionARN": {
+          "description": "The Amazon Resource Name (ARN) that identifies the created state machine\nversion. If you do not set the publish parameter to true, this field returns\nnull value.",
           "type": "string"
         }
       },

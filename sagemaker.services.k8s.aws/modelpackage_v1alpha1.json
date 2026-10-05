@@ -325,7 +325,7 @@
           "additionalProperties": false
         },
         "inferenceSpecification": {
-          "description": "Specifies details about inference jobs that you can run with models based\non this model package, including the following information:\n\n  - The Amazon ECR paths of containers that contain the inference code and\n    model artifacts.\n\n  - The instance types that the model package supports for transform jobs\n    and real-time endpoints used for inference.\n\n  - The input and output content formats that the model package supports\n    for inference.",
+          "description": "Specifies details about inference jobs that you can run with models based\non this model package, including the following information:\n\n   * The Amazon ECR paths of containers that contain the inference code and\n   model artifacts.\n\n   * The instance types that the model package supports for transform jobs\n   and real-time endpoints used for inference.\n\n   * The input and output content formats that the model package supports\n   for inference.",
           "properties": {
             "containers": {
               "items": {
@@ -809,6 +809,10 @@
             },
             "ownerAccountID": {
               "description": "OwnerAccountID is the AWS Account ID of the account that owns the\nbackend AWS service API resource.",
+              "type": "string"
+            },
+            "partition": {
+              "description": "Partition is the AWS partition in which the resource exists or will exist",
               "type": "string"
             },
             "region": {
